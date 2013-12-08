@@ -1899,15 +1899,18 @@ po	|SV*	|hfree_next_entry	|NN HV *hv|NN STRLEN *indexp
 #endif
 
 #if defined(PERL_IN_HV_C)
+in	|int	|should_hsplit	|NN XPVHV * const xhv
 s	|void	|hsplit		|NN HV *hv|STRLEN const oldsize|STRLEN newsize
 s	|void	|hfreeentries	|NN HV *hv
 s	|SV*	|hv_free_ent_ret|NN HV *hv|NN HE *entry
 sa	|HE*	|new_he
+i	|void	|del_he		|NN HE *p
 sanR	|HEK*	|save_hek_flags	|NN const char *str|I32 len|U32 hash|int flags
 sn	|void	|hv_magic_check	|NN HV *hv|NN bool *needs_copy|NN bool *needs_store
 s	|void	|unshare_hek_or_pvn|NULLOK const HEK* hek|NULLOK const char* str|I32 len|U32 hash
 sR	|HEK*	|share_hek_flags|NN const char *str|I32 len|U32 hash|int flags
 rs	|void	|hv_notallowed	|int flags|NN const char *key|I32 klen|NN const char *msg
+in	|void	|hv_set_max_adjusted_for_keys	|NN HV * const hv|STRLEN hv_max|STRLEN hv_keys
 in	|U32|ptr_hash|PTRV u
 s	|struct xpvhv_aux*|hv_auxinit|NN HV *hv
 sn	|struct xpvhv_aux*|hv_auxinit_internal|NN struct xpvhv_aux *iter

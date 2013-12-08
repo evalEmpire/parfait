@@ -6124,6 +6124,11 @@ STATIC void	S_clear_placeholders(pTHX_ HV *hv, U32 items)
 #define PERL_ARGS_ASSERT_CLEAR_PLACEHOLDERS	\
 	assert(hv)
 
+PERL_STATIC_INLINE void	S_del_he(pTHX_ HE *p)
+			__attribute__nonnull__(pTHX_1);
+#define PERL_ARGS_ASSERT_DEL_HE	\
+	assert(p)
+
 STATIC void	S_hfreeentries(pTHX_ HV *hv)
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_HFREEENTRIES	\
@@ -6165,6 +6170,11 @@ PERL_STATIC_NO_RET void	S_hv_notallowed(pTHX_ int flags, const char *key, I32 kl
 #define PERL_ARGS_ASSERT_HV_NOTALLOWED	\
 	assert(key); assert(msg)
 
+PERL_STATIC_INLINE void	S_hv_set_max_adjusted_for_keys(HV * const hv, STRLEN hv_max, STRLEN hv_keys)
+			__attribute__nonnull__(1);
+#define PERL_ARGS_ASSERT_HV_SET_MAX_ADJUSTED_FOR_KEYS	\
+	assert(hv)
+
 STATIC HE*	S_new_he(pTHX)
 			__attribute__malloc__
 			__attribute__warn_unused_result__;
@@ -6187,6 +6197,11 @@ STATIC HEK*	S_share_hek_flags(pTHX_ const char *str, I32 len, U32 hash, int flag
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_SHARE_HEK_FLAGS	\
 	assert(str)
+
+PERL_STATIC_INLINE int	S_should_hsplit(XPVHV * const xhv)
+			__attribute__nonnull__(1);
+#define PERL_ARGS_ASSERT_SHOULD_HSPLIT	\
+	assert(xhv)
 
 STATIC void	S_unshare_hek_or_pvn(pTHX_ const HEK* hek, const char* str, I32 len, U32 hash);
 #endif
