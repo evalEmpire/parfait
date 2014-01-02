@@ -6315,6 +6315,11 @@ STATIC void	S_bad_type_pv(pTHX_ I32 n, const char *t, const OP *o, const OP *kid
 #define PERL_ARGS_ASSERT_BAD_TYPE_PV	\
 	assert(t); assert(o); assert(kid)
 
+PERL_STATIC_INLINE OP*	S_checkop(pTHX_ I32 type, OP *o)
+			__attribute__nonnull__(pTHX_2);
+#define PERL_ARGS_ASSERT_CHECKOP	\
+	assert(o)
+
 STATIC void	S_clear_special_blocks(pTHX_ const char *const fullname, GV *const gv, CV *const cv)
 			__attribute__nonnull__(pTHX_1)
 			__attribute__nonnull__(pTHX_2)

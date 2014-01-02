@@ -502,16 +502,16 @@ Perl_op_refcnt_dec(pTHX_ OP *o)
     return result;
 }
 #endif
-/*
- * In the following definition, the ", (OP*)0" is just to make the compiler
- * think the expression is of the right type: croak actually does a Siglongjmp.
- */
-#define CHECKOP(type,o) \
-    ((PL_op_mask && PL_op_mask[type])				\
-     ? ( op_free((OP*)o),					\
-         Perl_croak(aTHX_ "'%s' trapped by operation mask", PL_op_desc[type]),	\
-         (OP*)0 )						\
-     : PL_check[type](aTHX_ (OP*)o))
+
+PERL_STATIC_INLINE OP *S_checkop(pTHX_ I32 type, OP *o) {
+    /* The ", (OP*)0" is just to make the compiler think the expression is of
+       the right type: croak actually does a Siglongjmp. */
+    return((PL_op_mask && PL_op_mask[type])
+     ? ( op_free((OP*)o),
+         Perl_croak(aTHX_ "'%s' trapped by operation mask", PL_op_desc[type]),
+         (OP*)0 )
+     : PL_check[type](aTHX_ (OP*)o));
+}
 
 #define RETURN_UNLIMITED_NUMBER (PERL_INT_MAX / 2)
 
@@ -4609,7 +4609,7 @@ Perl_op_convert_list(pTHX_ I32 type, I32 flags, OP *o)
     if (flags & OPf_FOLDED)
         o->op_folded = 1;
 
-    o = CHECKOP(type, o);
+    o = checkop(type, o);
     if (o->op_type != (unsigned)type)
         return o;
 
@@ -4722,7 +4722,7 @@ Perl_newLISTOP(pTHX_ I32 type, I32 flags, OP *first, OP *last)
     if (listop->op_last)
         OpLASTSIB_set(listop->op_last, (OP*)listop);
 
-    return CHECKOP(type, listop);
+    return checkop(type, (OP *)listop);
 }
 
 /*
@@ -4762,7 +4762,7 @@ Perl_newOP(pTHX_ I32 type, I32 flags)
         scalar(o);
     if (PL_opargs[type] & OA_TARGET)
         o->op_targ = pad_alloc(type, SVs_PADTMP);
-    return CHECKOP(type, o);
+    return checkop(type, o);
 }
 
 /*
@@ -4813,7 +4813,7 @@ Perl_newUNOP(pTHX_ I32 type, I32 flags, OP *first)
     if (!OpHAS_SIBLING(first)) /* true unless weird syntax error */
         OpLASTSIB_set(first, (OP*)unop);
 
-    unop = (UNOP*) CHECKOP(type, unop);
+    unop = (UNOP*) checkop(type, (OP*)unop);
     if (unop->op_next)
         return (OP*)unop;
 
@@ -4849,7 +4849,7 @@ Perl_newUNOP_AUX(pTHX_ I32 type, I32 flags, OP *first, UNOP_AUX_item *aux)
     if (first && !OpHAS_SIBLING(first)) /* true unless weird syntax error */
         OpLASTSIB_set(first, (OP*)unop);
 
-    unop = (UNOP_AUX*) CHECKOP(type, unop);
+    unop = (UNOP_AUX*) checkop(type, (OP*)unop);
 
     return op_std_init((OP *) unop);
 }
@@ -4902,7 +4902,7 @@ S_newMETHOP_internal(pTHX_ I32 type, I32 flags, OP* dynamic_meth, SV* const_meth
 #endif
 
     OpTYPE_set(methop, type);
-    return CHECKOP(type, methop);
+    return checkop(type, (OP*)methop);
 }
 
 OP *
@@ -4977,7 +4977,7 @@ Perl_newBINOP(pTHX_ I32 type, I32 flags, OP *first, OP *last)
     if (binop->op_last)
         OpLASTSIB_set(binop->op_last, (OP*)binop);
 
-    binop = (BINOP*)CHECKOP(type, binop);
+    binop = (BINOP*)checkop(type, (OP*)binop);
     if (binop->op_next || binop->op_type != (OPCODE)type)
         return (OP*)binop;
 
@@ -5409,7 +5409,7 @@ Perl_newPMOP(pTHX_ I32 type, I32 flags)
     }
 #endif
 
-    return CHECKOP(type, pmop);
+    return checkop(type, (OP*)pmop);
 }
 
 static void
@@ -5810,7 +5810,7 @@ Perl_newSVOP(pTHX_ I32 type, I32 flags, SV *sv)
         scalar((OP*)svop);
     if (PL_opargs[type] & OA_TARGET)
         svop->op_targ = pad_alloc(type, SVs_PADTMP);
-    return CHECKOP(type, svop);
+    return checkop(type, (OP*)svop);
 }
 
 /*
@@ -5879,7 +5879,7 @@ Perl_newPADOP(pTHX_ I32 type, I32 flags, SV *sv)
         scalar((OP*)padop);
     if (PL_opargs[type] & OA_TARGET)
         padop->op_targ = pad_alloc(type, SVs_PADTMP);
-    return CHECKOP(type, padop);
+    return checkop(type, (OP*)padop);
 }
 
 #endif /* USE_ITHREADS */
@@ -5943,7 +5943,7 @@ Perl_newPVOP(pTHX_ I32 type, I32 flags, char *pv)
         scalar((OP*)pvop);
     if (PL_opargs[type] & OA_TARGET)
         pvop->op_targ = pad_alloc(type, SVs_PADTMP);
-    return CHECKOP(type, pvop);
+    return checkop(type, (OP*)pvop);
 }
 
 void
@@ -7005,7 +7005,7 @@ S_new_logop(pTHX_ I32 type, I32 flags, OP** firstp, OP** otherp)
     assert(!OpHAS_SIBLING(first));
     op_sibling_splice((OP*)logop, first, 0, other);
 
-    CHECKOP(type,logop);
+    checkop(type, (OP*)logop);
 
     o = newUNOP(prepend_not ? OP_NOT : OP_NULL,
                 PL_opargs[type] & OA_RETSCALAR ? OPf_WANT_SCALAR : 0,
@@ -7071,8 +7071,8 @@ Perl_newCONDOP(pTHX_ I32 flags, OP *first, OP *trueop, OP *falseop)
     logop->op_private = (U8)(1 | (flags >> 8));
     logop->op_next = LINKLIST(falseop);
 
-    CHECKOP(OP_COND_EXPR, /* that's logop->op_type */
-            logop);
+    checkop(OP_COND_EXPR, /* that's logop->op_type */
+            (OP*)logop);
 
     /* establish postfix order */
     start = LINKLIST(first);
@@ -7662,7 +7662,7 @@ S_newGIVWHENOP(pTHX_ OP *cond, OP *block,
         o->op_next = (OP *) enterop;
     }
 
-    CHECKOP(enter_opcode, enterop); /* Currently does nothing, since
+    checkop(enter_opcode, (OP*)enterop); /* Currently does nothing, since
                                            entergiven and enterwhen both
                                            use ck_null() */
 

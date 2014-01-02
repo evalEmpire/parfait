@@ -1535,6 +1535,7 @@
 #define assignment_type(a)	S_assignment_type(aTHX_ a)
 #define bad_type_gv(a,b,c,d)	S_bad_type_gv(aTHX_ a,b,c,d)
 #define bad_type_pv(a,b,c,d)	S_bad_type_pv(aTHX_ a,b,c,d)
+#define checkop(a,b)		S_checkop(aTHX_ a,b)
 #define clear_special_blocks(a,b,c)	S_clear_special_blocks(aTHX_ a,b,c)
 #define cop_free(a)		S_cop_free(aTHX_ a)
 #define diff_opslots		S_diff_opslots

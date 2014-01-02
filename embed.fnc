@@ -1935,6 +1935,7 @@ s	|void	|fixup_errno_string|NN SV* sv
 #if defined(PERL_IN_OP_C)
 in	|size_t	|size_to_psize	|size_t x
 in	|size_t	|diff_opslots	|NN OPSLOT *o|NN OPSLOT *p
+i	|OP*	|checkop	|I32 type|NN OP *o
 sRn	|bool	|is_handle_constructor|NN const OP *o|I32 numargs
 sR	|I32	|assignment_type|NULLOK const OP *o
 s	|void	|forget_pmop	|NN PMOP *const o
