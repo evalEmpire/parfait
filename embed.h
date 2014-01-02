@@ -1537,6 +1537,7 @@
 #define bad_type_pv(a,b,c,d)	S_bad_type_pv(aTHX_ a,b,c,d)
 #define clear_special_blocks(a,b,c)	S_clear_special_blocks(aTHX_ a,b,c)
 #define cop_free(a)		S_cop_free(aTHX_ a)
+#define diff_opslots		S_diff_opslots
 #define dup_attrlist(a)		S_dup_attrlist(aTHX_ a)
 #define finalize_op(a)		S_finalize_op(aTHX_ a)
 #define find_and_forget_pmops(a)	S_find_and_forget_pmops(aTHX_ a)
@@ -1568,6 +1569,7 @@
 #define scalarseq(a)		S_scalarseq(aTHX_ a)
 #define search_const(a)		S_search_const(aTHX_ a)
 #define simplify_sort(a)	S_simplify_sort(aTHX_ a)
+#define size_to_psize		S_size_to_psize
 #define too_few_arguments_pv(a,b,c)	S_too_few_arguments_pv(aTHX_ a,b,c)
 #define too_many_arguments_pv(a,b,c)	S_too_many_arguments_pv(aTHX_ a,b,c)
 #    if defined(USE_ITHREADS)

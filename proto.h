@@ -6327,6 +6327,12 @@ STATIC void	S_cop_free(pTHX_ COP *cop)
 #define PERL_ARGS_ASSERT_COP_FREE	\
 	assert(cop)
 
+PERL_STATIC_INLINE size_t	S_diff_opslots(OPSLOT *o, OPSLOT *p)
+			__attribute__nonnull__(1)
+			__attribute__nonnull__(2);
+#define PERL_ARGS_ASSERT_DIFF_OPSLOTS	\
+	assert(o); assert(p)
+
 STATIC OP *	S_dup_attrlist(pTHX_ OP *o)
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_DUP_ATTRLIST	\
@@ -6455,6 +6461,7 @@ STATIC void	S_simplify_sort(pTHX_ OP *o)
 #define PERL_ARGS_ASSERT_SIMPLIFY_SORT	\
 	assert(o)
 
+PERL_STATIC_INLINE size_t	S_size_to_psize(size_t x);
 STATIC OP*	S_too_few_arguments_pv(pTHX_ OP *o, const char* name, U32 flags)
 			__attribute__warn_unused_result__
 			__attribute__nonnull__(pTHX_1)
