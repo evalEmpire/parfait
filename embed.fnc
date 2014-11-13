@@ -355,6 +355,8 @@ Ap	|int	|do_binmode	|NN PerlIO *fp|int iotype|int mode
 Ap	|bool	|do_close	|NULLOK GV* gv|bool not_implicit
 : Defined in doio.c, used only in pp_sys.c
 p	|bool	|do_eof		|NN GV* gv
+p	|void	|fixup_errno_string|NN SV* sv
+p	|SV *	|errno2sv	|NN SV* sv
 
 #ifdef PERL_DEFAULT_DO_EXEC3_IMPLEMENTATION
 pm	|bool	|do_exec	|NN const char* cmd
@@ -1925,7 +1927,6 @@ s	|SV*	|magic_methcall1|NN SV *sv|NN const MAGIC *mg \
 				|int n|NULLOK SV *val
 s	|void	|restore_magic	|NULLOK const void *p
 s	|void	|unwind_handler_stack|NULLOK const void *p
-s	|void	|fixup_errno_string|NN SV* sv
 
 #endif
 

@@ -329,6 +329,17 @@ perform the upgrade if necessary.  See C<svtype>.
 #define SvFLAGS(sv)	(sv)->sv_flags
 #define SvREFCNT(sv)	(sv)->sv_refcnt
 
+#define SvRTRIM(sv) STMT_START { \
+    if (SvPOK(sv)) { \
+        STRLEN len = SvCUR(sv); \
+        char * const p = SvPVX(sv); \
+	while (len > 0 && isSPACE(p[len-1])) \
+	   --len; \
+	SvCUR_set(sv, len); \
+	p[len] = '\0'; \
+    } \
+} STMT_END
+
 #define SvREFCNT_inc(sv)		S_SvREFCNT_inc(MUTABLE_SV(sv))
 #define SvREFCNT_inc_simple(sv)		SvREFCNT_inc(sv)
 #define SvREFCNT_inc_NN(sv)		S_SvREFCNT_inc_NN(MUTABLE_SV(sv))

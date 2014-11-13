@@ -3732,6 +3732,7 @@ typedef        struct crypt_data {     /* straight from /usr/include/crypt.h */
 #include "sv.h"
 #include "regexp.h"
 #include "util.h"
+#include "errnop.h"
 #include "form.h"
 #include "gv.h"
 #include "pad.h"

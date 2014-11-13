@@ -1177,11 +1177,13 @@
 #define dump_all_perl(a)	Perl_dump_all_perl(aTHX_ a)
 #define dump_packsubs_perl(a,b)	Perl_dump_packsubs_perl(aTHX_ a,b)
 #define dump_sub_perl(a,b)	Perl_dump_sub_perl(aTHX_ a,b)
+#define errno2sv(a)		Perl_errno2sv(aTHX_ a)
 #define finalize_optree(a)	Perl_finalize_optree(aTHX_ a)
 #define find_lexical_cv(a)	Perl_find_lexical_cv(aTHX_ a)
 #define find_runcv_where(a,b,c)	Perl_find_runcv_where(aTHX_ a,b,c)
 #define find_rundefsv2(a,b)	Perl_find_rundefsv2(aTHX_ a,b)
 #define find_script(a,b,c,d)	Perl_find_script(aTHX_ a,b,c,d)
+#define fixup_errno_string(a)	Perl_fixup_errno_string(aTHX_ a)
 #define free_tied_hv_pool()	Perl_free_tied_hv_pool(aTHX)
 #define get_hash_seed(a)	Perl_get_hash_seed(aTHX_ a)
 #define get_no_modify()		Perl_get_no_modify(aTHX)
@@ -1510,7 +1512,6 @@
 #define adjust_size_and_find_bucket	S_adjust_size_and_find_bucket
 #  endif
 #  if defined(PERL_IN_MG_C)
-#define fixup_errno_string(a)	S_fixup_errno_string(aTHX_ a)
 #define magic_methcall1(a,b,c,d,e,f)	S_magic_methcall1(aTHX_ a,b,c,d,e,f)
 #define magic_methpack(a,b,c)	S_magic_methpack(aTHX_ a,b,c)
 #define restore_magic(a)	S_restore_magic(aTHX_ a)

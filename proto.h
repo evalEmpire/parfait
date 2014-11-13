@@ -1155,6 +1155,11 @@ PERL_CALLCONV void	Perl_emulate_cop_io(pTHX_ const COP *const c, SV *const sv)
 #define PERL_ARGS_ASSERT_EMULATE_COP_IO	\
 	assert(c); assert(sv)
 
+PERL_CALLCONV SV *	Perl_errno2sv(pTHX_ SV* sv)
+			__attribute__nonnull__(pTHX_1);
+#define PERL_ARGS_ASSERT_ERRNO2SV	\
+	assert(sv)
+
 PERL_CALLCONV SV*	Perl_eval_pv(pTHX_ const char* p, I32 croak_on_error)
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_EVAL_PV	\
@@ -1220,6 +1225,11 @@ PERL_CALLCONV char*	Perl_find_script(pTHX_ const char *scriptname, bool dosearch
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_FIND_SCRIPT	\
 	assert(scriptname)
+
+PERL_CALLCONV void	Perl_fixup_errno_string(pTHX_ SV* sv)
+			__attribute__nonnull__(pTHX_1);
+#define PERL_ARGS_ASSERT_FIXUP_ERRNO_STRING	\
+	assert(sv)
 
 PERL_CALLCONV I32	Perl_foldEQ(const char* a, const char* b, I32 len)
 			__attribute__pure__
@@ -6213,11 +6223,6 @@ STATIC int	S_adjust_size_and_find_bucket(size_t *nbytes_p)
 
 #endif
 #if defined(PERL_IN_MG_C)
-STATIC void	S_fixup_errno_string(pTHX_ SV* sv)
-			__attribute__nonnull__(pTHX_1);
-#define PERL_ARGS_ASSERT_FIXUP_ERRNO_STRING	\
-	assert(sv)
-
 STATIC SV*	S_magic_methcall1(pTHX_ SV *sv, const MAGIC *mg, SV *meth, U32 flags, int n, SV *val)
 			__attribute__nonnull__(pTHX_1)
 			__attribute__nonnull__(pTHX_2)
