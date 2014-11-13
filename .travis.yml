@@ -1,0 +1,9 @@
+language: c
+script:
+        - sh Configure -des 
+        - make -j5
+        - TEST_JOBS=5 make test
+compiler:
+        - clang
+        - gcc
+
