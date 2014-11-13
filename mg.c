@@ -705,17 +705,6 @@ Perl_magic_regdatum_set(pTHX_ SV *sv, MAGIC *mg)
     NORETURN_FUNCTION_END;
 }
 
-#define SvRTRIM(sv) STMT_START { \
-    if (SvPOK(sv)) { \
-        STRLEN len = SvCUR(sv); \
-        char * const p = SvPVX(sv); \
-	while (len > 0 && isSPACE(p[len-1])) \
-	   --len; \
-	SvCUR_set(sv, len); \
-	p[len] = '\0'; \
-    } \
-} STMT_END
-
 void
 Perl_emulate_cop_io(pTHX_ const COP *const c, SV *const sv)
 {
@@ -738,47 +727,6 @@ Perl_emulate_cop_io(pTHX_ const COP *const c, SV *const sv)
 	    sv_catsv(sv, value);
 	}
     }
-}
-
-STATIC void
-S_fixup_errno_string(pTHX_ SV* sv)
-{
-    /* Do what is necessary to fixup the non-empty string in 'sv' for return to
-     * Perl space. */
-
-    PERL_ARGS_ASSERT_FIXUP_ERRNO_STRING;
-
-    assert(SvOK(sv));
-
-    if(strEQ(SvPVX(sv), "")) {
-	sv_catpv(sv, UNKNOWN_ERRNO_MSG);
-    }
-#if 0
-    /* This is disabled to get v5.20 out the door.  It means that $! behaves as
-     * if in the scope of both 'use locale' and 'use bytes'.  This can cause
-     * mixed encodings and double utf8 upgrading,  See towards the end of the
-     * thread for [perl #119499] */
-    else {
-
-        /* In some locales the error string may come back as UTF-8, in which
-         * case we should turn on that flag.  This didn't use to happen, and to
-         * avoid any possible backward compatibility issues, we don't turn on
-         * the flag unless we have to.  So the flag stays off for an entirely
-         * ASCII string.  We assume that if the string looks like UTF-8, it
-         * really is UTF-8:  "text in any other encoding that uses bytes with
-         * the high bit set is extremely unlikely to pass a UTF-8 validity
-         * test" (http://en.wikipedia.org/wiki/Charset_detection).  There is a
-         * potential that we will get it wrong however, especially on short
-         * error message text.  (If it turns out to be necessary, we could also
-         * keep track if the current LC_MESSAGES locale is UTF-8) */
-        if (! IN_BYTES  /* respect 'use bytes' */
-            && ! is_ascii_string((U8*) SvPVX_const(sv), SvCUR(sv))
-            && is_utf8_string((U8*) SvPVX_const(sv), SvCUR(sv)))
-        {
-            SvUTF8_on(sv);
-        }
-    }
-#endif
 }
 
 #ifdef VMS
@@ -885,36 +833,7 @@ Perl_magic_get(pTHX_ SV *sv, MAGIC *mg)
            through to $! */
 
     case '!':
-	{
-            dSAVE_ERRNO;
-#ifdef VMS
-            sv_setnv(sv, (NV)((errno == EVMSERR) ? vaxc$errno : errno));
-#else
-            sv_setnv(sv, (NV)errno);
-#endif
-#ifdef OS2
-            if (errno == errno_isOS2 || errno == errno_isOS2_set)
-                sv_setpv(sv, os2error(Perl_rc));
-            else
-#endif
-            if (! errno) {
-                sv_setpvs(sv, "");
-            }
-            else {
-
-                /* Strerror can return NULL on some platforms, which will
-                 * result in 'sv' not being considered SvOK.  The SvNOK_on()
-                 * below will cause just the number part to be valid */
-                sv_setpv(sv, Strerror(errno));
-                if (SvOK(sv)) {
-                    fixup_errno_string(sv);
-                }
-            }
-            RESTORE_ERRNO;
-	}
-
-	SvRTRIM(sv);
-	SvNOK_on(sv);	/* what a wonderful hack! */
+        errno2sv(sv);
 	break;
 
     case '\006':		/* ^F */
