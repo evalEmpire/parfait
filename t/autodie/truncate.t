@@ -13,7 +13,7 @@ note "without autodie"; {
 }
 
 note "with autodie"; {
-    eval {
+    ok !eval {
         package Foo;
         use autodie;
 
@@ -33,7 +33,7 @@ note "with autodie"; {
         is          $err->caller,   undef;
     }
     is          $err->line,     19;
-    is          $err->context,  "void";
+    is          $err->context,  "scalar";
     is          $err->return,   undef;
     is          $err->errno,    $errno;
     is          $err->eval_error, "this is the error before truncate";
