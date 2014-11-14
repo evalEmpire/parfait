@@ -622,19 +622,21 @@ sub format_default {
         return => undef,
     );
 
-
 Creates a new C<autodie::exception> object.  Normally called
-directly from an autodying function.  The C<function> argument
-is required, its the function we were trying to call that
-generated the exception.  The C<args> parameter is optional.
+directly from an autodying function.
+
+The C<function> argument is required, its the function we were trying
+to call that generated the exception.
+
+The C<args> parameter is optional and will default to an empty list.
 
 The C<errno> value is optional.  In versions of C<autodie::exception>
 1.99 and earlier the code would try to automatically use the
 current value of C<$!>, but this was unreliable and is no longer
 supported.
 
-Atrributes such as package, file, and caller are determined
-automatically, and cannot be specified.
+C<package>, C<file>, C<line> and C<caller> are all optional and will
+be determined automatically if not given.
 
 =cut
 
@@ -658,20 +660,50 @@ sub _init {
 
     my ($this, %args) = @_;
 
-    # Capturing errno here is not necessarily reliable.
-    my $original_errno = $!;
-
     our $init_called = 1;
 
     my $class = ref $this;
 
-    # We're going to walk up our call stack, looking for the
-    # first thing that doesn't look like our exception
-    # code, autodie/Fatal, or some whacky eval.
+    # Don't go through the trouble to guess our context if it's
+    # been handed to us.  Use exists instead of defined because
+    # it's possible to have an undefined caller if called
+    # outside a subroutine.
+    my $caller_info;
+    $caller_info = $this->_guess_caller_info if
+      !exists $args{package} ||
+      !exists $args{file}    ||
+      !exists $args{line}    ||
+      !exists $args{caller};
+
+    $this->{$PACKAGE}{package} = $args{package} || $caller_info->{package};
+    $this->{$PACKAGE}{file}    = $args{file}    || $caller_info->{file};
+    $this->{$PACKAGE}{line}    = $args{line}    || $caller_info->{line};
+    $this->{$PACKAGE}{caller}  = $args{caller}  || $caller_info->{caller};
+
+    $this->{$PACKAGE}{errno}   = $args{errno} || 0;
+
+    $this->{$PACKAGE}{context} = $args{context};
+    $this->{$PACKAGE}{return}  = $args{return};
+    $this->{$PACKAGE}{eval_error}  = $args{eval_error};
+
+    $this->{$PACKAGE}{args}    = $args{args} || [];
+    $this->{$PACKAGE}{function}= $args{function} or
+              croak("$class->new() called without function arg");
+
+    return $this;
+
+}
+
+# We're going to walk up our call stack, looking for the
+# first thing that doesn't look like our exception
+# code, autodie/Fatal, or some whacky eval.
+sub _guess_caller_info {
+    my $this = shift;
+    my $depth = @_ ? shift : 1;
+
+    my $class = ref $this;
 
     my ($package, $file, $line, $sub);
-
-    my $depth = 0;
 
     while (1) {
         $depth++;
@@ -718,24 +750,12 @@ sub _init {
         $sub = $first_guess_subroutine;
     }
 
-    $this->{$PACKAGE}{package} = $package;
-    $this->{$PACKAGE}{file}    = $file;
-    $this->{$PACKAGE}{line}    = $line;
-    $this->{$PACKAGE}{caller}  = $sub;
-    $this->{$PACKAGE}{package} = $package;
-
-    $this->{$PACKAGE}{errno}   = $args{errno} || 0;
-
-    $this->{$PACKAGE}{context} = $args{context};
-    $this->{$PACKAGE}{return}  = $args{return};
-    $this->{$PACKAGE}{eval_error}  = $args{eval_error};
-
-    $this->{$PACKAGE}{args}    = $args{args} || [];
-    $this->{$PACKAGE}{function}= $args{function} or
-              croak("$class->new() called without function arg");
-
-    return $this;
-
+    return {
+        package => $package,
+        file    => $file,
+        line    => $line,
+        caller  => $sub
+    };
 }
 
 1;
