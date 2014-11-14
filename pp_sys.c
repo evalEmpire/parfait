@@ -2270,108 +2270,119 @@ PP(pp_truncate)
 	if (!errno)
 	    SETERRNO(EBADF,RMS_IFI);
 
-        if( is_autodie_enabled() ) {
-            dMARK;
-
-            SV *exception;
-            const COP *cop;
-            SV *myerrno = newSV(0);
-            SV *myerrsv = newSVsv(ERRSV);
-            const I32 gimme = GIMME_V;
-            AV * args;
-            const PERL_CONTEXT *cx, *dbcx;
-            dSAVE_ERRNO;
-            dSAVE_ERRSV;
-
-            SPAGAIN;
-            args = av_make(SP - MARK, MARK+1);
-            SP = MARK;
-
-            load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
-            RESTORE_ERRSV;
-            RESTORE_ERRNO;
-
-            cop = closest_cop(PL_curcop, PL_curcop->op_sibling, PL_op, FALSE);
-            if(!cop)
-                cop = PL_curcop;
-
-            PUSHMARK(SP);
-            XPUSHs(newSVpvs("autodie::exception"));
-
-            XPUSHs(newSVpvs("function"));
-            XPUSHs(newSVpvs("CORE::truncate"));
-
-            XPUSHs(newSVpvs("errno"));
-            errno2sv(myerrno);
-            mXPUSHs(myerrno);
-
-            XPUSHs(newSVpvs("context"));
-            switch(gimme) {
-                case G_VOID:
-                    XPUSHs(newSVpvs("void"));
-                    break;
-                case G_ARRAY:
-                    XPUSHs(newSVpvs("list"));
-                    break;
-                case G_SCALAR:
-                    XPUSHs(newSVpvs("scalar"));
-                    break;
-            }
-
-            XPUSHs(newSVpvs("args"));
-            mXPUSHs(newRV_noinc(MUTABLE_SV(args)));
-
-            XPUSHs(newSVpvs("eval_error"));
-            mXPUSHs(myerrsv);
-
-            XPUSHs(newSVpvs("file"));
-            mXPUSHs(newSVpv(CopFILE(PL_curcop),0));
-
-            XPUSHs(newSVpvs("line"));
-            mXPUSHs(newSVuv(CopLINE(PL_curcop)));
-
-            XPUSHs(newSVpvs("package"));
-            mXPUSHs(newSVpv(CopSTASHPV(PL_curcop),0));
-
-            XPUSHs(newSVpvs("caller"));
-            /* cribbed from pp_caller */
-            cx = caller_cx(0 + !!(PL_op->op_private & OPpOFFBYONE), &dbcx);
-            if (!cx) {
-                XPUSHs(&PL_sv_undef);
-            }
-            else {
-                if (CxTYPE(cx) == CXt_SUB || CxTYPE(cx) == CXt_FORMAT) {
-                    GV * const cvgv = CvGV(dbcx->blk_sub.cv);
-                    /* So is ccstack[dbcxix]. */
-                    if (cvgv && isGV(cvgv)) {
-                        SV * const sv = newSV(0);
-                        gv_efullname3(sv, cvgv, NULL);
-                        mXPUSHs(sv);
-                    }
-                    else {
-                        XPUSHs(newSVpvs_flags("(unknown)", SVs_TEMP));
-                    }
-                }
-                else {
-                    XPUSHs(newSVpvs_flags("(eval)", SVs_TEMP));
-                }
-            }
-
-            PUTBACK;
-
-            call_method("new", G_SCALAR);
-
-            SPAGAIN;
-
-            exception = POPs;
-
-            PUTBACK;
-
-            croak_sv(exception);
-        }
-
+        io_error("CORE::truncate");
 	RETPUSHUNDEF;
     }
+}
+
+/* If autodie is on for the given function it will croak
+ * with an exception object.  Otherwise it will do nothing.  Typically
+ * called just before an IO function returns with an error.
+ */
+void
+Perl_io_error(pTHX_ const char *function_name) {
+    dSP; dMARK;
+    SV *exception;
+    const COP *cop;
+    SV *myerrno = newSV(0);
+    SV *myerrsv = newSVsv(ERRSV);
+    const I32 gimme = GIMME_V;
+    AV * args;
+    const PERL_CONTEXT *cx, *dbcx;
+    dSAVE_ERRNO;
+    dSAVE_ERRSV;
+
+    PERL_ARGS_ASSERT_IO_ERROR;
+
+    if( !is_autodie_enabled() ) {
+        return;
+    }
+
+    SPAGAIN;
+    args = av_make(SP - MARK, MARK+1);
+    SP = MARK;
+
+    load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
+    RESTORE_ERRSV;
+    RESTORE_ERRNO;
+
+    cop = closest_cop(PL_curcop, PL_curcop->op_sibling, PL_op, FALSE);
+    if(!cop)
+        cop = PL_curcop;
+
+    PUSHMARK(SP);
+    XPUSHs(newSVpvs("autodie::exception"));
+
+    XPUSHs(newSVpvs("function"));
+    mXPUSHp(function_name, strlen(function_name));
+
+    XPUSHs(newSVpvs("errno"));
+    errno2sv(myerrno);
+    mXPUSHs(myerrno);
+
+    XPUSHs(newSVpvs("context"));
+    switch(gimme) {
+    case G_VOID:
+        XPUSHs(newSVpvs("void"));
+        break;
+    case G_ARRAY:
+        XPUSHs(newSVpvs("list"));
+        break;
+    case G_SCALAR:
+        XPUSHs(newSVpvs("scalar"));
+        break;
+    }
+
+    XPUSHs(newSVpvs("args"));
+    mXPUSHs(newRV_noinc(MUTABLE_SV(args)));
+
+    XPUSHs(newSVpvs("eval_error"));
+    mXPUSHs(myerrsv);
+
+    XPUSHs(newSVpvs("file"));
+    mXPUSHs(newSVpv(CopFILE(PL_curcop),0));
+
+    XPUSHs(newSVpvs("line"));
+    mXPUSHs(newSVuv(CopLINE(PL_curcop)));
+
+    XPUSHs(newSVpvs("package"));
+    mXPUSHs(newSVpv(CopSTASHPV(PL_curcop),0));
+
+    XPUSHs(newSVpvs("caller"));
+    /* cribbed from pp_caller */
+    cx = caller_cx(0 + !!(PL_op->op_private & OPpOFFBYONE), &dbcx);
+    if (!cx) {
+        XPUSHs(&PL_sv_undef);
+    }
+    else {
+        if (CxTYPE(cx) == CXt_SUB || CxTYPE(cx) == CXt_FORMAT) {
+            GV * const cvgv = CvGV(dbcx->blk_sub.cv);
+            /* So is ccstack[dbcxix]. */
+            if (cvgv && isGV(cvgv)) {
+                SV * const sv = newSV(0);
+                gv_efullname3(sv, cvgv, NULL);
+                mXPUSHs(sv);
+            }
+            else {
+                XPUSHs(newSVpvs_flags("(unknown)", SVs_TEMP));
+            }
+        }
+        else {
+            XPUSHs(newSVpvs_flags("(eval)", SVs_TEMP));
+        }
+    }
+
+    PUTBACK;
+
+    call_method("new", G_SCALAR);
+
+    SPAGAIN;
+
+    exception = POPs;
+
+    PUTBACK;
+
+    croak_sv(exception);
 }
 
 PP(pp_ioctl)
