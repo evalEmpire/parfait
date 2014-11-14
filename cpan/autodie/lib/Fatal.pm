@@ -73,7 +73,7 @@ my %TAGS = (
                        read seek sysread syswrite sysseek )],
     ':dbm'     => [qw(dbmopen dbmclose)],
     ':file'    => [qw(open close flock sysopen fcntl fileno binmode
-                     ioctl truncate)],
+                     ioctl)],
     ':filesys' => [qw(opendir closedir chdir link unlink rename mkdir
                       symlink rmdir readlink umask chmod chown utime)],
     ':ipc'     => [qw(:msg :semaphore :shm pipe kill)],
@@ -100,7 +100,7 @@ my %TAGS = (
     # Everything in v2.07 and brefore. This was :default less chmod and chown
     ':v207'    => [qw(:threads :dbm :socket read seek sysread
                    syswrite sysseek open close flock sysopen fcntl fileno
-                   binmode ioctl truncate opendir closedir chdir link unlink
+                   binmode ioctl opendir closedir chdir link unlink
                    rename mkdir symlink rmdir readlink umask
                    :msg :semaphore :shm pipe)],
 
@@ -260,7 +260,6 @@ my %reusable_builtins;
 @reusable_builtins{qw(
     CORE::fork
     CORE::kill
-    CORE::truncate
     CORE::chdir
     CORE::link
     CORE::unlink

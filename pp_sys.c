@@ -2184,16 +2184,28 @@ PP(pp_sysseek)
     RETURN;
 }
 
+bool
+is_autodie_enabled()
+{
+    return(SvTRUE(cop_hints_fetch_pvs(PL_curcop, "autodie", 0)));
+}
+
 PP(pp_truncate)
 {
     dVAR;
     dSP;
+    dMARK;
     /* There seems to be no consensus on the length type of truncate()
      * and ftruncate(), both off_t and size_t have supporters. In
      * general one would think that when using large files, off_t is
      * at least as wide as size_t, so using an off_t should be okay. */
     /* XXX Configure probe for the length type of *truncate() needed XXX */
     Off_t len;
+
+    /* Store the arguments for possible use on failure */
+    const I32 items = SP - MARK;
+    SV * const args = MUTABLE_SV(av_make(items, MARK+1));
+    SPAGAIN;
 
 #if Off_t_size > IVSIZE
     len = (Off_t)POPn;
@@ -2263,6 +2275,61 @@ PP(pp_truncate)
 	    RETPUSHYES;
 	if (!errno)
 	    SETERRNO(EBADF,RMS_IFI);
+
+        if( is_autodie_enabled() ) {
+            const COP *cop;
+            SV *myerrno = newSV(0);
+            const I32 gimme = GIMME_V;
+            SV *myerrsv = newSVsv(ERRSV);
+            dSAVE_ERRNO;
+            dSAVE_ERRSV;
+
+            load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
+            RESTORE_ERRSV;
+            RESTORE_ERRNO;
+
+            cop = closest_cop(PL_curcop, PL_curcop->op_sibling, PL_op, FALSE);
+            if(!cop)
+                cop = PL_curcop;
+
+            PUSHMARK(SP);
+            XPUSHs(newSVpvs("autodie::exception"));
+
+            XPUSHs(newSVpvs("function"));
+            XPUSHs(newSVpvs("CORE::truncate"));
+
+            XPUSHs(newSVpvs("errno"));
+            errno2sv(myerrno);
+            mXPUSHs(myerrno);
+
+            XPUSHs(newSVpvs("context"));
+            switch(gimme) {
+                case G_VOID:
+                    XPUSHs(newSVpvs("void"));
+                    break;
+                case G_ARRAY:
+                    XPUSHs(newSVpvs("list"));
+                    break;
+                case G_SCALAR:
+                    XPUSHs(newSVpvs("scalar"));
+                    break;
+            }
+
+            XPUSHs(newSVpvs("args"));
+            mXPUSHs(newRV_noinc(args));
+
+            XPUSHs(newSVpvs("eval_error"));
+            mXPUSHs(myerrsv);
+
+            PUTBACK;
+
+            call_method("new", G_SCALAR);
+            SPAGAIN;
+
+            croak_sv(POPs);
+            PUTBACK;
+        }
+
 	RETPUSHUNDEF;
     }
 }

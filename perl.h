@@ -1261,6 +1261,10 @@ EXTERN_C char *crypt(const char *, const char *);
     }									\
     } STMT_END
 
+#define dSAVEDERRSV      SV * saved_errsv
+#define dSAVE_ERRSV      SV * saved_errsv = ERRSV
+#define RESTORE_ERRSV    ERRSV = saved_errsv
+#define SAVE_ERRSV       (saved_errsv = ERRSV)
 
 #ifdef PERL_CORE
 # define DEFSV (0 + GvSVn(PL_defgv))
