@@ -1,4 +1,7 @@
 language: c
+os:
+        - osx
+        - linux
 script:
         - sh Configure -des 
         - make -j5
