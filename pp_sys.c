@@ -2194,18 +2194,12 @@ PP(pp_truncate)
 {
     dVAR;
     dSP;
-    dMARK;
     /* There seems to be no consensus on the length type of truncate()
      * and ftruncate(), both off_t and size_t have supporters. In
      * general one would think that when using large files, off_t is
      * at least as wide as size_t, so using an off_t should be okay. */
     /* XXX Configure probe for the length type of *truncate() needed XXX */
     Off_t len;
-
-    /* Store the arguments for possible use on failure */
-    const I32 items = SP - MARK;
-    SV * const args = MUTABLE_SV(av_make(items, MARK+1));
-    SPAGAIN;
 
 #if Off_t_size > IVSIZE
     len = (Off_t)POPn;
@@ -2277,12 +2271,19 @@ PP(pp_truncate)
 	    SETERRNO(EBADF,RMS_IFI);
 
         if( is_autodie_enabled() ) {
+            dMARK;
+
             const COP *cop;
             SV *myerrno = newSV(0);
-            const I32 gimme = GIMME_V;
             SV *myerrsv = newSVsv(ERRSV);
+            const I32 gimme = GIMME_V;
+            const I32 items = SP - MARK;
+            AV * args;
             dSAVE_ERRNO;
             dSAVE_ERRSV;
+
+            SPAGAIN;
+            args = av_make(items, MARK+1);
 
             load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
             RESTORE_ERRSV;
@@ -2316,7 +2317,7 @@ PP(pp_truncate)
             }
 
             XPUSHs(newSVpvs("args"));
-            mXPUSHs(newRV_noinc(args));
+            mXPUSHs(newRV_noinc(MUTABLE_SV(args)));
 
             XPUSHs(newSVpvs("eval_error"));
             mXPUSHs(myerrsv);
