@@ -2273,17 +2273,18 @@ PP(pp_truncate)
         if( is_autodie_enabled() ) {
             dMARK;
 
+            SV *exception;
             const COP *cop;
             SV *myerrno = newSV(0);
             SV *myerrsv = newSVsv(ERRSV);
             const I32 gimme = GIMME_V;
-            const I32 items = SP - MARK;
             AV * args;
             dSAVE_ERRNO;
             dSAVE_ERRSV;
 
             SPAGAIN;
-            args = av_make(items, MARK+1);
+            args = av_make(SP - MARK, MARK+1);
+            SP = MARK;
 
             load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
             RESTORE_ERRSV;
@@ -2325,10 +2326,14 @@ PP(pp_truncate)
             PUTBACK;
 
             call_method("new", G_SCALAR);
+
             SPAGAIN;
 
-            croak_sv(POPs);
+            exception = POPs;
+
             PUTBACK;
+
+            croak_sv(exception);
         }
 
 	RETPUSHUNDEF;

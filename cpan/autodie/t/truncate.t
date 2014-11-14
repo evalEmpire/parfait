@@ -8,6 +8,8 @@ use File::Spec;
 use FindBin qw($Bin);
 use constant TRUNCATE_ME => File::Spec->catfile($Bin,'truncate_me');
 
+$| = 1;
+
 my ($truncate_status, $tmpfh);
 
 # Some systems have a screwy tempfile. We don't run our tests there.
@@ -27,7 +29,7 @@ if ($@ || !defined($truncate_status)) {
     plan skip_all => 'Truncate not implemented or not working on this system';
 }
 
-plan tests => 12;
+plan tests => 17;
 
 SKIP: {
     my $can_truncate_stdout = truncate(\*STDOUT,0);
@@ -52,6 +54,8 @@ eval {
 };
 
 isa_ok($@, 'autodie::exception', "Truncating an unopened file is wrong.");
+is ref $@->args->[0], 'GLOB',   'glob argument';
+is $@->args->[1], 0,            'length argument';
 
 $tmpfh->print("Hello World");
 $tmpfh->flush;
@@ -105,10 +109,13 @@ eval {
     package Fatal::Test;
     no warnings 'once';
     use autodie qw(truncate);
-    truncate(\*TRUNCATE_FH,0);  # Should die, as now unopened
+    truncate(\*TRUNCATE_FH,23);  # Should die, as now unopened
 };
 
 isa_ok($@, 'autodie::exception', 'Truncating unopened file in different package (\*TRUNCATE_FH)');
+is $@->package, "Fatal::Test";
+is ref $@->args->[0], 'GLOB',   'glob argument';
+is $@->args->[1], 23,           'length argument retained';
 
 eval {
     package Fatal::Test;
