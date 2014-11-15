@@ -1136,7 +1136,7 @@
 #define intro_my()		Perl_intro_my(aTHX)
 #define invert(a)		Perl_invert(aTHX_ a)
 #define io_close(a,b)		Perl_io_close(aTHX_ a,b)
-#define io_error(a)		Perl_io_error(aTHX_ a)
+#define io_error()		Perl_io_error(aTHX)
 #define isALNUM_lazy(a)		S_isALNUM_lazy(aTHX_ a)
 #define isIDFIRST_lazy(a)	S_isIDFIRST_lazy(aTHX_ a)
 #define jmaybe(a)		Perl_jmaybe(aTHX_ a)

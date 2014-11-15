@@ -351,7 +351,7 @@ Ap	|bool	|do_close	|NULLOK GV* gv|bool not_implicit
 p	|bool	|do_eof		|NN GV* gv
 p	|void	|fixup_errno_string|NN SV* sv
 p	|SV *	|errno2sv	|NN SV* sv
-p	|void	|io_error	|NN const char* function_name
+p	|void	|io_error
 
 #ifdef PERL_DEFAULT_DO_EXEC3_IMPLEMENTATION
 pm	|bool	|do_exec	|NN const char* cmd

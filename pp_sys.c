@@ -2270,7 +2270,7 @@ PP(pp_truncate)
 	if (!errno)
 	    SETERRNO(EBADF,RMS_IFI);
 
-        io_error("CORE::truncate");
+        io_error();
 	RETPUSHUNDEF;
     }
 }
@@ -2280,7 +2280,7 @@ PP(pp_truncate)
  * called just before an IO function returns with an error.
  */
 void
-Perl_io_error(pTHX_ const char *function_name) {
+Perl_io_error(pTHX) {
     dSP; dMARK;
     SV *exception;
     const COP *cop;
@@ -2289,10 +2289,9 @@ Perl_io_error(pTHX_ const char *function_name) {
     const I32 gimme = GIMME_V;
     AV * args;
     const PERL_CONTEXT *cx, *dbcx;
+    SV *function_name = newSV(0);
     dSAVE_ERRNO;
     dSAVE_ERRSV;
-
-    PERL_ARGS_ASSERT_IO_ERROR;
 
     if( !is_autodie_enabled() ) {
         return;
@@ -2314,7 +2313,9 @@ Perl_io_error(pTHX_ const char *function_name) {
     XPUSHs(newSVpvs("autodie::exception"));
 
     XPUSHs(newSVpvs("function"));
-    mXPUSHp(function_name, strlen(function_name));
+    sv_catpv(function_name, "CORE::");
+    sv_catpv(function_name, OP_NAME(PL_op));
+    mXPUSHs(function_name);
 
     XPUSHs(newSVpvs("errno"));
     errno2sv(myerrno);
