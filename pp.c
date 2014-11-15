@@ -3040,7 +3040,7 @@ PP(pp_substr)
     SV *repl_sv = NULL;
     const char *repl = NULL;
     STRLEN repl_len;
-    int num_args = PL_op->op_private & 7;
+    int num_args = NUMARGS;
     bool repl_need_utf8_upgrade = FALSE;
 
     if (num_args > 2) {
