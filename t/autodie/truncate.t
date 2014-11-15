@@ -1,4 +1,4 @@
-#!./perl
+#!./perl -w
 
 BEGIN {
     chdir 't' if -d 't';
@@ -13,16 +13,19 @@ note "without autodie"; {
 }
 
 note "with autodie"; {
+    my @warnings;
     ok !eval {
         package Foo;
         use autodie;
 
+        local $SIG{__WARN__} = sub { push @warnings, @_ };
         local $@ = "this is the error before truncate";
 #line 19 something_else.foo
         truncate("i-do-not-exist", 0);
     };
     my $err     = $@;
     my $errno   = $!;
+    ok !@warnings,              "no warnings from truncate";
     isa_ok      $err,           "autodie::exception";
     ok eq_array(  $err->args,     ["i-do-not-exist", 0] );
     is          $err->function, "CORE::truncate";
@@ -37,10 +40,12 @@ note "with autodie"; {
 }
 
 note "with autodie in a subroutine"; {
+    my @warnings;
     {
         package Foo;
         use autodie;
         sub try_truncate {
+            local $SIG{__WARN__} = sub { push @warnings, @_ };
             local $@ = "this is another error before truncate";
 #line 45 something_else.foo
             truncate("i-do-not-exist", 23);
@@ -51,6 +56,7 @@ note "with autodie in a subroutine"; {
 
     my $err     = $@;
     my $errno   = $!;
+    ok !@warnings,              "no warnings from truncate";
     isa_ok      $err,           "autodie::exception";
     ok eq_array(  $err->args,     ["i-do-not-exist", 23] );
     is          $err->function, "CORE::truncate";

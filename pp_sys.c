@@ -2313,7 +2313,7 @@ Perl_io_error(pTHX) {
     XPUSHs(newSVpvs("autodie::exception"));
 
     XPUSHs(newSVpvs("function"));
-    sv_catpv(function_name, "CORE::");
+    sv_setpv(function_name, "CORE::");
     sv_catpv(function_name, OP_NAME(PL_op));
     mXPUSHs(function_name);
 
