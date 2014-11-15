@@ -2285,6 +2285,15 @@ Perl_get_args(pTHX) {
     return args;
 }
 
+void
+Perl_load_module_protect_globals(pTHX_ const char *module_name) {
+    dSAVE_ERRNO;
+    dSAVE_ERRSV;
+    load_module(PERL_LOADMOD_NOIMPORT, newSVpv(module_name, 0), NULL);
+    RESTORE_ERRSV;
+    RESTORE_ERRNO;
+}
+
 /* If autodie is on for the given function it will croak
  * with an exception object.  Otherwise it will do nothing.  Typically
  * called just before an IO function returns with an error.
@@ -2300,18 +2309,14 @@ Perl_io_error(pTHX) {
     AV *args;
     const PERL_CONTEXT *cx, *dbcx;
     SV *function_name = newSV(0);
-    dSAVE_ERRNO;
-    dSAVE_ERRSV;
 
     if( !is_autodie_enabled() ) {
         return;
     }
 
-    args = get_args();
+    load_module_protect_globals("autodie::exception");
 
-    load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
-    RESTORE_ERRSV;
-    RESTORE_ERRNO;
+    args = get_args();
 
     cop = closest_cop(PL_curcop, PL_curcop->op_sibling, PL_op, FALSE);
     if(!cop)
