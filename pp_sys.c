@@ -2285,12 +2285,16 @@ Perl_get_args(pTHX) {
     return args;
 }
 
+/* Load a module, but don't alter $! or $@.  Equivalent to
+ * { local $!, $@; require Some::Module; }
+ */
 void
-Perl_load_module_protect_globals(pTHX_ const char *module_name) {
+Perl_load_module_protect_err(pTHX_ const char *module_name) {
     dSAVE_ERRNO;
-    dSAVE_ERRSV;
+    ENTER;
+    save_scalar(PL_errgv);
     load_module(PERL_LOADMOD_NOIMPORT, newSVpv(module_name, 0), NULL);
-    RESTORE_ERRSV;
+    LEAVE;
     RESTORE_ERRNO;
 }
 
@@ -2314,7 +2318,7 @@ Perl_io_error(pTHX) {
         return;
     }
 
-    load_module_protect_globals("autodie::exception");
+    load_module_protect_err("autodie::exception");
 
     args = get_args();
 
