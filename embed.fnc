@@ -352,6 +352,7 @@ p	|bool	|do_eof		|NN GV* gv
 p	|void	|fixup_errno_string|NN SV* sv
 p	|SV *	|errno2sv	|NN SV* sv
 p	|void	|io_error
+p	|AV *   |get_args
 
 #ifdef PERL_DEFAULT_DO_EXEC3_IMPLEMENTATION
 pm	|bool	|do_exec	|NN const char* cmd

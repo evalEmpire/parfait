@@ -1123,6 +1123,7 @@
 #define find_script(a,b,c,d)	Perl_find_script(aTHX_ a,b,c,d)
 #define fixup_errno_string(a)	Perl_fixup_errno_string(aTHX_ a)
 #define free_tied_hv_pool()	Perl_free_tied_hv_pool(aTHX)
+#define get_args()		Perl_get_args(aTHX)
 #define get_hash_seed(a)	Perl_get_hash_seed(aTHX_ a)
 #define get_no_modify()		Perl_get_no_modify(aTHX)
 #define get_opargs()		Perl_get_opargs(aTHX)

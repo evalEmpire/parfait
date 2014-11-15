@@ -1200,6 +1200,7 @@ PERL_CALLCONV char*	Perl_form(pTHX_ const char* pat, ...)
 
 PERL_CALLCONV void	Perl_free_tied_hv_pool(pTHX);
 PERL_CALLCONV void	Perl_free_tmps(pTHX);
+PERL_CALLCONV AV *	Perl_get_args(pTHX);
 PERL_CALLCONV AV*	Perl_get_av(pTHX_ const char *name, I32 flags)
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_GET_AV	\

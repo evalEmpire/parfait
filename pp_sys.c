@@ -2275,19 +2275,29 @@ PP(pp_truncate)
     }
 }
 
+AV *
+Perl_get_args(pTHX) {
+    dSP;
+    AV * args;
+
+    args = av_make(NUMARGS, SP-1);
+
+    return args;
+}
+
 /* If autodie is on for the given function it will croak
  * with an exception object.  Otherwise it will do nothing.  Typically
  * called just before an IO function returns with an error.
  */
 void
 Perl_io_error(pTHX) {
-    dSP; dMARK;
+    dSP;
     SV *exception;
     const COP *cop;
     SV *myerrno = newSV(0);
     SV *myerrsv = newSVsv(ERRSV);
     const I32 gimme = GIMME_V;
-    AV * args;
+    AV *args;
     const PERL_CONTEXT *cx, *dbcx;
     SV *function_name = newSV(0);
     dSAVE_ERRNO;
@@ -2297,9 +2307,7 @@ Perl_io_error(pTHX) {
         return;
     }
 
-    SPAGAIN;
-    args = av_make(SP - MARK, MARK+1);
-    SP = MARK;
+    args = get_args();
 
     load_module(PERL_LOADMOD_NOIMPORT, newSVpvs("autodie::exception"), NULL);
     RESTORE_ERRSV;
