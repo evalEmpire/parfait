@@ -2308,8 +2308,6 @@ Perl_io_error(pTHX) {
     SV *exception;
     const COP *cop;
     SV *myerrno = newSV(0);
-    SV *myerrsv = newSVsv(ERRSV);
-    const I32 gimme = GIMME_V;
     AV *args;
     const PERL_CONTEXT *cx, *dbcx;
     SV *function_name = newSV(0);
@@ -2339,7 +2337,7 @@ Perl_io_error(pTHX) {
     mXPUSHs(myerrno);
 
     XPUSHs(newSVpvs("context"));
-    switch(gimme) {
+    switch(GIMME_V) {
     case G_VOID:
         XPUSHs(newSVpvs("void"));
         break;
@@ -2355,7 +2353,7 @@ Perl_io_error(pTHX) {
     mXPUSHs(newRV_noinc(MUTABLE_SV(args)));
 
     XPUSHs(newSVpvs("eval_error"));
-    mXPUSHs(myerrsv);
+    mXPUSHs(newSVsv(ERRSV));
 
     XPUSHs(newSVpvs("file"));
     mXPUSHs(newSVpv(CopFILE(PL_curcop),0));
