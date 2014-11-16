@@ -2192,9 +2192,9 @@ PERL_CALLCONV void	Perl_load_module(pTHX_ U32 flags, SV* name, SV* ver, ...)
 #define PERL_ARGS_ASSERT_LOAD_MODULE	\
 	assert(name)
 
-PERL_CALLCONV void	Perl_load_module_protect_globals(pTHX_ const char *module_name)
+PERL_CALLCONV void	Perl_load_module_protect_err(pTHX_ const char *module_name)
 			__attribute__nonnull__(pTHX_1);
-#define PERL_ARGS_ASSERT_LOAD_MODULE_PROTECT_GLOBALS	\
+#define PERL_ARGS_ASSERT_LOAD_MODULE_PROTECT_ERR	\
 	assert(module_name)
 
 PERL_CALLCONV OP*	Perl_localize(pTHX_ OP *o, I32 lex)
