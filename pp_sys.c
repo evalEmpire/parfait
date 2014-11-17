@@ -2289,14 +2289,14 @@ Perl_get_args(pTHX) {
  * { local $!, $@; require Some::Module; }
  */
 void
-Perl_load_module_protect_err(pTHX_ const char *module_name) {
+Perl_load_module_protect_err(pTHX_ SV *module_name) {
     dSAVE_ERRNO;
 
     PERL_ARGS_ASSERT_LOAD_MODULE_PROTECT_ERR;
 
     ENTER;
     save_scalar(PL_errgv);
-    load_module(PERL_LOADMOD_NOIMPORT, newSVpv(module_name, 0), NULL);
+    load_module(PERL_LOADMOD_NOIMPORT, module_name, NULL);
     LEAVE;
     RESTORE_ERRNO;
 }
@@ -2319,7 +2319,7 @@ Perl_io_error(pTHX) {
         return;
     }
 
-    load_module_protect_err("autodie::exception");
+    load_module_protect_err(newSVpvs("autodie::exception"));
 
     args = get_args();
 
