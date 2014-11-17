@@ -2291,6 +2291,9 @@ Perl_get_args(pTHX) {
 void
 Perl_load_module_protect_err(pTHX_ const char *module_name) {
     dSAVE_ERRNO;
+
+    PERL_ARGS_ASSERT_LOAD_MODULE_PROTECT_ERR;
+
     ENTER;
     save_scalar(PL_errgv);
     load_module(PERL_LOADMOD_NOIMPORT, newSVpv(module_name, 0), NULL);
