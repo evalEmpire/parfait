@@ -360,13 +360,18 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 #define dPOPTOPiirl_nomg \
     IV right = SvIV_nomg(TOPs); IV left = (sp--, SvIV_nomg(TOPs))
 
-#define RETPUSHYES	RETURNX(PUSHs(&PL_sv_yes))
-#define RETPUSHNO	RETURNX(PUSHs(&PL_sv_no))
-#define RETPUSHUNDEF	RETURNX(PUSHs(&PL_sv_undef))
+#define RETPUSHSV(sv)	RETURNX(PUSHs(sv))
+#define RETPUSHYES	RETPUSHSV(&PL_sv_yes)
+#define RETPUSHNO	RETPUSHSV(&PL_sv_no)
+#define RETPUSHUNDEF	RETPUSHSV(&PL_sv_undef)
 
-#define RETSETYES	RETURNX(SETs(&PL_sv_yes))
-#define RETSETNO	RETURNX(SETs(&PL_sv_no))
-#define RETSETUNDEF	RETURNX(SETs(&PL_sv_undef))
+#define RETSETSV(sv)	RETURNX(SETs(sv))
+#define RETSETYES	RETSETSV(&PL_sv_yes)
+#define RETSETNO	RETSETSV(&PL_sv_no)
+#define RETSETUNDEF	RETSETSV(&PL_sv_undef)
+
+#define RETIOERR(sv)	STMT_START { Perl_io_error(sv); RETURNX(XPUSHs(sv)); } STMT_END
+#define RETIOUNDEF	RETIOERR(&PL_sv_undef)
 
 #define ARGTARG		PL_op->op_targ
 

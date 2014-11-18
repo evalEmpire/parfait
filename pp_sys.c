@@ -2270,8 +2270,7 @@ PP(pp_truncate)
 	if (!errno)
 	    SETERRNO(EBADF,RMS_IFI);
 
-        io_error();
-	RETPUSHUNDEF;
+        RETIOUNDEF;
     }
 }
 
@@ -2306,7 +2305,7 @@ Perl_load_module_protect_err(pTHX_ SV *module_name) {
  * called just before an IO function returns with an error.
  */
 void
-Perl_io_error(pTHX) {
+Perl_io_error(pTHX_ SV *io_retval) {
     dSP;
     SV *exception;
     const COP *cop;
@@ -2314,6 +2313,8 @@ Perl_io_error(pTHX) {
     AV *args;
     const PERL_CONTEXT *cx, *dbcx;
     SV *function_name = newSV(0);
+
+    PERL_ARGS_ASSERT_IO_ERROR;
 
     if( !is_autodie_enabled() ) {
         return;
@@ -2354,6 +2355,9 @@ Perl_io_error(pTHX) {
 
     XPUSHs(newSVpvs("args"));
     mXPUSHs(newRV_noinc(MUTABLE_SV(args)));
+
+    XPUSHs(newSVpvs("return"));
+    mXPUSHs(io_retval);
 
     XPUSHs(newSVpvs("eval_error"));
     mXPUSHs(newSVsv(ERRSV));
