@@ -1721,7 +1721,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     I32 val;
     I32 tot = 0;
     const char *const what = PL_op_name[type];
-    const char *s;
     STRLEN len;
 
     PERL_ARGS_ASSERT_APPLY;
@@ -1787,33 +1786,6 @@ For now, we'll let Configure test for HAS_LCHOWN, but do
 nothing in the core.
     --AD  5/1998
 */
-    case OP_UNLINK:
-	APPLY_TAINT_PROPER(type);
-	tot = sp - mark;
-	while (++mark <= sp) {
-	    s = SvPV_const(*mark, len);
-	    APPLY_TAINT_PROPER(type);
-	    if (!IS_SAFE_PATHNAME(s, len, "unlink")) {
-                tot--;
-            }
-	    else if (PL_unsafe) {
-		if (UNLINK(s))
-		    tot--;
-	    }
-	    else {	/* don't let root wipe out directories without -U */
-		if (PerlLIO_lstat(s,&PL_statbuf) < 0)
-		    tot--;
-		else if (S_ISDIR(PL_statbuf.st_mode)) {
-		    tot--;
-		    SETERRNO(EISDIR, SS_NOPRIV);
-		}
-		else {
-		    if (UNLINK(s))
-			tot--;
-		}
-	    }
-	}
-	break;
 #if defined(HAS_UTIME) || defined(HAS_FUTIMES)
     case OP_UTIME:
 	APPLY_TAINT_PROPER(type);

@@ -3855,9 +3855,47 @@ PP(pp_rename)
     RETURN;
 }
 
+PP(pp_unlink)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 tot = 0;
+    STRLEN len;
+    const char *s;
+
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_UNLINK);
+
+    tot = sp - mark;
+    while (++mark <= sp) {
+        s = SvPV_const(*mark, len);
+        APPLY_TAINT_PROPER(OP_UNLINK);
+        if (!IS_SAFE_PATHNAME(s, len, "unlink")) {
+            tot--;
+        }
+        else if (PL_unsafe) {
+            if (UNLINK(s))
+                tot--;
+        }
+        else {	/* don't let root wipe out directories without -U */
+            if (PerlLIO_lstat(s,&PL_statbuf) < 0)
+                tot--;
+            else if (S_ISDIR(PL_statbuf.st_mode)) {
+                tot--;
+                SETERRNO(EISDIR, SS_NOPRIV);
+            }
+            else {
+                if (UNLINK(s))
+                    tot--;
+            }
+        }
+    }
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
 
 /* also used for: pp_symlink() */
-
 #if defined(HAS_LINK) || defined(HAS_SYMLINK)
 PP(pp_link)
 {
