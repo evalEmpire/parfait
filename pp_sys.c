@@ -3549,11 +3549,55 @@ PP(pp_chmod)
 
 PP(pp_chown)
 {
-    dVAR; dSP; dMARK; dTARGET;
-    const I32 value = (I32)apply(PL_op->op_type, MARK, SP);
+    dVAR; dSP; dMARK; dORIGMARK; dTARGET;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
 
-    SP = MARK;
-    XPUSHi(value);
+#ifndef HAS_CHOWN
+    Perl_die(aTHX_ PL_no_func, PL_op_name[OP_CHOWN]);
+#endif
+
+    taint_if_args_are_tainted(mark, sp);
+
+#ifdef HAS_CHOWN
+    APPLY_TAINT_PROPER(OP_CHOWN);
+    if (sp - mark > 2) {
+        I32 val2;
+        val = SvIVx(*++mark);
+        val2 = SvIVx(*++mark);
+        APPLY_TAINT_PROPER(OP_CHOWN);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FCHOWN
+                    APPLY_TAINT_PROPER(OP_CHOWN);
+                    if (fchown(PerlIO_fileno(IoIFP(GvIOn(gv))), val, val2))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "fchown");
+#endif
+                }
+                else {
+                    tot--;
+                }
+            }
+            else {
+                const char *name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_CHOWN);
+                if (!IS_SAFE_PATHNAME(name, len, "chown") ||
+                    PerlLIO_chown(name, val, val2)) {
+                    tot--;
+                }
+            }
+        }
+    }
+#endif
+    
+    SP = ORIGMARK;
+    XPUSHi(tot);
     RETURN;
 }
 
