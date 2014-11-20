@@ -2279,7 +2279,7 @@ Perl_get_args(pTHX) {
     dSP;
     AV * args;
 
-    args = av_make(NUMARGS, SP-1);
+    args = av_make(NUMARGS, SP - NUMARGS + 1);
 
     return args;
 }
