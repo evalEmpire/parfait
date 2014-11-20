@@ -3669,6 +3669,118 @@ PP(pp_chroot)
 #endif
 }
 
+
+#ifdef VMS
+#include <starlet.h> /* for sys$delprc */
+#endif
+
+PP(pp_kill)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
+    bool killgp = FALSE;
+    const char *s;
+
+#ifndef HAS_KILL
+    Perl_die(aTHX_ PL_no_func, PL_op_name[OP_KILL]);
+#else
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_KILL);
+
+    /* No arguments */
+    if (mark == sp) {
+        XPUSHi(tot);
+        RETURN;
+    }
+
+    s = SvPVx_const(*++mark, len);
+    if (*s == '-' && isALPHA(s[1]))
+	{
+	    s++;
+	    len--;
+            killgp = TRUE;
+	}
+    if (isALPHA(*s)) {
+        if (*s == 'S' && s[1] == 'I' && s[2] == 'G') {
+            s += 3;
+            len -= 3;
+        }
+        if ((val = whichsig_pvn(s, len)) < 0)
+            Perl_croak(aTHX_ "Unrecognized signal name \"%"SVf"\"", SVfARG(*mark));
+    }
+    else
+	{
+	    val = SvIV(*mark);
+	    if (val < 0)
+                {
+                    killgp = TRUE;
+                    val = -val;
+                }
+	}
+    APPLY_TAINT_PROPER(OP_KILL);
+    tot = sp - mark;
+#ifdef VMS
+    /* kill() doesn't do process groups (job trees?) under VMS */
+    if (val == SIGKILL) {
+        /* Use native sys$delprc() to insure that target process is
+         * deleted; supervisor-mode images don't pay attention to
+         * CRTL's emulation of Unix-style signals and kill()
+         */
+        while (++mark <= sp) {
+            I32 proc;
+            unsigned long int __vmssts;
+            SvGETMAGIC(*mark);
+            if (!(SvIOK(*mark) || SvNOK(*mark) || looks_like_number(*mark)))
+                Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
+            proc = SvIV_nomg(*mark);
+            APPLY_TAINT_PROPER(OP_KILL);
+            if (!((__vmssts = sys$delprc(&proc,0)) & 1)) {
+                tot--;
+                switch (__vmssts) {
+                case SS$_NONEXPR:
+                case SS$_NOSUCHNODE:
+                    SETERRNO(ESRCH,__vmssts);
+                    break;
+                case SS$_NOPRIV:
+                    SETERRNO(EPERM,__vmssts);
+                    break;
+                default:
+                    SETERRNO(EVMSERR,__vmssts);
+                }
+            }
+        }
+        PERL_ASYNC_CHECK();
+        break;
+    }
+#endif
+    while (++mark <= sp) {
+        Pid_t proc;
+        SvGETMAGIC(*mark);
+        if (!(SvNIOK(*mark) || looks_like_number(*mark)))
+            Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
+        proc = SvIV_nomg(*mark);
+        APPLY_TAINT_PROPER(OP_KILL);
+#ifdef HAS_KILLPG
+        /* use killpg in preference, as the killpg() wrapper for Win32
+         * understands process groups, but the kill() wrapper doesn't */
+        if (killgp ? PerlProc_killpg(proc, val)
+            : PerlProc_kill(proc, val))
+#else
+            if (PerlProc_kill(killgp ? -proc: proc, val))
+#endif
+		tot--;
+    }
+    PERL_ASYNC_CHECK();
+#endif /* HAS_KILL */
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
+
+
 PP(pp_rename)
 {
     dSP; dTARGET;

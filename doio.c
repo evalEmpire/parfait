@@ -1715,10 +1715,6 @@ Perl_do_exec3(pTHX_ const char *incmd, int fd, int do_report)
 
 #endif /* OS2 || WIN32 */
 
-#ifdef VMS
-#include <starlet.h> /* for sys$delprc */
-#endif
-
 I32
 Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 {
@@ -1727,7 +1723,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     const char *const what = PL_op_name[type];
     const char *s;
     STRLEN len;
-    bool killgp = FALSE;
 
     PERL_ARGS_ASSERT_APPLY;
 
@@ -1736,10 +1731,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     /* Doing this ahead of the switch statement preserves the old behaviour,
        where attempting to use kill as a taint test test would fail on
        platforms where kill was not defined.  */
-#ifndef HAS_KILL
-    if (type == OP_KILL)
-	Perl_die(aTHX_ PL_no_func, what);
-#endif
 #ifndef HAS_CHOWN
     if (type == OP_CHOWN)
 	Perl_die(aTHX_ PL_no_func, what);
@@ -1834,91 +1825,6 @@ For now, we'll let Configure test for HAS_LCHOWN, but do
 nothing in the core.
     --AD  5/1998
 */
-#ifdef HAS_KILL
-    case OP_KILL:
-	APPLY_TAINT_PROPER(type);
-	if (mark == sp)
-	    break;
-	s = SvPVx_const(*++mark, len);
-	if (*s == '-' && isALPHA(s[1]))
-	{
-	    s++;
-	    len--;
-            killgp = TRUE;
-	}
-	if (isALPHA(*s)) {
-	    if (*s == 'S' && s[1] == 'I' && s[2] == 'G') {
-		s += 3;
-                len -= 3;
-            }
-           if ((val = whichsig_pvn(s, len)) < 0)
-               Perl_croak(aTHX_ "Unrecognized signal name \"%"SVf"\"", SVfARG(*mark));
-	}
-	else
-	{
-	    val = SvIV(*mark);
-	    if (val < 0)
-	    {
-		killgp = TRUE;
-                val = -val;
-	    }
-	}
-	APPLY_TAINT_PROPER(type);
-	tot = sp - mark;
-#ifdef VMS
-	/* kill() doesn't do process groups (job trees?) under VMS */
-	if (val == SIGKILL) {
-	    /* Use native sys$delprc() to insure that target process is
-	     * deleted; supervisor-mode images don't pay attention to
-	     * CRTL's emulation of Unix-style signals and kill()
-	     */
-	    while (++mark <= sp) {
-		I32 proc;
-		unsigned long int __vmssts;
-		SvGETMAGIC(*mark);
-		if (!(SvIOK(*mark) || SvNOK(*mark) || looks_like_number(*mark)))
-		    Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
-		proc = SvIV_nomg(*mark);
-		APPLY_TAINT_PROPER(type);
-		if (!((__vmssts = sys$delprc(&proc,0)) & 1)) {
-		    tot--;
-		    switch (__vmssts) {
-			case SS$_NONEXPR:
-			case SS$_NOSUCHNODE:
-			    SETERRNO(ESRCH,__vmssts);
-			    break;
-			case SS$_NOPRIV:
-			    SETERRNO(EPERM,__vmssts);
-			    break;
-			default:
-			    SETERRNO(EVMSERR,__vmssts);
-		    }
-		}
-	    }
-	    PERL_ASYNC_CHECK();
-	    break;
-	}
-#endif
-	while (++mark <= sp) {
-	    Pid_t proc;
-	    SvGETMAGIC(*mark);
-	    if (!(SvNIOK(*mark) || looks_like_number(*mark)))
-		Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
-	    proc = SvIV_nomg(*mark);
-	    APPLY_TAINT_PROPER(type);
-#ifdef HAS_KILLPG
-            /* use killpg in preference, as the killpg() wrapper for Win32
-             * understands process groups, but the kill() wrapper doesn't */
-            if (killgp ? PerlProc_killpg(proc, val)
-                       : PerlProc_kill(proc, val))
-#else
-            if (PerlProc_kill(killgp ? -proc: proc, val))
-#endif
-		tot--;
-	}
-	PERL_ASYNC_CHECK();
-	break;
-#endif
     case OP_UNLINK:
 	APPLY_TAINT_PROPER(type);
 	tot = sp - mark;
