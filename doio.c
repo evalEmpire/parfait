@@ -1739,44 +1739,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     taint_if_args_are_tainted(mark, sp);
 
     switch (type) {
-    case OP_CHMOD:
-	APPLY_TAINT_PROPER(type);
-	if (++mark <= sp) {
-	    val = SvIV(*mark);
-	    APPLY_TAINT_PROPER(type);
-	    tot = sp - mark;
-	    while (++mark <= sp) {
-                GV* gv;
-                if ((gv = MAYBE_DEREF_GV(*mark))) {
-		    if (GvIO(gv) && IoIFP(GvIOp(gv))) {
-#ifdef HAS_FCHMOD
-                        int fd = PerlIO_fileno(IoIFP(GvIOn(gv)));
-			APPLY_TAINT_PROPER(type);
-                        if (fd < 0) {
-                            SETERRNO(EBADF,RMS_IFI);
-                            tot--;
-                        } else if (fchmod(fd, val))
-                            tot--;
-#else
-			Perl_die(aTHX_ PL_no_func, "fchmod");
-#endif
-		    }
-		    else {
-                        SETERRNO(EBADF,RMS_IFI);
-			tot--;
-		    }
-		}
-		else {
-		    const char *name = SvPV_nomg_const(*mark, len);
-		    APPLY_TAINT_PROPER(type);
-                    if (!IS_SAFE_PATHNAME(name, len, "chmod") ||
-                        PerlLIO_chmod(name, val)) {
-                        tot--;
-                    }
-		}
-	    }
-	}
-	break;
 #ifdef HAS_CHOWN
     case OP_CHOWN:
 	APPLY_TAINT_PROPER(type);
