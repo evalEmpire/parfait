@@ -1087,7 +1087,6 @@
 #define Slab_Free(a)		Perl_Slab_Free(aTHX_ a)
 #define allocmy(a,b,c)		Perl_allocmy(aTHX_ a,b,c)
 #define amagic_is_enabled(a)	Perl_amagic_is_enabled(aTHX_ a)
-#define apply(a,b,c)		Perl_apply(aTHX_ a,b,c)
 #define av_extend_guts(a,b,c,d,e)	Perl_av_extend_guts(aTHX_ a,b,c,d,e)
 #define bind_match(a,b,c)	Perl_bind_match(aTHX_ a,b,c)
 #define boot_core_PerlIO()	Perl_boot_core_PerlIO(aTHX)

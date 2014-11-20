@@ -209,8 +209,6 @@ Apd	|OP*	|op_append_elem	|I32 optype|NULLOK OP* first|NULLOK OP* last
 Apd	|OP*	|op_append_list	|I32 optype|NULLOK OP* first|NULLOK OP* last
 Apd	|OP*	|op_linklist	|NN OP *o
 Apd	|OP*	|op_prepend_elem|I32 optype|NULLOK OP* first|NULLOK OP* last
-: FIXME - this is only called by pp_chown. They should be merged.
-p	|I32	|apply		|I32 type|NN SV** mark|NN SV** sp
 ApM	|void	|apply_attrs_string|NN const char *stashpv|NN CV *cv|NN const char *attrstr|STRLEN len
 Apd	|void	|av_clear	|NN AV *av
 Apd	|SV*	|av_delete	|NN AV *av|SSize_t key|I32 flags

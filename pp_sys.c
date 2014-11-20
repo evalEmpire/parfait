@@ -3693,15 +3693,65 @@ PP(pp_chmod)
     RETURN;
 }
 
-/* also used for: pp_chmod() pp_kill() pp_unlink() pp_utime() */
-
 PP(pp_chown)
 {
-    dSP; dMARK; dTARGET;
-    const I32 value = (I32)apply(PL_op->op_type, MARK, SP);
+    dVAR; dSP; dMARK; dORIGMARK; dTARGET;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
 
-    SP = MARK;
-    XPUSHi(value);
+    /* Doing this before the taint check preserves the old behaviour,
+       where attempting to use kill as a taint test test would fail on
+       platforms where kill was not defined.  */
+#ifndef HAS_CHOWN
+    Perl_die(aTHX_ PL_no_func, PL_op_name[OP_CHOWN]);
+#endif
+
+    taint_if_args_are_tainted(mark, sp);
+
+#ifdef HAS_CHOWN
+    APPLY_TAINT_PROPER(OP_CHOWN);
+    if (sp - mark > 2) {
+        I32 val2;
+        val = SvIVx(*++mark);
+        val2 = SvIVx(*++mark);
+        APPLY_TAINT_PROPER(OP_CHOWN);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FCHOWN
+                    int fd = PerlIO_fileno(IoIFP(GvIOn(gv)));
+                    APPLY_TAINT_PROPER(OP_CHOWN);
+                    if (fd < 0) {
+                        SETERRNO(EBADF,RMS_IFI);
+                        tot--;
+                    } else if (fchown(fd, val, val2))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "fchown");
+#endif
+                }
+                else {
+                    SETERRNO(EBADF,RMS_IFI);
+                    tot--;
+                }
+            }
+            else {
+                const char *name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_CHOWN);
+                if (!IS_SAFE_PATHNAME(name, len, "chown") ||
+                    PerlLIO_chown(name, val, val2)) {
+                    tot--;
+                }
+            }
+        }
+    }
+#endif
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
     RETURN;
 }
 
