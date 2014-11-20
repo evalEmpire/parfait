@@ -377,7 +377,7 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 
     /* See OPpTARGET_MY: */
 #define MAXARG		(PL_op->op_private & 15)
-#define NUMARGS		(PL_op->op_private & 7)
+#define NUMARGS		(SP - (PL_stack_base + TOPMARK))
 
 #define SWITCHSTACK(f,t) \
     STMT_START {							\
