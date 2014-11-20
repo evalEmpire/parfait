@@ -287,6 +287,7 @@ PERL_CALLCONV OP *Perl_pp_unpack(pTHX);
 PERL_CALLCONV OP *Perl_pp_unshift(pTHX);
 PERL_CALLCONV OP *Perl_pp_unstack(pTHX);
 PERL_CALLCONV OP *Perl_pp_untie(pTHX);
+PERL_CALLCONV OP *Perl_pp_utime(pTHX);
 PERL_CALLCONV OP *Perl_pp_vec(pTHX);
 PERL_CALLCONV OP *Perl_pp_wait(pTHX);
 PERL_CALLCONV OP *Perl_pp_waitpid(pTHX);

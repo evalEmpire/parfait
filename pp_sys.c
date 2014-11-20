@@ -4777,6 +4777,103 @@ PP(pp_tms)
 #endif /* HAS_TIMES */
 }
 
+PP(pp_utime)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 tot = 0;
+    STRLEN len;
+
+    taint_if_args_are_tainted(mark, sp);
+
+#if defined(HAS_UTIME) || defined(HAS_FUTIMES)
+    APPLY_TAINT_PROPER(OP_UTIME);
+    if (sp - mark > 2) {
+#if defined(HAS_FUTIMES)
+        struct timeval utbuf[2];
+        void *utbufp = utbuf;
+#elif defined(I_UTIME) || defined(VMS)
+        struct utimbuf utbuf;
+        struct utimbuf *utbufp = &utbuf;
+#else
+        struct {
+            Time_t	actime;
+            Time_t	modtime;
+        } utbuf;
+        void *utbufp = &utbuf;
+#endif
+
+        SV* const accessed = *++mark;
+        SV* const modified = *++mark;
+
+        /* Be like C, and if both times are undefined, let the C
+         * library figure out what to do.  This usually means
+         * "current time". */
+
+        if ( accessed == &PL_sv_undef && modified == &PL_sv_undef )
+            utbufp = NULL;
+        else {
+            Zero(&utbuf, sizeof utbuf, char);
+#ifdef HAS_FUTIMES
+            utbuf[0].tv_sec = (long)SvIV(accessed);  /* time accessed */
+            utbuf[0].tv_usec = 0;
+            utbuf[1].tv_sec = (long)SvIV(modified);  /* time modified */
+            utbuf[1].tv_usec = 0;
+#elif defined(BIG_TIME)
+            utbuf.actime = (Time_t)SvNV(accessed);  /* time accessed */
+            utbuf.modtime = (Time_t)SvNV(modified); /* time modified */
+#else
+            utbuf.actime = (Time_t)SvIV(accessed);  /* time accessed */
+            utbuf.modtime = (Time_t)SvIV(modified); /* time modified */
+#endif
+        }
+        APPLY_TAINT_PROPER(OP_UTIME);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FUTIMES
+                    int fd =  PerlIO_fileno(IoIFP(GvIOn(gv)));
+                    APPLY_TAINT_PROPER(OP_UTIME);
+                    if (fd < 0) {
+                        SETERRNO(EBADF,RMS_IFI);
+                        tot--;
+                    } else if (futimes(fd, (struct timeval *) utbufp))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "futimes");
+#endif
+                }
+                else {
+                    tot--;
+                }
+            }
+            else {
+                const char * const name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_UTIME);
+                if (!IS_SAFE_PATHNAME(name, len, "utime")) {
+                    tot--;
+                }
+                else
+#ifdef HAS_FUTIMES
+		    if (utimes(name, (struct timeval *)utbufp))
+#else
+                        if (PerlLIO_utime(name, utbufp))
+#endif
+                            tot--;
+            }
+
+        }
+    }
+    else
+        tot = 0;
+#endif
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
+
 /* The 32 bit int year limits the times we can represent to these
    boundaries with a few days wiggle room to account for time zone
    offsets

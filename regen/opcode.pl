@@ -105,7 +105,6 @@ my @raw_alias = (
 		 Perl_pp_gpwent => [qw(gpwnam gpwuid)],
 		 Perl_pp_ggrent => [qw(ggrnam ggrgid)],
 		 Perl_pp_ftis => [qw(ftsize ftmtime ftatime ftctime)],
-		 Perl_pp_chown => [qw(utime)],
 		 Perl_pp_link => ['symlink'],
 		 Perl_pp_ftrread => [qw(ftrwrite ftrexec fteread ftewrite
  					fteexec)],

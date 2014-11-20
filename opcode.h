@@ -104,7 +104,6 @@
 #define Perl_pp_ftsgid Perl_pp_ftrowned
 #define Perl_pp_ftsvtx Perl_pp_ftrowned
 #define Perl_pp_ftbinary Perl_pp_fttext
-#define Perl_pp_utime Perl_pp_chown
 #define Perl_pp_symlink Perl_pp_link
 #define Perl_pp_localtime Perl_pp_gmtime
 #define Perl_pp_shmget Perl_pp_semget
@@ -1267,7 +1266,7 @@ EXT Perl_ppaddr_t PL_ppaddr[] /* or perlvars.h */
 	Perl_pp_chroot,
 	Perl_pp_unlink,
 	Perl_pp_chmod,
-	Perl_pp_utime,	/* implemented by Perl_pp_chown */
+	Perl_pp_utime,
 	Perl_pp_rename,
 	Perl_pp_link,
 	Perl_pp_symlink,	/* implemented by Perl_pp_link */
