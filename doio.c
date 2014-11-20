@@ -1708,12 +1708,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 	Perl_die(aTHX_ PL_no_func, what);
 #endif
 
-
-#define APPLY_TAINT_PROPER() \
-    STMT_START {							\
-	if (TAINT_get) { TAINT_PROPER(what); }				\
-    } STMT_END
-
     /* This is a first heuristic; it doesn't catch tainting magic. */
     if (TAINTING_get) {
 	while (++mark <= sp) {
@@ -1726,17 +1720,17 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     }
     switch (type) {
     case OP_CHMOD:
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	if (++mark <= sp) {
 	    val = SvIV(*mark);
-	    APPLY_TAINT_PROPER();
+	    APPLY_TAINT_PROPER(type);
 	    tot = sp - mark;
 	    while (++mark <= sp) {
                 GV* gv;
                 if ((gv = MAYBE_DEREF_GV(*mark))) {
 		    if (GvIO(gv) && IoIFP(GvIOp(gv))) {
 #ifdef HAS_FCHMOD
-			APPLY_TAINT_PROPER();
+			APPLY_TAINT_PROPER(type);
 			if (fchmod(PerlIO_fileno(IoIFP(GvIOn(gv))), val))
 			    tot--;
 #else
@@ -1749,7 +1743,7 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 		}
 		else {
 		    const char *name = SvPV_nomg_const(*mark, len);
-		    APPLY_TAINT_PROPER();
+		    APPLY_TAINT_PROPER(type);
                     if (!IS_SAFE_PATHNAME(name, len, "chmod") ||
                         PerlLIO_chmod(name, val)) {
                         tot--;
@@ -1760,19 +1754,19 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 	break;
 #ifdef HAS_CHOWN
     case OP_CHOWN:
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	if (sp - mark > 2) {
             I32 val2;
 	    val = SvIVx(*++mark);
 	    val2 = SvIVx(*++mark);
-	    APPLY_TAINT_PROPER();
+	    APPLY_TAINT_PROPER(type);
 	    tot = sp - mark;
 	    while (++mark <= sp) {
                 GV* gv;
 		if ((gv = MAYBE_DEREF_GV(*mark))) {
 		    if (GvIO(gv) && IoIFP(GvIOp(gv))) {
 #ifdef HAS_FCHOWN
-			APPLY_TAINT_PROPER();
+			APPLY_TAINT_PROPER(type);
 			if (fchown(PerlIO_fileno(IoIFP(GvIOn(gv))), val, val2))
 			    tot--;
 #else
@@ -1785,7 +1779,7 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 		}
 		else {
 		    const char *name = SvPV_nomg_const(*mark, len);
-		    APPLY_TAINT_PROPER();
+		    APPLY_TAINT_PROPER(type);
                     if (!IS_SAFE_PATHNAME(name, len, "chown") ||
                         PerlLIO_chown(name, val, val2)) {
 			tot--;
@@ -1803,7 +1797,7 @@ nothing in the core.
 */
 #ifdef HAS_KILL
     case OP_KILL:
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	if (mark == sp)
 	    break;
 	s = SvPVx_const(*++mark, len);
@@ -1830,7 +1824,7 @@ nothing in the core.
                 val = -val;
 	    }
 	}
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	tot = sp - mark;
 #ifdef VMS
 	/* kill() doesn't do process groups (job trees?) under VMS */
@@ -1846,7 +1840,7 @@ nothing in the core.
 		if (!(SvIOK(*mark) || SvNOK(*mark) || looks_like_number(*mark)))
 		    Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
 		proc = SvIV_nomg(*mark);
-		APPLY_TAINT_PROPER();
+		APPLY_TAINT_PROPER(type);
 		if (!((__vmssts = sys$delprc(&proc,0)) & 1)) {
 		    tot--;
 		    switch (__vmssts) {
@@ -1872,7 +1866,7 @@ nothing in the core.
 	    if (!(SvNIOK(*mark) || looks_like_number(*mark)))
 		Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
 	    proc = SvIV_nomg(*mark);
-	    APPLY_TAINT_PROPER();
+	    APPLY_TAINT_PROPER(type);
 #ifdef HAS_KILLPG
             /* use killpg in preference, as the killpg() wrapper for Win32
              * understands process groups, but the kill() wrapper doesn't */
@@ -1887,11 +1881,11 @@ nothing in the core.
 	break;
 #endif
     case OP_UNLINK:
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	tot = sp - mark;
 	while (++mark <= sp) {
 	    s = SvPV_const(*mark, len);
-	    APPLY_TAINT_PROPER();
+	    APPLY_TAINT_PROPER(type);
 	    if (!IS_SAFE_PATHNAME(s, len, "unlink")) {
                 tot--;
             }
@@ -1915,7 +1909,7 @@ nothing in the core.
 	break;
 #if defined(HAS_UTIME) || defined(HAS_FUTIMES)
     case OP_UTIME:
-	APPLY_TAINT_PROPER();
+	APPLY_TAINT_PROPER(type);
 	if (sp - mark > 2) {
 #if defined(HAS_FUTIMES)
 	    struct timeval utbuf[2];
@@ -1955,14 +1949,14 @@ nothing in the core.
                 utbuf.modtime = (Time_t)SvIV(modified); /* time modified */
 #endif
             }
-	    APPLY_TAINT_PROPER();
+	    APPLY_TAINT_PROPER(type);
 	    tot = sp - mark;
 	    while (++mark <= sp) {
                 GV* gv;
                 if ((gv = MAYBE_DEREF_GV(*mark))) {
 		    if (GvIO(gv) && IoIFP(GvIOp(gv))) {
 #ifdef HAS_FUTIMES
-			APPLY_TAINT_PROPER();
+			APPLY_TAINT_PROPER(type);
 			if (futimes(PerlIO_fileno(IoIFP(GvIOn(gv))),
                             (struct timeval *) utbufp))
 			    tot--;
@@ -1976,7 +1970,7 @@ nothing in the core.
 		}
 		else {
 		    const char * const name = SvPV_nomg_const(*mark, len);
-		    APPLY_TAINT_PROPER();
+		    APPLY_TAINT_PROPER(type);
 		    if (!IS_SAFE_PATHNAME(name, len, "utime")) {
                         tot--;
                     }
@@ -1997,8 +1991,6 @@ nothing in the core.
 #endif
     }
     return tot;
-
-#undef APPLY_TAINT_PROPER
 }
 
 /* Do the permissions allow some operation?  Assumes statcache already set. */
