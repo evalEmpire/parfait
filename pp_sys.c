@@ -3502,6 +3502,51 @@ PP(pp_chdir)
     RETURN;
 }
 
+PP(pp_chmod)
+{
+    dVAR; dSP; dMARK; dORIGMARK; dTARGET;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
+
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_CHMOD);
+    if (++mark <= sp) {
+        val = SvIV(*mark);
+        APPLY_TAINT_PROPER(OP_CHMOD);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FCHMOD
+                    APPLY_TAINT_PROPER(OP_CHMOD);
+                    if (fchmod(PerlIO_fileno(IoIFP(GvIOn(gv))), val))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "fchmod");
+#endif
+                }
+                else {
+                    tot--;
+                }
+            }
+            else {
+                const char *name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_CHMOD);
+                if (!IS_SAFE_PATHNAME(name, len, "chmod") ||
+                    PerlLIO_chmod(name, val)) {
+                    tot--;
+                }
+            }
+        }
+    }
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
+
 PP(pp_chown)
 {
     dVAR; dSP; dMARK; dTARGET;
