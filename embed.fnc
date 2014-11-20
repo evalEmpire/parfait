@@ -209,8 +209,6 @@ Apd	|OP*	|op_append_elem	|I32 optype|NULLOK OP* first|NULLOK OP* last
 Apd	|OP*	|op_append_list	|I32 optype|NULLOK OP* first|NULLOK OP* last
 Apd	|OP*	|op_linklist	|NN OP *o
 Apd	|OP*	|op_prepend_elem|I32 optype|NULLOK OP* first|NULLOK OP* last
-: FIXME - this is only called by pp_chown. They should be merged.
-p	|I32	|apply		|I32 type|NN SV** mark|NN SV** sp
 ApM	|void	|apply_attrs_string|NN const char *stashpv|NN CV *cv|NN const char *attrstr|STRLEN len
 Apd	|void	|av_clear	|NN AV *av
 Apd	|SV*	|av_delete	|NN AV *av|SSize_t key|I32 flags
@@ -1588,6 +1586,7 @@ EXMp	|void	|_invlist_dump	|NN PerlIO *file|I32 level   \
 #endif
 Ap	|void	|taint_env
 Ap	|void	|taint_proper	|NULLOK const char* f|NN const char *const s
+p	|void	|taint_if_args_are_tainted	|NN SV **mark|NN SV **sp
 Apd	|UV	|to_utf8_case	|NN const U8 *p|NN U8* ustrp|NULLOK STRLEN *lenp \
 				|NN SV **swashp|NN const char *normal|NULLOK const char *special
 Abmd	|UV	|to_utf8_lower	|NN const U8 *p|NN U8* ustrp|NULLOK STRLEN *lenp

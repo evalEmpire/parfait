@@ -3643,16 +3643,115 @@ PP(pp_chdir)
 #endif
 }
 
+PP(pp_chmod)
+{
+    dVAR; dSP; dMARK; dORIGMARK; dTARGET;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
 
-/* also used for: pp_chmod() pp_kill() pp_unlink() pp_utime() */
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_CHMOD);
+    if (++mark <= sp) {
+        val = SvIV(*mark);
+        APPLY_TAINT_PROPER(OP_CHMOD);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FCHMOD
+                    int fd = PerlIO_fileno(IoIFP(GvIOn(gv)));
+                    APPLY_TAINT_PROPER(OP_CHMOD);
+                    if (fd < 0) {
+                        SETERRNO(EBADF,RMS_IFI);
+                        tot--;
+                    } else if (fchmod(fd, val))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "fchmod");
+#endif
+                }
+                else {
+                    SETERRNO(EBADF,RMS_IFI);
+                    tot--;
+                }
+            }
+            else {
+                const char *name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_CHMOD);
+                if (!IS_SAFE_PATHNAME(name, len, "chmod") ||
+                    PerlLIO_chmod(name, val)) {
+                    tot--;
+                }
+            }
+        }
+    }
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
 
 PP(pp_chown)
 {
-    dSP; dMARK; dTARGET;
-    const I32 value = (I32)apply(PL_op->op_type, MARK, SP);
+    dVAR; dSP; dMARK; dORIGMARK; dTARGET;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
 
-    SP = MARK;
-    XPUSHi(value);
+    /* Doing this before the taint check preserves the old behaviour,
+       where attempting to use kill as a taint test test would fail on
+       platforms where kill was not defined.  */
+#ifndef HAS_CHOWN
+    Perl_die(aTHX_ PL_no_func, PL_op_name[OP_CHOWN]);
+#endif
+
+    taint_if_args_are_tainted(mark, sp);
+
+#ifdef HAS_CHOWN
+    APPLY_TAINT_PROPER(OP_CHOWN);
+    if (sp - mark > 2) {
+        I32 val2;
+        val = SvIVx(*++mark);
+        val2 = SvIVx(*++mark);
+        APPLY_TAINT_PROPER(OP_CHOWN);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FCHOWN
+                    int fd = PerlIO_fileno(IoIFP(GvIOn(gv)));
+                    APPLY_TAINT_PROPER(OP_CHOWN);
+                    if (fd < 0) {
+                        SETERRNO(EBADF,RMS_IFI);
+                        tot--;
+                    } else if (fchown(fd, val, val2))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "fchown");
+#endif
+                }
+                else {
+                    SETERRNO(EBADF,RMS_IFI);
+                    tot--;
+                }
+            }
+            else {
+                const char *name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_CHOWN);
+                if (!IS_SAFE_PATHNAME(name, len, "chown") ||
+                    PerlLIO_chown(name, val, val2)) {
+                    tot--;
+                }
+            }
+        }
+    }
+#endif
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
     RETURN;
 }
 
@@ -3668,6 +3767,118 @@ PP(pp_chroot)
     DIE(aTHX_ PL_no_func, "chroot");
 #endif
 }
+
+
+#ifdef VMS
+#include <starlet.h> /* for sys$delprc */
+#endif
+
+PP(pp_kill)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 val;
+    I32 tot = 0;
+    STRLEN len;
+    bool killgp = FALSE;
+    const char *s;
+
+#ifndef HAS_KILL
+    Perl_die(aTHX_ PL_no_func, PL_op_name[OP_KILL]);
+#else
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_KILL);
+
+    /* No arguments */
+    if (mark == sp) {
+        XPUSHi(tot);
+        RETURN;
+    }
+
+    s = SvPVx_const(*++mark, len);
+    if (*s == '-' && isALPHA(s[1]))
+	{
+	    s++;
+	    len--;
+            killgp = TRUE;
+	}
+    if (isALPHA(*s)) {
+        if (*s == 'S' && s[1] == 'I' && s[2] == 'G') {
+            s += 3;
+            len -= 3;
+        }
+        if ((val = whichsig_pvn(s, len)) < 0)
+            Perl_croak(aTHX_ "Unrecognized signal name \"%"SVf"\"", SVfARG(*mark));
+    }
+    else
+	{
+	    val = SvIV(*mark);
+	    if (val < 0)
+                {
+                    killgp = TRUE;
+                    val = -val;
+                }
+	}
+    APPLY_TAINT_PROPER(OP_KILL);
+    tot = sp - mark;
+#ifdef VMS
+    /* kill() doesn't do process groups (job trees?) under VMS */
+    if (val == SIGKILL) {
+        /* Use native sys$delprc() to insure that target process is
+         * deleted; supervisor-mode images don't pay attention to
+         * CRTL's emulation of Unix-style signals and kill()
+         */
+        while (++mark <= sp) {
+            I32 proc;
+            unsigned long int __vmssts;
+            SvGETMAGIC(*mark);
+            if (!(SvIOK(*mark) || SvNOK(*mark) || looks_like_number(*mark)))
+                Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
+            proc = SvIV_nomg(*mark);
+            APPLY_TAINT_PROPER(OP_KILL);
+            if (!((__vmssts = sys$delprc(&proc,0)) & 1)) {
+                tot--;
+                switch (__vmssts) {
+                case SS$_NONEXPR:
+                case SS$_NOSUCHNODE:
+                    SETERRNO(ESRCH,__vmssts);
+                    break;
+                case SS$_NOPRIV:
+                    SETERRNO(EPERM,__vmssts);
+                    break;
+                default:
+                    SETERRNO(EVMSERR,__vmssts);
+                }
+            }
+        }
+        PERL_ASYNC_CHECK();
+        break;
+    }
+#endif
+    while (++mark <= sp) {
+        Pid_t proc;
+        SvGETMAGIC(*mark);
+        if (!(SvNIOK(*mark) || looks_like_number(*mark)))
+            Perl_croak(aTHX_ "Can't kill a non-numeric process ID");
+        proc = SvIV_nomg(*mark);
+        APPLY_TAINT_PROPER(OP_KILL);
+#ifdef HAS_KILLPG
+        /* use killpg in preference, as the killpg() wrapper for Win32
+         * understands process groups, but the kill() wrapper doesn't */
+        if (killgp ? PerlProc_killpg(proc, val)
+            : PerlProc_kill(proc, val))
+#else
+            if (PerlProc_kill(killgp ? -proc: proc, val))
+#endif
+		tot--;
+    }
+    PERL_ASYNC_CHECK();
+#endif /* HAS_KILL */
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
+
 
 PP(pp_rename)
 {
@@ -3694,9 +3905,47 @@ PP(pp_rename)
     RETURN;
 }
 
+PP(pp_unlink)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 tot = 0;
+    STRLEN len;
+    const char *s;
+
+    taint_if_args_are_tainted(MARK, SP);
+    APPLY_TAINT_PROPER(OP_UNLINK);
+
+    tot = sp - mark;
+    while (++mark <= sp) {
+        s = SvPV_const(*mark, len);
+        APPLY_TAINT_PROPER(OP_UNLINK);
+        if (!IS_SAFE_PATHNAME(s, len, "unlink")) {
+            tot--;
+        }
+        else if (PL_unsafe) {
+            if (UNLINK(s))
+                tot--;
+        }
+        else {	/* don't let root wipe out directories without -U */
+            if (PerlLIO_lstat(s,&PL_statbuf) < 0)
+                tot--;
+            else if (S_ISDIR(PL_statbuf.st_mode)) {
+                tot--;
+                SETERRNO(EISDIR, SS_NOPRIV);
+            }
+            else {
+                if (UNLINK(s))
+                    tot--;
+            }
+        }
+    }
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
+}
 
 /* also used for: pp_symlink() */
-
 #if defined(HAS_LINK) || defined(HAS_SYMLINK)
 PP(pp_link)
 {
@@ -4576,6 +4825,103 @@ PP(pp_tms)
     DIE(aTHX_ "times not implemented");
 #   endif
 #endif /* HAS_TIMES */
+}
+
+PP(pp_utime)
+{
+    dVAR; dSP; dMARK; dTARGET; dORIGMARK;
+    I32 tot = 0;
+    STRLEN len;
+
+    taint_if_args_are_tainted(mark, sp);
+
+#if defined(HAS_UTIME) || defined(HAS_FUTIMES)
+    APPLY_TAINT_PROPER(OP_UTIME);
+    if (sp - mark > 2) {
+#if defined(HAS_FUTIMES)
+        struct timeval utbuf[2];
+        void *utbufp = utbuf;
+#elif defined(I_UTIME) || defined(VMS)
+        struct utimbuf utbuf;
+        struct utimbuf *utbufp = &utbuf;
+#else
+        struct {
+            Time_t	actime;
+            Time_t	modtime;
+        } utbuf;
+        void *utbufp = &utbuf;
+#endif
+
+        SV* const accessed = *++mark;
+        SV* const modified = *++mark;
+
+        /* Be like C, and if both times are undefined, let the C
+         * library figure out what to do.  This usually means
+         * "current time". */
+
+        if ( accessed == &PL_sv_undef && modified == &PL_sv_undef )
+            utbufp = NULL;
+        else {
+            Zero(&utbuf, sizeof utbuf, char);
+#ifdef HAS_FUTIMES
+            utbuf[0].tv_sec = (long)SvIV(accessed);  /* time accessed */
+            utbuf[0].tv_usec = 0;
+            utbuf[1].tv_sec = (long)SvIV(modified);  /* time modified */
+            utbuf[1].tv_usec = 0;
+#elif defined(BIG_TIME)
+            utbuf.actime = (Time_t)SvNV(accessed);  /* time accessed */
+            utbuf.modtime = (Time_t)SvNV(modified); /* time modified */
+#else
+            utbuf.actime = (Time_t)SvIV(accessed);  /* time accessed */
+            utbuf.modtime = (Time_t)SvIV(modified); /* time modified */
+#endif
+        }
+        APPLY_TAINT_PROPER(OP_UTIME);
+        tot = sp - mark;
+        while (++mark <= sp) {
+            GV* gv;
+            if ((gv = MAYBE_DEREF_GV(*mark))) {
+                if (GvIO(gv) && IoIFP(GvIOp(gv))) {
+#ifdef HAS_FUTIMES
+                    int fd =  PerlIO_fileno(IoIFP(GvIOn(gv)));
+                    APPLY_TAINT_PROPER(OP_UTIME);
+                    if (fd < 0) {
+                        SETERRNO(EBADF,RMS_IFI);
+                        tot--;
+                    } else if (futimes(fd, (struct timeval *) utbufp))
+                        tot--;
+#else
+                    Perl_die(aTHX_ PL_no_func, "futimes");
+#endif
+                }
+                else {
+                    tot--;
+                }
+            }
+            else {
+                const char * const name = SvPV_nomg_const(*mark, len);
+                APPLY_TAINT_PROPER(OP_UTIME);
+                if (!IS_SAFE_PATHNAME(name, len, "utime")) {
+                    tot--;
+                }
+                else
+#ifdef HAS_FUTIMES
+		    if (utimes(name, (struct timeval *)utbufp))
+#else
+                        if (PerlLIO_utime(name, utbufp))
+#endif
+                            tot--;
+            }
+
+        }
+    }
+    else
+        tot = 0;
+#endif
+
+    SP = ORIGMARK;
+    XPUSHi(tot);
+    RETURN;
 }
 
 /* The 32 bit int year limits the times we can represent to these

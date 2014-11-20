@@ -163,12 +163,6 @@ PERL_STATIC_INLINE void	S_append_utf8_from_native_byte(const U8 byte, U8** dest)
 #define PERL_ARGS_ASSERT_APPEND_UTF8_FROM_NATIVE_BYTE	\
 	assert(dest)
 
-PERL_CALLCONV I32	Perl_apply(pTHX_ I32 type, SV** mark, SV** sp)
-			__attribute__nonnull__(pTHX_2)
-			__attribute__nonnull__(pTHX_3);
-#define PERL_ARGS_ASSERT_APPLY	\
-	assert(mark); assert(sp)
-
 PERL_CALLCONV void	Perl_apply_attrs_string(pTHX_ const char *stashpv, CV *cv, const char *attrstr, STRLEN len)
 			__attribute__nonnull__(pTHX_1)
 			__attribute__nonnull__(pTHX_2)
@@ -4872,6 +4866,12 @@ PERL_CALLCONV void	Perl_sys_init3(int* argc, char*** argv, char*** env)
 
 PERL_CALLCONV void	Perl_sys_term(void);
 PERL_CALLCONV void	Perl_taint_env(pTHX);
+PERL_CALLCONV void	Perl_taint_if_args_are_tainted(pTHX_ SV **mark, SV **sp)
+			__attribute__nonnull__(pTHX_1)
+			__attribute__nonnull__(pTHX_2);
+#define PERL_ARGS_ASSERT_TAINT_IF_ARGS_ARE_TAINTED	\
+	assert(mark); assert(sp)
+
 PERL_CALLCONV void	Perl_taint_proper(pTHX_ const char* f, const char *const s)
 			__attribute__nonnull__(pTHX_2);
 #define PERL_ARGS_ASSERT_TAINT_PROPER	\
