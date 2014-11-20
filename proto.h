@@ -4872,6 +4872,12 @@ PERL_CALLCONV void	Perl_sys_init3(int* argc, char*** argv, char*** env)
 
 PERL_CALLCONV void	Perl_sys_term(void);
 PERL_CALLCONV void	Perl_taint_env(pTHX);
+PERL_CALLCONV void	Perl_taint_if_args_are_tainted(pTHX_ SV **mark, SV **sp)
+			__attribute__nonnull__(pTHX_1)
+			__attribute__nonnull__(pTHX_2);
+#define PERL_ARGS_ASSERT_TAINT_IF_ARGS_ARE_TAINTED	\
+	assert(mark); assert(sp)
+
 PERL_CALLCONV void	Perl_taint_proper(pTHX_ const char* f, const char *const s)
 			__attribute__nonnull__(pTHX_2);
 #define PERL_ARGS_ASSERT_TAINT_PROPER	\

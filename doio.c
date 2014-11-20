@@ -1727,7 +1727,6 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
     const char *const what = PL_op_name[type];
     const char *s;
     STRLEN len;
-    SV ** const oldmark = mark;
     bool killgp = FALSE;
 
     PERL_ARGS_ASSERT_APPLY;
@@ -1746,16 +1745,8 @@ Perl_apply(pTHX_ I32 type, SV **mark, SV **sp)
 	Perl_die(aTHX_ PL_no_func, what);
 #endif
 
-    /* This is a first heuristic; it doesn't catch tainting magic. */
-    if (TAINTING_get) {
-	while (++mark <= sp) {
-	    if (SvTAINTED(*mark)) {
-		TAINT;
-		break;
-	    }
-	}
-	mark = oldmark;
-    }
+    taint_if_args_are_tainted(mark, sp);
+
     switch (type) {
     case OP_CHMOD:
 	APPLY_TAINT_PROPER(type);

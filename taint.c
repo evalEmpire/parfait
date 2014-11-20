@@ -184,6 +184,25 @@ Perl_taint_env(pTHX)
     }
 }
 
+/* XXX I'm not sure if the name matches what the code does.
+ * XXX It's my best guess.  This is the product of an
+ * XXX extract method refactoring.
+ */
+void
+Perl_taint_if_args_are_tainted(SV **mark, SV **sp) {
+    PERL_ARGS_ASSERT_TAINT_IF_ARGS_ARE_TAINTED;
+
+    /* This is a first heuristic; it doesn't catch tainting magic. */
+    if (TAINTING_get) {
+	while (++mark <= sp) {
+	    if (SvTAINTED(*mark)) {
+		TAINT;
+		break;
+	    }
+	}
+    }
+}
+
 /*
  * ex: set ts=8 sts=4 sw=4 et:
  */
