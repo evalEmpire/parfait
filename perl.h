@@ -629,6 +629,10 @@
 #   define TAINT_WARN_get       (PL_taint_warn)
 #   define TAINT_WARN_set(s)    (PL_taint_warn = (s))
 #endif
+#define APPLY_TAINT_PROPER(op)                                          \
+    STMT_START {							\
+	if (TAINT_get) { TAINT_PROPER(PL_op_name[op]); }                \
+    } STMT_END
 
 /* flags used internally only within pp_subst and pp_substcont */
 #ifdef PERL_CORE
