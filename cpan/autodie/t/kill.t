@@ -5,12 +5,16 @@ use autodie;
 
 use constant SYSINIT => 1;
 
-if (not CORE::kill(0,$$)) {
-    plan skip_all => "Can't send signals to own process on this system.";
-}
+BEGIN {
+    no autodie;
 
-if (CORE::kill(0, SYSINIT)) {
-    plan skip_all => "Can unexpectedly signal process 1. Won't run as root.";
+    if (not kill(0,$$)) {
+        plan skip_all => "Can't send signals to own process on this system.";
+    }
+
+    if (kill(0, SYSINIT)) {
+        plan skip_all => "Can unexpectedly signal process 1. Won't run as root.";
+    }
 }
 
 plan tests => 4;
