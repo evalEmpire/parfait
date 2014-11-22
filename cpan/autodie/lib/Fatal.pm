@@ -587,6 +587,7 @@ sub unimport {
 
         my $sub = $symbol;
         $sub = "${pkg}::$sub" unless $sub =~ /::/;
+        my($func) = $symbol =~ m{([^:]+)$};
 
         # If 'blah' was already enabled with Fatal (which has package
         # scope) then, this is considered an error.
@@ -601,11 +602,20 @@ sub unimport {
 
         $^H{$NO_PACKAGE}{$sub} = 1;
 
+        # Unset this so internal implementations know not to autodie.
+
+        delete $^H{"autodie/$func"};
+
         if (my $original_sub = $Original_user_sub{$sub}) {
             # Hey, we've got an original one of these, put it back.
             $uninstall_subs{$symbol} = $original_sub;
             next;
         }
+
+        # If it's already implemented in Perl, there's no reason
+        # to continue.
+
+        next if ($Internal_to_perl{$func} || 0) >= $];
 
         # We don't have an original copy of the sub, on the assumption
         # it's core (or doesn't exist), we'll just nuke it.
