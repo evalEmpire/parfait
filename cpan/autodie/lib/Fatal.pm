@@ -73,7 +73,7 @@ my %TAGS = (
                        read seek sysread syswrite sysseek )],
     ':dbm'     => [qw(dbmopen dbmclose)],
     ':file'    => [qw(open close flock sysopen fcntl fileno binmode
-                     ioctl)],
+                     ioctl truncate)],
     ':filesys' => [qw(opendir closedir chdir link unlink rename mkdir
                       symlink rmdir readlink umask chmod chown utime)],
     ':ipc'     => [qw(:msg :semaphore :shm pipe kill)],
@@ -100,7 +100,7 @@ my %TAGS = (
     # Everything in v2.07 and brefore. This was :default less chmod and chown
     ':v207'    => [qw(:threads :dbm :socket read seek sysread
                    syswrite sysseek open close flock sysopen fcntl fileno
-                   binmode ioctl opendir closedir chdir link unlink
+                   binmode ioctl truncate opendir closedir chdir link unlink
                    rename mkdir symlink rmdir readlink umask
                    :msg :semaphore :shm pipe)],
 
@@ -164,6 +164,15 @@ my %TAGS = (
     } map { @{$_} } values %TAGS;
     $TAGS{':all'} = \@all;
 }
+
+# This tracks when autodie was implemented internally in Perl
+# for each function.
+
+my %Internal_to_perl;
+
+# XXX This version number is temporary while we're working on
+# XXX a fork of 5.20.1.
+$Internal_to_perl{truncate} = '5.020001';
 
 # This hash contains subroutines for which we should
 # subroutine() // die() rather than subroutine() || die()
@@ -260,6 +269,7 @@ my %reusable_builtins;
 @reusable_builtins{qw(
     CORE::fork
     CORE::kill
+    CORE::truncate
     CORE::chdir
     CORE::link
     CORE::unlink
@@ -411,6 +421,17 @@ sub import {
                 $func = substr($func, 1);
                 $insist_this = 1;
             }
+
+            # To allow others to determine when autodie was in scope,
+            # and with what arguments, we also set a %^H hint which
+            # is how we were called.
+
+            $^H{"autodie/$func"} = 1;
+
+            # If it's already implemented in Perl, there's no reason
+            # to continue.
+
+            next if ($Internal_to_perl{$func} || 0) >= $];
 
             # We're going to make a subroutine fatalistic.
             # However if we're being invoked with 'use Fatal qw(x)'

@@ -72,6 +72,7 @@ cpan/autodie/t/filehandles.t		autodie - filehandle tests
 cpan/autodie/t/fileno.t			autodie - fileno tests
 cpan/autodie/t/flock.t			autodie - File locking tests
 cpan/autodie/t/format-clobber.t		autodie - Don't clobber scalars
+cpan/autodie/t/hinthash.t		autodie - Test setting %^H
 cpan/autodie/t/hints_insist.t		autodie - Test hints insistance
 cpan/autodie/t/hints_pod_examples.t	autodie - Test hints POD examples
 cpan/autodie/t/hints_provider_does.t	autodie - Test hints/does roles
@@ -4912,6 +4913,7 @@ symbian/uid.pl			Helper code for config.pl
 symbian/version.pl		Helper code for config.pl
 symbian/xsbuild.pl		Building extensions
 taint.c				Tainting code
+t/autodie/internal_to_perl.t	Test autodie funcitonality is handled by perl
 t/autodie/truncate.t		Test autodie + truncate()
 t/base/cond.t			See if conditionals work
 t/base/if.t			See if if works

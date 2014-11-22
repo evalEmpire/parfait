@@ -2184,10 +2184,14 @@ PP(pp_sysseek)
     RETURN;
 }
 
+/* Checks if $^H{"autodie/$opname"} is true */
 bool
-is_autodie_enabled()
+is_autodie_enabled(const OP *op)
 {
-    return(SvTRUE(cop_hints_fetch_pvs(PL_curcop, "autodie", 0)));
+    SV *autodie_key = newSVpvs("autodie/");
+    sv_catpv(autodie_key, OP_NAME(op));
+
+    return(SvTRUE(cop_hints_fetch_sv(PL_curcop, autodie_key, 0, 0)));
 }
 
 PP(pp_truncate)
@@ -2316,7 +2320,7 @@ Perl_io_error(pTHX_ SV *io_retval) {
 
     PERL_ARGS_ASSERT_IO_ERROR;
 
-    if( !is_autodie_enabled() ) {
+    if( !is_autodie_enabled(PL_op) ) {
         return;
     }
 
