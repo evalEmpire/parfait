@@ -172,7 +172,12 @@ my %Internal_to_perl;
 
 # XXX This version number is temporary while we're working on
 # XXX a fork of 5.20.1.
-$Internal_to_perl{truncate} = '5.020001';
+$Internal_to_perl{truncate}     = '5.020001';
+$Internal_to_perl{chmod}        = '5.020001';
+$Internal_to_perl{chown}        = '5.020001';
+$Internal_to_perl{kill}         = '5.020001';
+$Internal_to_perl{unlink}       = '5.020001';
+$Internal_to_perl{utime}        = '5.020001';
 
 # This hash contains subroutines for which we should
 # subroutine() // die() rather than subroutine() || die()

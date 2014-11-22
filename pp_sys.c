@@ -3652,6 +3652,7 @@ PP(pp_chmod)
     dVAR; dSP; dMARK; dORIGMARK; dTARGET;
     I32 val;
     I32 tot = 0;
+    I32 num_files = NUMARGS - 1;
     STRLEN len;
 
     taint_if_args_are_tainted(MARK, SP);
@@ -3688,7 +3689,12 @@ PP(pp_chmod)
     }
 
     SP = ORIGMARK;
-    XPUSHi(tot);
+    if( tot != num_files ) {
+        RETIOERR(newSViv(tot));
+    }
+    else {
+        XPUSHi(tot);
+    }
     RETURN;
 }
 
@@ -3697,6 +3703,7 @@ PP(pp_chown)
     dVAR; dSP; dMARK; dORIGMARK; dTARGET;
     I32 val;
     I32 tot = 0;
+    I32 num_files = NUMARGS - 2;
     STRLEN len;
 
 #ifndef HAS_CHOWN
@@ -3742,7 +3749,7 @@ PP(pp_chown)
 #endif
     
     SP = ORIGMARK;
-    if( tot != NUMARGS ) {
+    if( tot != num_files ) {
         RETIOERR(newSViv(tot));
     }
     else {
@@ -3774,6 +3781,7 @@ PP(pp_kill)
     dVAR; dSP; dMARK; dTARGET; dORIGMARK;
     I32 val;
     I32 tot = 0;
+    I32 num_procs = NUMARGS - 1;
     STRLEN len;
     bool killgp = FALSE;
     const char *s;
@@ -3871,7 +3879,12 @@ PP(pp_kill)
 #endif /* HAS_KILL */
 
     SP = ORIGMARK;
-    XPUSHi(tot);
+    if( tot != num_procs ) {
+        RETIOERR(newSViv(tot));
+    }
+    else {
+        XPUSHi(tot);
+    }
     RETURN;
 }
 
@@ -3905,6 +3918,7 @@ PP(pp_unlink)
 {
     dVAR; dSP; dMARK; dTARGET; dORIGMARK;
     I32 tot = 0;
+    I32 num_files = NUMARGS;
     STRLEN len;
     const char *s;
 
@@ -3937,7 +3951,12 @@ PP(pp_unlink)
     }
 
     SP = ORIGMARK;
-    XPUSHi(tot);
+    if( tot != num_files ) {
+        RETIOERR(newSViv(tot));
+    }
+    else {
+        XPUSHi(tot);
+    }
     RETURN;
 }
 
@@ -4820,6 +4839,7 @@ PP(pp_utime)
 {
     dVAR; dSP; dMARK; dTARGET; dORIGMARK;
     I32 tot = 0;
+    I32 num_files = NUMARGS - 2;
     STRLEN len;
     
     taint_if_args_are_tainted(mark, sp);
@@ -4906,7 +4926,12 @@ PP(pp_utime)
 #endif
 
     SP = ORIGMARK;
-    XPUSHi(tot);
+    if( tot != num_files ) {
+        RETIOERR(newSViv(tot));
+    }
+    else {
+        XPUSHi(tot);
+    }
     RETURN;
 }
 

@@ -8,6 +8,11 @@ BEGIN {
 
 my @Internal_to_perl = qw(
     truncate
+    chmod
+    chown
+    kill
+    unlink
+    utime
 );
 
 note "Check that autodie functions implemented in Perl do not have autodie wrappers"; {
