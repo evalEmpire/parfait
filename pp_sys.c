@@ -3742,7 +3742,12 @@ PP(pp_chown)
 #endif
     
     SP = ORIGMARK;
-    XPUSHi(tot);
+    if( tot != NUMARGS ) {
+        RETIOERR(newSViv(tot));
+    }
+    else {
+        XPUSHi(tot);
+    }
     RETURN;
 }
 
