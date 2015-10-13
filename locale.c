@@ -68,21 +68,21 @@ S_stdize_locale(pTHX_ char *locs)
     PERL_ARGS_ASSERT_STDIZE_LOCALE;
 
     if (s) {
-	const char * const t = strchr(s, '.');
-	okay = FALSE;
-	if (t) {
-	    const char * const u = strchr(t, '\n');
-	    if (u && (u[1] == 0)) {
-		const STRLEN len = u - s;
-		Move(s + 1, locs, len, char);
-		locs[len] = 0;
-		okay = TRUE;
-	    }
-	}
+        const char * const t = strchr(s, '.');
+        okay = FALSE;
+        if (t) {
+            const char * const u = strchr(t, '\n');
+            if (u && (u[1] == 0)) {
+                const STRLEN len = u - s;
+                Move(s + 1, locs, len, char);
+                locs[len] = 0;
+                okay = TRUE;
+            }
+        }
     }
 
     if (!okay)
-	Perl_croak(aTHX_ "Can't fix broken locale name \"%s\"", locs);
+        Perl_croak(aTHX_ "Can't fix broken locale name \"%s\"", locs);
 
     return locs;
 }
@@ -97,25 +97,25 @@ Perl_set_numeric_radix(pTHX)
     const struct lconv* const lc = localeconv();
 
     if (lc && lc->decimal_point) {
-	if (lc->decimal_point[0] == '.' && lc->decimal_point[1] == 0) {
-	    SvREFCNT_dec(PL_numeric_radix_sv);
-	    PL_numeric_radix_sv = NULL;
-	}
-	else {
-	    if (PL_numeric_radix_sv)
-		sv_setpv(PL_numeric_radix_sv, lc->decimal_point);
-	    else
-		PL_numeric_radix_sv = newSVpv(lc->decimal_point, 0);
+        if (lc->decimal_point[0] == '.' && lc->decimal_point[1] == 0) {
+            SvREFCNT_dec(PL_numeric_radix_sv);
+            PL_numeric_radix_sv = NULL;
+        }
+        else {
+            if (PL_numeric_radix_sv)
+                sv_setpv(PL_numeric_radix_sv, lc->decimal_point);
+            else
+                PL_numeric_radix_sv = newSVpv(lc->decimal_point, 0);
             if (! is_invariant_string((U8 *) lc->decimal_point, 0)
                 && is_utf8_string((U8 *) lc->decimal_point, 0)
                 && _is_cur_LC_category_utf8(LC_NUMERIC))
             {
-		SvUTF8_on(PL_numeric_radix_sv);
+                SvUTF8_on(PL_numeric_radix_sv);
             }
-	}
+        }
     }
     else
-	PL_numeric_radix_sv = NULL;
+        PL_numeric_radix_sv = NULL;
 
     DEBUG_L(PerlIO_printf(Perl_debug_log, "Locale radix is %s\n",
                                           (PL_numeric_radix_sv)
@@ -179,17 +179,17 @@ Perl_new_numeric(pTHX_ const char *newnum)
     char *save_newnum;
 
     if (! newnum) {
-	Safefree(PL_numeric_name);
-	PL_numeric_name = NULL;
-	PL_numeric_standard = TRUE;
-	PL_numeric_local = TRUE;
-	return;
+        Safefree(PL_numeric_name);
+        PL_numeric_name = NULL;
+        PL_numeric_standard = TRUE;
+        PL_numeric_local = TRUE;
+        return;
     }
 
     save_newnum = stdize_locale(savepv(newnum));
     if (! PL_numeric_name || strNE(PL_numeric_name, save_newnum)) {
-	Safefree(PL_numeric_name);
-	PL_numeric_name = save_newnum;
+        Safefree(PL_numeric_name);
+        PL_numeric_name = save_newnum;
     }
 
     PL_numeric_standard = isNAME_C_OR_POSIX(save_newnum);
@@ -453,37 +453,37 @@ Perl_new_collate(pTHX_ const char *newcoll)
      * POSIX::setlocale() */
 
     if (! newcoll) {
-	if (PL_collation_name) {
-	    ++PL_collation_ix;
-	    Safefree(PL_collation_name);
-	    PL_collation_name = NULL;
-	}
-	PL_collation_standard = TRUE;
-	PL_collxfrm_base = 0;
-	PL_collxfrm_mult = 2;
-	return;
+        if (PL_collation_name) {
+            ++PL_collation_ix;
+            Safefree(PL_collation_name);
+            PL_collation_name = NULL;
+        }
+        PL_collation_standard = TRUE;
+        PL_collxfrm_base = 0;
+        PL_collxfrm_mult = 2;
+        return;
     }
 
     if (! PL_collation_name || strNE(PL_collation_name, newcoll)) {
-	++PL_collation_ix;
-	Safefree(PL_collation_name);
-	PL_collation_name = stdize_locale(savepv(newcoll));
-	PL_collation_standard = isNAME_C_OR_POSIX(newcoll);
+        ++PL_collation_ix;
+        Safefree(PL_collation_name);
+        PL_collation_name = stdize_locale(savepv(newcoll));
+        PL_collation_standard = isNAME_C_OR_POSIX(newcoll);
 
-	{
-	  /*  2: at most so many chars ('a', 'b'). */
-	  /* 50: surely no system expands a char more. */
+        {
+          /*  2: at most so many chars ('a', 'b'). */
+          /* 50: surely no system expands a char more. */
 #define XFRMBUFSIZE  (2 * 50)
-	  char xbuf[XFRMBUFSIZE];
-	  const Size_t fa = strxfrm(xbuf, "a",  XFRMBUFSIZE);
-	  const Size_t fb = strxfrm(xbuf, "ab", XFRMBUFSIZE);
-	  const SSize_t mult = fb - fa;
-	  if (mult < 1 && !(fa == 0 && fb == 0))
-	      Perl_croak(aTHX_ "panic: strxfrm() gets absurd - a => %"UVuf", ab => %"UVuf,
-			 (UV) fa, (UV) fb);
-	  PL_collxfrm_base = (fa > (Size_t)mult) ? (fa - mult) : 0;
-	  PL_collxfrm_mult = mult;
-	}
+          char xbuf[XFRMBUFSIZE];
+          const Size_t fa = strxfrm(xbuf, "a",  XFRMBUFSIZE);
+          const Size_t fb = strxfrm(xbuf, "ab", XFRMBUFSIZE);
+          const SSize_t mult = fb - fa;
+          if (mult < 1 && !(fa == 0 && fb == 0))
+              Perl_croak(aTHX_ "panic: strxfrm() gets absurd - a => %"UVuf", ab => %"UVuf,
+                         (UV) fa, (UV) fb);
+          PL_collxfrm_base = (fa > (Size_t)mult) ? (fa - mult) : 0;
+          PL_collxfrm_mult = mult;
+        }
     }
 
 #else
@@ -700,56 +700,56 @@ Perl_init_i18nl10n(pTHX_ int printwarn)
 
 #   ifdef LC_ALL
     if (lang) {
-	if (my_setlocale(LC_ALL, setlocale_init))
-	    done = TRUE;
-	else
-	    setlocale_failure = TRUE;
+        if (my_setlocale(LC_ALL, setlocale_init))
+            done = TRUE;
+        else
+            setlocale_failure = TRUE;
     }
     if (!setlocale_failure) {
 #       ifdef USE_LOCALE_CTYPE
-	Safefree(curctype);
-	if (! (curctype =
-	       my_setlocale(LC_CTYPE,
-			 (!done && (lang || PerlEnv_getenv("LC_CTYPE")))
-				    ? setlocale_init : NULL)))
-	    setlocale_failure = TRUE;
-	else
-	    curctype = savepv(curctype);
+        Safefree(curctype);
+        if (! (curctype =
+               my_setlocale(LC_CTYPE,
+                         (!done && (lang || PerlEnv_getenv("LC_CTYPE")))
+                                    ? setlocale_init : NULL)))
+            setlocale_failure = TRUE;
+        else
+            curctype = savepv(curctype);
 #       endif /* USE_LOCALE_CTYPE */
 #       ifdef USE_LOCALE_COLLATE
-	Safefree(curcoll);
-	if (! (curcoll =
-	       my_setlocale(LC_COLLATE,
-			 (!done && (lang || PerlEnv_getenv("LC_COLLATE")))
-				   ? setlocale_init : NULL)))
-	    setlocale_failure = TRUE;
-	else
-	    curcoll = savepv(curcoll);
+        Safefree(curcoll);
+        if (! (curcoll =
+               my_setlocale(LC_COLLATE,
+                         (!done && (lang || PerlEnv_getenv("LC_COLLATE")))
+                                   ? setlocale_init : NULL)))
+            setlocale_failure = TRUE;
+        else
+            curcoll = savepv(curcoll);
 #       endif /* USE_LOCALE_COLLATE */
 #       ifdef USE_LOCALE_NUMERIC
-	Safefree(curnum);
-	if (! (curnum =
-	       my_setlocale(LC_NUMERIC,
-			 (!done && (lang || PerlEnv_getenv("LC_NUMERIC")))
-				  ? setlocale_init : NULL)))
-	    setlocale_failure = TRUE;
-	else
-	    curnum = savepv(curnum);
+        Safefree(curnum);
+        if (! (curnum =
+               my_setlocale(LC_NUMERIC,
+                         (!done && (lang || PerlEnv_getenv("LC_NUMERIC")))
+                                  ? setlocale_init : NULL)))
+            setlocale_failure = TRUE;
+        else
+            curnum = savepv(curnum);
 #       endif /* USE_LOCALE_NUMERIC */
 #       ifdef USE_LOCALE_MESSAGES
-	if (! my_setlocale(LC_MESSAGES,
-			 (!done && (lang || PerlEnv_getenv("LC_MESSAGES")))
-				  ? setlocale_init : NULL))
+        if (! my_setlocale(LC_MESSAGES,
+                         (!done && (lang || PerlEnv_getenv("LC_MESSAGES")))
+                                  ? setlocale_init : NULL))
         {
-	    setlocale_failure = TRUE;
+            setlocale_failure = TRUE;
         }
 #       endif /* USE_LOCALE_MESSAGES */
 #       ifdef USE_LOCALE_MONETARY
-	if (! my_setlocale(LC_MONETARY,
-			 (!done && (lang || PerlEnv_getenv("LC_MONETARY")))
-				  ? setlocale_init : NULL))
+        if (! my_setlocale(LC_MONETARY,
+                         (!done && (lang || PerlEnv_getenv("LC_MONETARY")))
+                                  ? setlocale_init : NULL))
         {
-	    setlocale_failure = TRUE;
+            setlocale_failure = TRUE;
         }
 #       endif /* USE_LOCALE_MONETARY */
     }
@@ -1066,10 +1066,10 @@ Perl_init_i18nl10n(pTHX_ int printwarn)
        This is an alternative to using the -C command line switch
        (the -C if present will override this). */
     {
-	 const char *p = PerlEnv_getenv("PERL_UNICODE");
-	 PL_unicode = p ? parse_unicode_opts(&p) : 0;
-	 if (PL_unicode & PERL_UNICODE_UTF8CACHEASSERT_FLAG)
-	     PL_utf8cache = -1;
+         const char *p = PerlEnv_getenv("PERL_UNICODE");
+         PL_unicode = p ? parse_unicode_opts(&p) : 0;
+         if (PL_unicode & PERL_UNICODE_UTF8CACHEASSERT_FLAG)
+             PL_utf8cache = -1;
     }
 #endif
 
@@ -1122,30 +1122,30 @@ Perl_mem_collxfrm(pTHX_ const char *s, STRLEN len, STRLEN *xlen)
     xAlloc = sizeof(PL_collation_ix) + PL_collxfrm_base + (PL_collxfrm_mult * len) + 1;
     Newx(xbuf, xAlloc, char);
     if (! xbuf)
-	goto bad;
+        goto bad;
 
     *(U32*)xbuf = PL_collation_ix;
     xout = sizeof(PL_collation_ix);
     for (xin = 0; xin < len; ) {
-	Size_t xused;
+        Size_t xused;
 
-	for (;;) {
-	    xused = strxfrm(xbuf + xout, s + xin, xAlloc - xout);
-	    if (xused >= PERL_INT_MAX)
-		goto bad;
-	    if ((STRLEN)xused < xAlloc - xout)
-		break;
-	    xAlloc = (2 * xAlloc) + 1;
-	    Renew(xbuf, xAlloc, char);
-	    if (! xbuf)
-		goto bad;
-	}
+        for (;;) {
+            xused = strxfrm(xbuf + xout, s + xin, xAlloc - xout);
+            if (xused >= PERL_INT_MAX)
+                goto bad;
+            if ((STRLEN)xused < xAlloc - xout)
+                break;
+            xAlloc = (2 * xAlloc) + 1;
+            Renew(xbuf, xAlloc, char);
+            if (! xbuf)
+                goto bad;
+        }
 
-	xin += strlen(s + xin) + 1;
-	xout += xused;
+        xin += strlen(s + xin) + 1;
+        xout += xused;
 
-	/* Embedded NULs are understood but silently skipped
-	 * because they make no sense in locale collation. */
+        /* Embedded NULs are understood but silently skipped
+         * because they make no sense in locale collation. */
     }
 
     xbuf[xout] = '\0';

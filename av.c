@@ -32,22 +32,22 @@ Perl_av_reify(pTHX_ AV *av)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (AvREAL(av))
-	return;
+        return;
 #ifdef DEBUGGING
     if (SvTIED_mg((const SV *)av, PERL_MAGIC_tied))
-	Perl_ck_warner_d(aTHX_ packWARN(WARN_DEBUGGING), "av_reify called on tied array");
+        Perl_ck_warner_d(aTHX_ packWARN(WARN_DEBUGGING), "av_reify called on tied array");
 #endif
     key = AvMAX(av) + 1;
     while (key > AvFILLp(av) + 1)
-	AvARRAY(av)[--key] = NULL;
+        AvARRAY(av)[--key] = NULL;
     while (key) {
-	SV * const sv = AvARRAY(av)[--key];
-	if (sv != &PL_sv_undef)
-	    SvREFCNT_inc_simple_void(sv);
+        SV * const sv = AvARRAY(av)[--key];
+        if (sv != &PL_sv_undef)
+            SvREFCNT_inc_simple_void(sv);
     }
     key = AvARRAY(av) - AvALLOC(av);
     while (key)
-	AvALLOC(av)[--key] = NULL;
+        AvALLOC(av)[--key] = NULL;
     AvREIFY_off(av);
     AvREAL_on(av);
 }
@@ -71,11 +71,11 @@ Perl_av_extend(pTHX_ AV *av, SSize_t key)
 
     mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied);
     if (mg) {
-	SV *arg1 = sv_newmortal();
-	sv_setiv(arg1, (IV)(key + 1));
-	Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(EXTEND), G_DISCARD, 1,
-			    arg1);
-	return;
+        SV *arg1 = sv_newmortal();
+        sv_setiv(arg1, (IV)(key + 1));
+        Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(EXTEND), G_DISCARD, 1,
+                            arg1);
+        return;
     }
     av_extend_guts(av,key,&AvMAX(av),&AvALLOC(av),&AvARRAY(av));
 }    
@@ -83,62 +83,62 @@ Perl_av_extend(pTHX_ AV *av, SSize_t key)
 /* The guts of av_extend.  *Not* for general use! */
 void
 Perl_av_extend_guts(pTHX_ AV *av, SSize_t key, SSize_t *maxp, SV ***allocp,
-			  SV ***arrayp)
+                          SV ***arrayp)
 {
     PERL_ARGS_ASSERT_AV_EXTEND_GUTS;
 
     if (key > *maxp) {
-	SV** ary;
-	SSize_t tmp;
-	SSize_t newmax;
+        SV** ary;
+        SSize_t tmp;
+        SSize_t newmax;
 
-	if (av && *allocp != *arrayp) {
-	    ary = *allocp + AvFILLp(av) + 1;
-	    tmp = *arrayp - *allocp;
-	    Move(*arrayp, *allocp, AvFILLp(av)+1, SV*);
-	    *maxp += tmp;
-	    *arrayp = *allocp;
-	    if (AvREAL(av)) {
-		while (tmp)
-		    ary[--tmp] = NULL;
-	    }
-	    if (key > *maxp - 10) {
-		newmax = key + *maxp;
-		goto resize;
-	    }
-	}
-	else {
-	    if (*allocp) {
+        if (av && *allocp != *arrayp) {
+            ary = *allocp + AvFILLp(av) + 1;
+            tmp = *arrayp - *allocp;
+            Move(*arrayp, *allocp, AvFILLp(av)+1, SV*);
+            *maxp += tmp;
+            *arrayp = *allocp;
+            if (AvREAL(av)) {
+                while (tmp)
+                    ary[--tmp] = NULL;
+            }
+            if (key > *maxp - 10) {
+                newmax = key + *maxp;
+                goto resize;
+            }
+        }
+        else {
+            if (*allocp) {
 
 #ifdef Perl_safesysmalloc_size
-		/* Whilst it would be quite possible to move this logic around
-		   (as I did in the SV code), so as to set AvMAX(av) early,
-		   based on calling Perl_safesysmalloc_size() immediately after
-		   allocation, I'm not convinced that it is a great idea here.
-		   In an array we have to loop round setting everything to
-		   NULL, which means writing to memory, potentially lots
-		   of it, whereas for the SV buffer case we don't touch the
-		   "bonus" memory. So there there is no cost in telling the
-		   world about it, whereas here we have to do work before we can
-		   tell the world about it, and that work involves writing to
-		   memory that might never be read. So, I feel, better to keep
-		   the current lazy system of only writing to it if our caller
-		   has a need for more space. NWC  */
-		newmax = Perl_safesysmalloc_size((void*)*allocp) /
-		    sizeof(const SV *) - 1;
+                /* Whilst it would be quite possible to move this logic around
+                   (as I did in the SV code), so as to set AvMAX(av) early,
+                   based on calling Perl_safesysmalloc_size() immediately after
+                   allocation, I'm not convinced that it is a great idea here.
+                   In an array we have to loop round setting everything to
+                   NULL, which means writing to memory, potentially lots
+                   of it, whereas for the SV buffer case we don't touch the
+                   "bonus" memory. So there there is no cost in telling the
+                   world about it, whereas here we have to do work before we can
+                   tell the world about it, and that work involves writing to
+                   memory that might never be read. So, I feel, better to keep
+                   the current lazy system of only writing to it if our caller
+                   has a need for more space. NWC  */
+                newmax = Perl_safesysmalloc_size((void*)*allocp) /
+                    sizeof(const SV *) - 1;
 
-		if (key <= newmax) 
-		    goto resized;
+                if (key <= newmax) 
+                    goto resized;
 #endif 
                 /* overflow-safe version of newmax = key + *maxp/5 */
-		newmax = *maxp / 5;
+                newmax = *maxp / 5;
                 newmax = (key > SSize_t_MAX - newmax)
                             ? SSize_t_MAX : key + newmax;
-	      resize:
-		{
+              resize:
+                {
 #ifdef PERL_MALLOC_WRAP /* Duplicated in pp_hot.c */
-		    static const char oom_array_extend[] =
-			"Out of memory during array extend";
+                    static const char oom_array_extend[] =
+                        "Out of memory during array extend";
 #endif
                     /* it should really be newmax+1 here, but if newmax
                      * happens to equal SSize_t_MAX, then newmax+1 is
@@ -146,52 +146,52 @@ Perl_av_extend_guts(pTHX_ AV *av, SSize_t key, SSize_t *maxp, SV ***allocp,
                      * index lower than we should in theory; in practice
                      * its unlikely the system has SSize_t_MAX/sizeof(SV*)
                      * bytes to spare! */
-		    MEM_WRAP_CHECK_1(newmax, SV*, oom_array_extend);
-		}
+                    MEM_WRAP_CHECK_1(newmax, SV*, oom_array_extend);
+                }
 #ifdef STRESS_REALLOC
-		{
-		    SV ** const old_alloc = *allocp;
-		    Newx(*allocp, newmax+1, SV*);
-		    Copy(old_alloc, *allocp, *maxp + 1, SV*);
-		    Safefree(old_alloc);
-		}
+                {
+                    SV ** const old_alloc = *allocp;
+                    Newx(*allocp, newmax+1, SV*);
+                    Copy(old_alloc, *allocp, *maxp + 1, SV*);
+                    Safefree(old_alloc);
+                }
 #else
-		Renew(*allocp,newmax+1, SV*);
+                Renew(*allocp,newmax+1, SV*);
 #endif
 #ifdef Perl_safesysmalloc_size
-	      resized:
+              resized:
 #endif
-		ary = *allocp + *maxp + 1;
-		tmp = newmax - *maxp;
-		if (av == PL_curstack) {	/* Oops, grew stack (via av_store()?) */
-		    PL_stack_sp = *allocp + (PL_stack_sp - PL_stack_base);
-		    PL_stack_base = *allocp;
-		    PL_stack_max = PL_stack_base + newmax;
-		}
-	    }
-	    else {
-		newmax = key < 3 ? 3 : key;
-		{
+                ary = *allocp + *maxp + 1;
+                tmp = newmax - *maxp;
+                if (av == PL_curstack) {	/* Oops, grew stack (via av_store()?) */
+                    PL_stack_sp = *allocp + (PL_stack_sp - PL_stack_base);
+                    PL_stack_base = *allocp;
+                    PL_stack_max = PL_stack_base + newmax;
+                }
+            }
+            else {
+                newmax = key < 3 ? 3 : key;
+                {
 #ifdef PERL_MALLOC_WRAP /* Duplicated in pp_hot.c */
-		    static const char oom_array_extend[] =
-			"Out of memory during array extend";
+                    static const char oom_array_extend[] =
+                        "Out of memory during array extend";
 #endif
                     /* see comment above about newmax+1*/
-		    MEM_WRAP_CHECK_1(newmax, SV*, oom_array_extend);
-		}
-		Newx(*allocp, newmax+1, SV*);
-		ary = *allocp + 1;
-		tmp = newmax;
-		*allocp[0] = NULL;	/* For the stacks */
-	    }
-	    if (av && AvREAL(av)) {
-		while (tmp)
-		    ary[--tmp] = NULL;
-	    }
-	    
-	    *arrayp = *allocp;
-	    *maxp = newmax;
-	}
+                    MEM_WRAP_CHECK_1(newmax, SV*, oom_array_extend);
+                }
+                Newx(*allocp, newmax+1, SV*);
+                ary = *allocp + 1;
+                tmp = newmax;
+                *allocp[0] = NULL;	/* For the stacks */
+            }
+            if (av && AvREAL(av)) {
+                while (tmp)
+                    ary[--tmp] = NULL;
+            }
+            
+            *arrayp = *allocp;
+            *maxp = newmax;
+        }
     }
 }
 
@@ -216,23 +216,23 @@ S_adjust_index(pTHX_ AV *av, const MAGIC *mg, SSize_t *keyp)
 {
     bool adjust_index = 1;
     if (mg) {
-	/* Handle negative array indices 20020222 MJD */
-	SV * const ref = SvTIED_obj(MUTABLE_SV(av), mg);
-	SvGETMAGIC(ref);
-	if (SvROK(ref) && SvOBJECT(SvRV(ref))) {
-	    SV * const * const negative_indices_glob =
-		hv_fetchs(SvSTASH(SvRV(ref)), NEGATIVE_INDICES_VAR, 0);
+        /* Handle negative array indices 20020222 MJD */
+        SV * const ref = SvTIED_obj(MUTABLE_SV(av), mg);
+        SvGETMAGIC(ref);
+        if (SvROK(ref) && SvOBJECT(SvRV(ref))) {
+            SV * const * const negative_indices_glob =
+                hv_fetchs(SvSTASH(SvRV(ref)), NEGATIVE_INDICES_VAR, 0);
 
-	    if (negative_indices_glob && isGV(*negative_indices_glob)
-	     && SvTRUE(GvSV(*negative_indices_glob)))
-		adjust_index = 0;
-	}
+            if (negative_indices_glob && isGV(*negative_indices_glob)
+             && SvTRUE(GvSV(*negative_indices_glob)))
+                adjust_index = 0;
+        }
     }
 
     if (adjust_index) {
-	*keyp += AvFILL(av) + 1;
-	if (*keyp < 0)
-	    return FALSE;
+        *keyp += AvFILL(av) + 1;
+        if (*keyp < 0)
+            return FALSE;
     }
     return TRUE;
 }
@@ -245,41 +245,41 @@ Perl_av_fetch(pTHX_ AV *av, SSize_t key, I32 lval)
 
     if (SvRMAGICAL(av)) {
         const MAGIC * const tied_magic
-	    = mg_find((const SV *)av, PERL_MAGIC_tied);
+            = mg_find((const SV *)av, PERL_MAGIC_tied);
         if (tied_magic || mg_find((const SV *)av, PERL_MAGIC_regdata)) {
-	    SV *sv;
-	    if (key < 0) {
-		if (!S_adjust_index(aTHX_ av, tied_magic, &key))
-			return NULL;
-	    }
+            SV *sv;
+            if (key < 0) {
+                if (!S_adjust_index(aTHX_ av, tied_magic, &key))
+                        return NULL;
+            }
 
             sv = sv_newmortal();
-	    sv_upgrade(sv, SVt_PVLV);
-	    mg_copy(MUTABLE_SV(av), sv, 0, key);
-	    if (!tied_magic) /* for regdata, force leavesub to make copies */
-		SvTEMP_off(sv);
-	    LvTYPE(sv) = 't';
-	    LvTARG(sv) = sv; /* fake (SV**) */
-	    return &(LvTARG(sv));
+            sv_upgrade(sv, SVt_PVLV);
+            mg_copy(MUTABLE_SV(av), sv, 0, key);
+            if (!tied_magic) /* for regdata, force leavesub to make copies */
+                SvTEMP_off(sv);
+            LvTYPE(sv) = 't';
+            LvTARG(sv) = sv; /* fake (SV**) */
+            return &(LvTARG(sv));
         }
     }
 
     if (key < 0) {
-	key += AvFILL(av) + 1;
-	if (key < 0)
-	    return NULL;
+        key += AvFILL(av) + 1;
+        if (key < 0)
+            return NULL;
     }
 
     if (key > AvFILLp(av) || !AvARRAY(av)[key]) {
       emptyness:
-	return lval ? av_store(av,key,newSV(0)) : NULL;
+        return lval ? av_store(av,key,newSV(0)) : NULL;
     }
 
     if (AvREIFY(av)
-	     && (!AvARRAY(av)[key]	/* eg. @_ could have freed elts */
-		 || SvIS_FREED(AvARRAY(av)[key]))) {
-	AvARRAY(av)[key] = NULL;	/* 1/2 reify */
-	goto emptyness;
+             && (!AvARRAY(av)[key]	/* eg. @_ could have freed elts */
+                 || SvIS_FREED(AvARRAY(av)[key]))) {
+        AvARRAY(av)[key] = NULL;	/* 1/2 reify */
+        goto emptyness;
     }
     return &AvARRAY(av)[key];
 }
@@ -322,59 +322,59 @@ Perl_av_store(pTHX_ AV *av, SSize_t key, SV *val)
         const MAGIC * const tied_magic = mg_find((const SV *)av, PERL_MAGIC_tied);
         if (tied_magic) {
             if (key < 0) {
-		if (!S_adjust_index(aTHX_ av, tied_magic, &key))
+                if (!S_adjust_index(aTHX_ av, tied_magic, &key))
                         return 0;
             }
-	    if (val) {
-		mg_copy(MUTABLE_SV(av), val, 0, key);
-	    }
-	    return NULL;
+            if (val) {
+                mg_copy(MUTABLE_SV(av), val, 0, key);
+            }
+            return NULL;
         }
     }
 
 
     if (key < 0) {
-	key += AvFILL(av) + 1;
-	if (key < 0)
-	    return NULL;
+        key += AvFILL(av) + 1;
+        if (key < 0)
+            return NULL;
     }
 
     if (SvREADONLY(av) && key >= AvFILL(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
 
     if (!AvREAL(av) && AvREIFY(av))
-	av_reify(av);
+        av_reify(av);
     if (key > AvMAX(av))
-	av_extend(av,key);
+        av_extend(av,key);
     ary = AvARRAY(av);
     if (AvFILLp(av) < key) {
-	if (!AvREAL(av)) {
-	    if (av == PL_curstack && key > PL_stack_sp - PL_stack_base)
-		PL_stack_sp = PL_stack_base + key;	/* XPUSH in disguise */
-	    do {
-		ary[++AvFILLp(av)] = NULL;
-	    } while (AvFILLp(av) < key);
-	}
-	AvFILLp(av) = key;
+        if (!AvREAL(av)) {
+            if (av == PL_curstack && key > PL_stack_sp - PL_stack_base)
+                PL_stack_sp = PL_stack_base + key;	/* XPUSH in disguise */
+            do {
+                ary[++AvFILLp(av)] = NULL;
+            } while (AvFILLp(av) < key);
+        }
+        AvFILLp(av) = key;
     }
     else if (AvREAL(av))
-	SvREFCNT_dec(ary[key]);
+        SvREFCNT_dec(ary[key]);
     ary[key] = val;
     if (SvSMAGICAL(av)) {
-	const MAGIC *mg = SvMAGIC(av);
-	bool set = TRUE;
-	for (; mg; mg = mg->mg_moremagic) {
-	  if (!isUPPER(mg->mg_type)) continue;
-	  if (val) {
-	    sv_magic(val, MUTABLE_SV(av), toLOWER(mg->mg_type), 0, key);
-	  }
-	  if (PL_delaymagic && mg->mg_type == PERL_MAGIC_isa) {
-	    PL_delaymagic |= DM_ARRAY_ISA;
-	    set = FALSE;
-	  }
-	}
-	if (set)
-	   mg_set(MUTABLE_SV(av));
+        const MAGIC *mg = SvMAGIC(av);
+        bool set = TRUE;
+        for (; mg; mg = mg->mg_moremagic) {
+          if (!isUPPER(mg->mg_type)) continue;
+          if (val) {
+            sv_magic(val, MUTABLE_SV(av), toLOWER(mg->mg_type), 0, key);
+          }
+          if (PL_delaymagic && mg->mg_type == PERL_MAGIC_isa) {
+            PL_delaymagic |= DM_ARRAY_ISA;
+            set = FALSE;
+          }
+        }
+        if (set)
+           mg_set(MUTABLE_SV(av));
     }
     return &ary[key];
 }
@@ -402,29 +402,29 @@ Perl_av_make(pTHX_ SSize_t size, SV **strp)
     if (size) {		/* "defined" was returning undef for size==0 anyway. */
         SV** ary;
         SSize_t i;
-	Newx(ary,size,SV*);
-	AvALLOC(av) = ary;
-	AvARRAY(av) = ary;
-	AvMAX(av) = size - 1;
-	AvFILLp(av) = -1;
-	ENTER;
-	SAVEFREESV(av);
-	for (i = 0; i < size; i++) {
-	    assert (*strp);
+        Newx(ary,size,SV*);
+        AvALLOC(av) = ary;
+        AvARRAY(av) = ary;
+        AvMAX(av) = size - 1;
+        AvFILLp(av) = -1;
+        ENTER;
+        SAVEFREESV(av);
+        for (i = 0; i < size; i++) {
+            assert (*strp);
 
-	    /* Don't let sv_setsv swipe, since our source array might
-	       have multiple references to the same temp scalar (e.g.
-	       from a list slice) */
+            /* Don't let sv_setsv swipe, since our source array might
+               have multiple references to the same temp scalar (e.g.
+               from a list slice) */
 
-	    SvGETMAGIC(*strp); /* before newSV, in case it dies */
-	    AvFILLp(av)++;
-	    ary[i] = newSV(0);
-	    sv_setsv_flags(ary[i], *strp,
-			   SV_DO_COW_SVSETSV|SV_NOSTEAL);
-	    strp++;
-	}
-	SvREFCNT_inc_simple_void_NN(av);
-	LEAVE;
+            SvGETMAGIC(*strp); /* before newSV, in case it dies */
+            AvFILLp(av)++;
+            ary[i] = newSV(0);
+            sv_setsv_flags(ary[i], *strp,
+                           SV_DO_COW_SVSETSV|SV_NOSTEAL);
+            strp++;
+        }
+        SvREFCNT_inc_simple_void_NN(av);
+        LEAVE;
     }
     return av;
 }
@@ -452,42 +452,42 @@ Perl_av_clear(pTHX_ AV *av)
 
 #ifdef DEBUGGING
     if (SvREFCNT(av) == 0) {
-	Perl_ck_warner_d(aTHX_ packWARN(WARN_DEBUGGING), "Attempt to clear deleted array");
+        Perl_ck_warner_d(aTHX_ packWARN(WARN_DEBUGGING), "Attempt to clear deleted array");
     }
 #endif
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
 
     /* Give any tie a chance to cleanup first */
     if (SvRMAGICAL(av)) {
-	const MAGIC* const mg = SvMAGIC(av);
-	if (PL_delaymagic && mg && mg->mg_type == PERL_MAGIC_isa)
-	    PL_delaymagic |= DM_ARRAY_ISA;
+        const MAGIC* const mg = SvMAGIC(av);
+        if (PL_delaymagic && mg && mg->mg_type == PERL_MAGIC_isa)
+            PL_delaymagic |= DM_ARRAY_ISA;
         else
-	    mg_clear(MUTABLE_SV(av)); 
+            mg_clear(MUTABLE_SV(av)); 
     }
 
     if (AvMAX(av) < 0)
-	return;
+        return;
 
     if ((real = !!AvREAL(av))) {
-	SV** const ary = AvARRAY(av);
-	SSize_t index = AvFILLp(av) + 1;
-	ENTER;
-	SAVEFREESV(SvREFCNT_inc_simple_NN(av));
-	while (index) {
-	    SV * const sv = ary[--index];
-	    /* undef the slot before freeing the value, because a
-	     * destructor might try to modify this array */
-	    ary[index] = NULL;
-	    SvREFCNT_dec(sv);
-	}
+        SV** const ary = AvARRAY(av);
+        SSize_t index = AvFILLp(av) + 1;
+        ENTER;
+        SAVEFREESV(SvREFCNT_inc_simple_NN(av));
+        while (index) {
+            SV * const sv = ary[--index];
+            /* undef the slot before freeing the value, because a
+             * destructor might try to modify this array */
+            ary[index] = NULL;
+            SvREFCNT_dec(sv);
+        }
     }
     extra = AvARRAY(av) - AvALLOC(av);
     if (extra) {
-	AvMAX(av) += extra;
-	AvARRAY(av) = AvALLOC(av);
+        AvMAX(av) += extra;
+        AvARRAY(av) = AvALLOC(av);
     }
     AvFILLp(av) = -1;
     if (real) LEAVE;
@@ -513,14 +513,14 @@ Perl_av_undef(pTHX_ AV *av)
 
     /* Give any tie a chance to cleanup first */
     if (SvTIED_mg((const SV *)av, PERL_MAGIC_tied)) 
-	av_fill(av, -1);
+        av_fill(av, -1);
 
     if ((real = !!AvREAL(av))) {
-	SSize_t key = AvFILLp(av) + 1;
-	ENTER;
-	SAVEFREESV(SvREFCNT_inc_simple_NN(av));
-	while (key)
-	    SvREFCNT_dec(AvARRAY(av)[--key]);
+        SSize_t key = AvFILLp(av) + 1;
+        ENTER;
+        SAVEFREESV(SvREFCNT_inc_simple_NN(av));
+        while (key)
+            SvREFCNT_dec(AvARRAY(av)[--key]);
     }
 
     Safefree(AvALLOC(av));
@@ -548,7 +548,7 @@ Perl_av_create_and_push(pTHX_ AV **const avp, SV *const val)
     PERL_ARGS_ASSERT_AV_CREATE_AND_PUSH;
 
     if (!*avp)
-	*avp = newAV();
+        *avp = newAV();
     av_push(*avp, val);
 }
 
@@ -572,12 +572,12 @@ Perl_av_push(pTHX_ AV *av, SV *val)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
 
     if ((mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied))) {
-	Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(PUSH), G_DISCARD, 1,
-			    val);
-	return;
+        Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(PUSH), G_DISCARD, 1,
+                            val);
+        return;
     }
     av_store(av,AvFILLp(av)+1,val);
 }
@@ -604,19 +604,19 @@ Perl_av_pop(pTHX_ AV *av)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
     if ((mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied))) {
-	retval = Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(POP), 0, 0);
-	if (retval)
-	    retval = newSVsv(retval);
-	return retval;
+        retval = Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(POP), 0, 0);
+        if (retval)
+            retval = newSVsv(retval);
+        return retval;
     }
     if (AvFILL(av) < 0)
-	return &PL_sv_undef;
+        return &PL_sv_undef;
     retval = AvARRAY(av)[AvFILLp(av)];
     AvARRAY(av)[AvFILLp(av)--] = NULL;
     if (SvSMAGICAL(av))
-	mg_set(MUTABLE_SV(av));
+        mg_set(MUTABLE_SV(av));
     return retval ? retval : &PL_sv_undef;
 }
 
@@ -637,7 +637,7 @@ Perl_av_create_and_unshift_one(pTHX_ AV **const avp, SV *const val)
     PERL_ARGS_ASSERT_AV_CREATE_AND_UNSHIFT_ONE;
 
     if (!*avp)
-	*avp = newAV();
+        *avp = newAV();
     av_unshift(*avp, 1);
     return av_store(*avp, 0, val);
 }
@@ -664,45 +664,45 @@ Perl_av_unshift(pTHX_ AV *av, SSize_t num)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
 
     if ((mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied))) {
-	Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(UNSHIFT),
-			    G_DISCARD | G_UNDEF_FILL, num);
-	return;
+        Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(UNSHIFT),
+                            G_DISCARD | G_UNDEF_FILL, num);
+        return;
     }
 
     if (num <= 0)
       return;
     if (!AvREAL(av) && AvREIFY(av))
-	av_reify(av);
+        av_reify(av);
     i = AvARRAY(av) - AvALLOC(av);
     if (i) {
-	if (i > num)
-	    i = num;
-	num -= i;
+        if (i > num)
+            i = num;
+        num -= i;
     
-	AvMAX(av) += i;
-	AvFILLp(av) += i;
-	AvARRAY(av) = AvARRAY(av) - i;
+        AvMAX(av) += i;
+        AvFILLp(av) += i;
+        AvARRAY(av) = AvARRAY(av) - i;
     }
     if (num) {
-	SV **ary;
-	const SSize_t i = AvFILLp(av);
-	/* Create extra elements */
-	const SSize_t slide = i > 0 ? i : 0;
-	num += slide;
-	av_extend(av, i + num);
-	AvFILLp(av) += num;
-	ary = AvARRAY(av);
-	Move(ary, ary + num, i + 1, SV*);
-	do {
-	    ary[--num] = NULL;
-	} while (num);
-	/* Make extra elements into a buffer */
-	AvMAX(av) -= slide;
-	AvFILLp(av) -= slide;
-	AvARRAY(av) = AvARRAY(av) + slide;
+        SV **ary;
+        const SSize_t i = AvFILLp(av);
+        /* Create extra elements */
+        const SSize_t slide = i > 0 ? i : 0;
+        num += slide;
+        av_extend(av, i + num);
+        AvFILLp(av) += num;
+        ary = AvARRAY(av);
+        Move(ary, ary + num, i + 1, SV*);
+        do {
+            ary[--num] = NULL;
+        } while (num);
+        /* Make extra elements into a buffer */
+        AvMAX(av) -= slide;
+        AvFILLp(av) -= slide;
+        AvARRAY(av) = AvARRAY(av) + slide;
     }
 }
 
@@ -728,23 +728,23 @@ Perl_av_shift(pTHX_ AV *av)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
     if ((mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied))) {
-	retval = Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(SHIFT), 0, 0);
-	if (retval)
-	    retval = newSVsv(retval);
-	return retval;
+        retval = Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(SHIFT), 0, 0);
+        if (retval)
+            retval = newSVsv(retval);
+        return retval;
     }
     if (AvFILL(av) < 0)
       return &PL_sv_undef;
     retval = *AvARRAY(av);
     if (AvREAL(av))
-	*AvARRAY(av) = NULL;
+        *AvARRAY(av) = NULL;
     AvARRAY(av) = AvARRAY(av) + 1;
     AvMAX(av)--;
     AvFILLp(av)--;
     if (SvSMAGICAL(av))
-	mg_set(MUTABLE_SV(av));
+        mg_set(MUTABLE_SV(av));
     return retval ? retval : &PL_sv_undef;
 }
 
@@ -799,35 +799,35 @@ Perl_av_fill(pTHX_ AV *av, SSize_t fill)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (fill < 0)
-	fill = -1;
+        fill = -1;
     if ((mg = SvTIED_mg((const SV *)av, PERL_MAGIC_tied))) {
-	SV *arg1 = sv_newmortal();
-	sv_setiv(arg1, (IV)(fill + 1));
-	Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(STORESIZE), G_DISCARD,
-			    1, arg1);
-	return;
+        SV *arg1 = sv_newmortal();
+        sv_setiv(arg1, (IV)(fill + 1));
+        Perl_magic_methcall(aTHX_ MUTABLE_SV(av), mg, SV_CONST(STORESIZE), G_DISCARD,
+                            1, arg1);
+        return;
     }
     if (fill <= AvMAX(av)) {
-	SSize_t key = AvFILLp(av);
-	SV** const ary = AvARRAY(av);
+        SSize_t key = AvFILLp(av);
+        SV** const ary = AvARRAY(av);
 
-	if (AvREAL(av)) {
-	    while (key > fill) {
-		SvREFCNT_dec(ary[key]);
-		ary[key--] = NULL;
-	    }
-	}
-	else {
-	    while (key < fill)
-		ary[++key] = NULL;
-	}
-	    
-	AvFILLp(av) = fill;
-	if (SvSMAGICAL(av))
-	    mg_set(MUTABLE_SV(av));
+        if (AvREAL(av)) {
+            while (key > fill) {
+                SvREFCNT_dec(ary[key]);
+                ary[key--] = NULL;
+            }
+        }
+        else {
+            while (key < fill)
+                ary[++key] = NULL;
+        }
+            
+        AvFILLp(av) = fill;
+        if (SvSMAGICAL(av))
+            mg_set(MUTABLE_SV(av));
     }
     else
-	(void)av_store(av,fill,NULL);
+        (void)av_store(av,fill,NULL);
 }
 
 /*
@@ -850,16 +850,16 @@ Perl_av_delete(pTHX_ AV *av, SSize_t key, I32 flags)
     assert(SvTYPE(av) == SVt_PVAV);
 
     if (SvREADONLY(av))
-	Perl_croak_no_modify();
+        Perl_croak_no_modify();
 
     if (SvRMAGICAL(av)) {
         const MAGIC * const tied_magic
-	    = mg_find((const SV *)av, PERL_MAGIC_tied);
+            = mg_find((const SV *)av, PERL_MAGIC_tied);
         if ((tied_magic || mg_find((const SV *)av, PERL_MAGIC_regdata))) {
             SV **svp;
             if (key < 0) {
-		if (!S_adjust_index(aTHX_ av, tied_magic, &key))
-			return NULL;
+                if (!S_adjust_index(aTHX_ av, tied_magic, &key))
+                        return NULL;
             }
             svp = av_fetch(av, key, TRUE);
             if (svp) {
@@ -869,39 +869,39 @@ Perl_av_delete(pTHX_ AV *av, SSize_t key, I32 flags)
                     sv_unmagic(sv, PERL_MAGIC_tiedelem); /* No longer an element */
                     return sv;
                 }
-		return NULL;
+                return NULL;
             }
         }
     }
 
     if (key < 0) {
-	key += AvFILL(av) + 1;
-	if (key < 0)
-	    return NULL;
+        key += AvFILL(av) + 1;
+        if (key < 0)
+            return NULL;
     }
 
     if (key > AvFILLp(av))
-	return NULL;
+        return NULL;
     else {
-	if (!AvREAL(av) && AvREIFY(av))
-	    av_reify(av);
-	sv = AvARRAY(av)[key];
-	AvARRAY(av)[key] = NULL;
-	if (key == AvFILLp(av)) {
-	    do {
-		AvFILLp(av)--;
-	    } while (--key >= 0 && !AvARRAY(av)[key]);
-	}
-	if (SvSMAGICAL(av))
-	    mg_set(MUTABLE_SV(av));
+        if (!AvREAL(av) && AvREIFY(av))
+            av_reify(av);
+        sv = AvARRAY(av)[key];
+        AvARRAY(av)[key] = NULL;
+        if (key == AvFILLp(av)) {
+            do {
+                AvFILLp(av)--;
+            } while (--key >= 0 && !AvARRAY(av)[key]);
+        }
+        if (SvSMAGICAL(av))
+            mg_set(MUTABLE_SV(av));
     }
     if(sv != NULL) {
-	if (flags & G_DISCARD) {
-	    SvREFCNT_dec_NN(sv);
-	    return NULL;
-	}
-	else if (AvREAL(av))
-	    sv_2mortal(sv);
+        if (flags & G_DISCARD) {
+            SvREFCNT_dec_NN(sv);
+            return NULL;
+        }
+        else if (AvREAL(av))
+            sv_2mortal(sv);
     }
     return sv;
 }
@@ -926,14 +926,14 @@ Perl_av_exists(pTHX_ AV *av, SSize_t key)
 
     if (SvRMAGICAL(av)) {
         const MAGIC * const tied_magic
-	    = mg_find((const SV *)av, PERL_MAGIC_tied);
+            = mg_find((const SV *)av, PERL_MAGIC_tied);
         const MAGIC * const regdata_magic
             = mg_find((const SV *)av, PERL_MAGIC_regdata);
         if (tied_magic || regdata_magic) {
             MAGIC *mg;
             /* Handle negative array indices 20020222 MJD */
             if (key < 0) {
-		if (!S_adjust_index(aTHX_ av, tied_magic, &key))
+                if (!S_adjust_index(aTHX_ av, tied_magic, &key))
                         return FALSE;
             }
 
@@ -943,33 +943,33 @@ Perl_av_exists(pTHX_ AV *av, SSize_t key)
                 else
                     return FALSE;
             }
-	    {
-		SV * const sv = sv_newmortal();
-		mg_copy(MUTABLE_SV(av), sv, 0, key);
-		mg = mg_find(sv, PERL_MAGIC_tiedelem);
-		if (mg) {
-		    magic_existspack(sv, mg);
-		    {
-			I32 retbool = SvTRUE_nomg_NN(sv);
-			return cBOOL(retbool);
-		    }
-		}
-	    }
+            {
+                SV * const sv = sv_newmortal();
+                mg_copy(MUTABLE_SV(av), sv, 0, key);
+                mg = mg_find(sv, PERL_MAGIC_tiedelem);
+                if (mg) {
+                    magic_existspack(sv, mg);
+                    {
+                        I32 retbool = SvTRUE_nomg_NN(sv);
+                        return cBOOL(retbool);
+                    }
+                }
+            }
         }
     }
 
     if (key < 0) {
-	key += AvFILL(av) + 1;
-	if (key < 0)
-	    return FALSE;
+        key += AvFILL(av) + 1;
+        if (key < 0)
+            return FALSE;
     }
 
     if (key <= AvFILLp(av) && AvARRAY(av)[key])
     {
-	return TRUE;
+        return TRUE;
     }
     else
-	return FALSE;
+        return FALSE;
 }
 
 static MAGIC *
@@ -982,11 +982,11 @@ S_get_aux_mg(pTHX_ AV *av) {
     mg = mg_find((const SV *)av, PERL_MAGIC_arylen_p);
 
     if (!mg) {
-	mg = sv_magicext(MUTABLE_SV(av), 0, PERL_MAGIC_arylen_p,
-			 &PL_vtbl_arylen_p, 0, 0);
-	assert(mg);
-	/* sv_magicext won't set this for us because we pass in a NULL obj  */
-	mg->mg_flags |= MGf_REFCOUNTED;
+        mg = sv_magicext(MUTABLE_SV(av), 0, PERL_MAGIC_arylen_p,
+                         &PL_vtbl_arylen_p, 0, 0);
+        assert(mg);
+        /* sv_magicext won't set this for us because we pass in a NULL obj  */
+        mg->mg_flags |= MGf_REFCOUNTED;
     }
     return mg;
 }
@@ -1012,10 +1012,10 @@ Perl_av_iter_p(pTHX_ AV *av) {
     return (IV *)&(mg->mg_len);
 #else
     if (!mg->mg_ptr) {
-	IV *temp;
-	mg->mg_len = IVSIZE;
-	Newxz(temp, 1, IV);
-	mg->mg_ptr = (char *) temp;
+        IV *temp;
+        mg->mg_len = IVSIZE;
+        Newxz(temp, 1, IV);
+        mg->mg_ptr = (char *) temp;
     }
     return (IV *)mg->mg_ptr;
 #endif

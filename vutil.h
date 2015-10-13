@@ -77,11 +77,11 @@ Perl_ck_warner(pTHX_ U32 err, const char* pat, ...)
 
 #define PERL_VERSION_DECIMAL(r,v,s) (r*1000000 + v*1000 + s)
 #define PERL_DECIMAL_VERSION \
-	PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
+        PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
 #define PERL_VERSION_LT(r,v,s) \
-	(PERL_DECIMAL_VERSION < PERL_VERSION_DECIMAL(r,v,s))
+        (PERL_DECIMAL_VERSION < PERL_VERSION_DECIMAL(r,v,s))
 #define PERL_VERSION_GE(r,v,s) \
-	(PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
+        (PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
 
 #if PERL_VERSION_LT(5,15,4)
 #  define ISA_VERSION_OBJ(v) (sv_isobject(v) && sv_derived_from(v,"version"))
@@ -153,10 +153,10 @@ const char * Perl_prescan_version2(pTHX_ const char *s, bool strict, const char*
 #  define PRESCAN_VERSION(a,b,c,d,e,f,g)	Perl_prescan_version2(aTHX_ a,b,c,d,e,f,g)
 #  undef is_LAX_VERSION
 #  define is_LAX_VERSION(a,b) \
-	(a != Perl_prescan_version2(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version2(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
 #  undef is_STRICT_VERSION
 #  define is_STRICT_VERSION(a,b) \
-	(a != Perl_prescan_version2(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version2(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
 
 #else
 
@@ -182,44 +182,44 @@ const char * Perl_prescan_version(pTHX_ const char *s, bool strict, const char**
 #  define PRESCAN_VERSION(a,b,c,d,e,f,g)	Perl_prescan_version(aTHX_ a,b,c,d,e,f,g)
 #  ifndef is_LAX_VERSION
 #    define is_LAX_VERSION(a,b) \
-	(a != Perl_prescan_version(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
 #  endif
 #  ifndef is_STRICT_VERSION
 #    define is_STRICT_VERSION(a,b) \
-	(a != Perl_prescan_version(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
 #  endif
 
 #endif
 
 #if PERL_VERSION_LT(5,11,4)
 #  define BADVERSION(a,b,c) \
-	if (b) { \
-	    *b = c; \
-	} \
-	return a;
+        if (b) { \
+            *b = c; \
+        } \
+        return a;
 
 #  define PERL_ARGS_ASSERT_PRESCAN_VERSION	\
-	assert(s); assert(sqv); assert(ssaw_decimal);\
-	assert(swidth); assert(salpha);
+        assert(s); assert(sqv); assert(ssaw_decimal);\
+        assert(swidth); assert(salpha);
 
 #  define PERL_ARGS_ASSERT_SCAN_VERSION	\
-	assert(s); assert(rv)
+        assert(s); assert(rv)
 #  define PERL_ARGS_ASSERT_NEW_VERSION	\
-	assert(ver)
+        assert(ver)
 #  define PERL_ARGS_ASSERT_UPG_VERSION	\
-	assert(ver)
+        assert(ver)
 #  define PERL_ARGS_ASSERT_VVERIFY	\
-	assert(vs)
+        assert(vs)
 #  define PERL_ARGS_ASSERT_VNUMIFY	\
-	assert(vs)
+        assert(vs)
 #  define PERL_ARGS_ASSERT_VNORMAL	\
-	assert(vs)
+        assert(vs)
 #  define PERL_ARGS_ASSERT_VSTRINGIFY	\
-	assert(vs)
+        assert(vs)
 #  define PERL_ARGS_ASSERT_VCMP	\
-	assert(lhv); assert(rhv)
+        assert(lhv); assert(rhv)
 #  define PERL_ARGS_ASSERT_CK_WARNER      \
-	assert(pat)
+        assert(pat)
 #endif
 
 
@@ -228,12 +228,12 @@ const char * Perl_prescan_version(pTHX_ const char *s, bool strict, const char**
 # undef RESTORE_NUMERIC_LOCAL
 # ifdef USE_LOCALE
 #  define STORE_NUMERIC_LOCAL_SET_STANDARD()\
-	char *loc = savepv(setlocale(LC_NUMERIC, NULL)); \
-	SAVEFREEPV(loc); \
-	setlocale(LC_NUMERIC, "C");
+        char *loc = savepv(setlocale(LC_NUMERIC, NULL)); \
+        SAVEFREEPV(loc); \
+        setlocale(LC_NUMERIC, "C");
 
 #  define RESTORE_NUMERIC_LOCAL()\
-	setlocale(LC_NUMERIC, loc);
+        setlocale(LC_NUMERIC, loc);
 # else
 #  define STORE_NUMERIC_LOCAL_SET_STANDARD()
 #  define RESTORE_NUMERIC_LOCAL()

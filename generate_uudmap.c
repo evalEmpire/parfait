@@ -40,13 +40,13 @@ format_mg_data(FILE *out, const void *thing, size_t count) {
 
   while (1) {
       if (p->value) {
-	  fprintf(out, "    %s\n    %s", p->comment, p->value);
+          fprintf(out, "    %s\n    %s", p->comment, p->value);
       } else {
-	  fputs("    0", out);
+          fputs("    0", out);
       }
       ++p;
       if (!--count)
-	  break;
+          break;
       fputs(",\n", out);
   }
   fputc('\n', out);
@@ -63,7 +63,7 @@ format_char_block(FILE *out, const void *thing, size_t count) {
     if (count) {
       fputs(", ", out);
       if (!(count & 15)) {
-	fputs("\n    ", out);
+        fputs("\n    ", out);
       }
     }
   }
@@ -72,13 +72,13 @@ format_char_block(FILE *out, const void *thing, size_t count) {
 
 static void
 output_to_file(const char *progname, const char *filename,
-	       void (format_function)(FILE *out, const void *thing, size_t count),
-	       const void *thing, size_t count) {
+               void (format_function)(FILE *out, const void *thing, size_t count),
+               const void *thing, size_t count) {
   FILE *const out = fopen(filename, "w");
 
   if (!out) {
     fprintf(stderr, "%s: Could not open '%s': %s\n", progname, filename,
-	    strerror(errno));
+            strerror(errno));
     exit(1);
   }
 
@@ -88,7 +88,7 @@ output_to_file(const char *progname, const char *filename,
 
   if (fclose(out)) {
     fprintf(stderr, "%s: Could not close '%s': %s\n", progname, filename,
-	    strerror(errno));
+            strerror(errno));
     exit(1);
   }
 }
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
   PL_uudmap[(U8)' '] = 0;
 
   output_to_file(argv[0], argv[1], &format_char_block,
-		 (const void *)PL_uudmap, sizeof(PL_uudmap));
+                 (const void *)PL_uudmap, sizeof(PL_uudmap));
 
   for (bits = 1; bits < 256; bits++) {
     if (bits & 1)	PL_bitcount[bits]++;
@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
   }
 
   output_to_file(argv[0], argv[2], &format_char_block,
-		 (const void *)PL_bitcount, sizeof(PL_bitcount));
+                 (const void *)PL_bitcount, sizeof(PL_bitcount));
 
   while (p->value) {
       mg_data[p->type].value = p->value;
@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
   }
       
   output_to_file(argv[0], argv[3], &format_mg_data,
-		 (const void *)mg_data, sizeof(mg_data)/sizeof(mg_data[0]));
+                 (const void *)mg_data, sizeof(mg_data)/sizeof(mg_data[0]));
 
   return 0;
 }

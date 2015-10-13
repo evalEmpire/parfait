@@ -59,15 +59,15 @@ XCE_EXPORT struct protoent *xcegetprotobynumber(int number);
 
 #define StartSockets() \
     STMT_START {					\
-	if (!wsock_started)				\
-	    start_sockets();				\
+        if (!wsock_started)				\
+            start_sockets();				\
     } STMT_END
 
 #define SOCKET_TEST(x, y) \
     STMT_START {					\
-	StartSockets();					\
-	if((x) == (y))					\
-	    errno = WSAGetLastError();			\
+        StartSockets();					\
+        if((x) == (y))					\
+            errno = WSAGetLastError();			\
     } STMT_END
 
 #define SOCKET_TEST_ERROR(x) SOCKET_TEST(x, SOCKET_ERROR)
@@ -82,7 +82,7 @@ EXTERN_C void
 EndSockets(void)
 {
     if (wsock_started)
-	WSACleanup();
+        WSACleanup();
 }
 
 void
@@ -99,9 +99,9 @@ start_sockets(void)
      */
     version = 0x101;
     if(ret = WSAStartup(version, &retdata))
-	Perl_croak_nocontext("Unable to locate winsock library!\n");
+        Perl_croak_nocontext("Unable to locate winsock library!\n");
     if(retdata.wVersion != version)
-	Perl_croak_nocontext("Could not find version 1.1 of winsock dll\n");
+        Perl_croak_nocontext("Could not find version 1.1 of winsock dll\n");
 
     /* atexit((void (*)(void)) EndSockets); */
     wsock_started = 1;
@@ -208,7 +208,7 @@ win32_recv(SOCKET s, char *buf, int len, int flags)
 
 int
 win32_recvfrom(SOCKET s, char *buf, int len, int flags,
-	       struct sockaddr *from, int *fromlen)
+               struct sockaddr *from, int *fromlen)
 {
   StartSockets();
   return xcerecvfrom(s, buf, len, flags, from, fromlen);
@@ -216,7 +216,7 @@ win32_recvfrom(SOCKET s, char *buf, int len, int flags,
 
 int
 win32_select(int nfds, Perl_fd_set* rd, Perl_fd_set* wr,
-	     Perl_fd_set* ex, const struct timeval* timeout)
+             Perl_fd_set* ex, const struct timeval* timeout)
 {
   StartSockets();
   /* select not yet fixed */
@@ -233,7 +233,7 @@ win32_send(SOCKET s, const char *buf, int len, int flags)
 
 int
 win32_sendto(SOCKET s, const char *buf, int len, int flags,
-	     const struct sockaddr *to, int tolen)
+             const struct sockaddr *to, int tolen)
 {
   StartSockets();
   return xcesendto(s, buf, len, flags, to, tolen);
@@ -241,7 +241,7 @@ win32_sendto(SOCKET s, const char *buf, int len, int flags,
 
 int
 win32_setsockopt(SOCKET s, int level, int optname,
-		 const char *optval, int optlen)
+                 const char *optval, int optlen)
 {
   StartSockets();
   return xcesetsockopt(s, level, optname, optval, optlen);
@@ -314,7 +314,7 @@ win32_getservbyname(const char *name, const char *proto)
 
     SOCKET_TEST(r = getservbyname(name, proto), NULL);
     if (r) {
-	r = win32_savecopyservent(&w32_servent, r, proto);
+        r = win32_savecopyservent(&w32_servent, r, proto);
     }
     return r;
 }
@@ -327,7 +327,7 @@ win32_getservbyport(int port, const char *proto)
 
     SOCKET_TEST(r = getservbyport(port, proto), NULL);
     if (r) {
-	r = win32_savecopyservent(&w32_servent, r, proto);
+        r = win32_savecopyservent(&w32_servent, r, proto);
     }
     return r;
 }
@@ -340,8 +340,8 @@ win32_ioctl(int i, unsigned int u, char *data)
     int retval;
     
     if (!wsock_started) {
-	Perl_croak_nocontext("ioctl implemented only on sockets");
-	/* NOTREACHED */
+        Perl_croak_nocontext("ioctl implemented only on sockets");
+        /* NOTREACHED */
     }
 
     /* mauke says using memcpy avoids alignment issues */
@@ -350,11 +350,11 @@ win32_ioctl(int i, unsigned int u, char *data)
     memcpy(data, &u_long_arg, sizeof u_long_arg);
     
     if (retval == SOCKET_ERROR) {
-	if (WSAGetLastError() == WSAENOTSOCK) {
-	    Perl_croak_nocontext("ioctl implemented only on sockets");
-	    /* NOTREACHED */
-	}
-	errno = WSAGetLastError();
+        if (WSAGetLastError() == WSAENOTSOCK) {
+            Perl_croak_nocontext("ioctl implemented only on sockets");
+            /* NOTREACHED */
+        }
+        errno = WSAGetLastError();
     }
     return retval;
 }
@@ -484,12 +484,12 @@ win32_savecopyservent(struct servent*d, struct servent*s, const char *proto)
     d->s_aliases = s->s_aliases;
     d->s_port = s->s_port;
     if (!IsWin95() && s->s_proto && strlen(s->s_proto))
-	d->s_proto = s->s_proto;
+        d->s_proto = s->s_proto;
     else
     if (proto && strlen(proto))
-	d->s_proto = (char *)proto;
+        d->s_proto = (char *)proto;
     else
-	d->s_proto = "tcp";
+        d->s_proto = "tcp";
 
     return d;
 }

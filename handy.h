@@ -145,13 +145,13 @@ Null SV pointer.  (No longer available when C<PERL_CORE> is defined.)
    For dealing with issues that may arise from various 32/64-bit
    systems, we will ask Configure to check out
 
-	SHORTSIZE == sizeof(short)
-	INTSIZE == sizeof(int)
-	LONGSIZE == sizeof(long)
-	LONGLONGSIZE == sizeof(long long) (if HAS_LONG_LONG)
-	PTRSIZE == sizeof(void *)
-	DOUBLESIZE == sizeof(double)
-	LONG_DOUBLESIZE == sizeof(long double) (if HAS_LONG_DOUBLE).
+        SHORTSIZE == sizeof(short)
+        INTSIZE == sizeof(int)
+        LONGSIZE == sizeof(long)
+        LONGLONGSIZE == sizeof(long long) (if HAS_LONG_LONG)
+        PTRSIZE == sizeof(void *)
+        DOUBLESIZE == sizeof(double)
+        LONG_DOUBLESIZE == sizeof(long double) (if HAS_LONG_DOUBLE).
 
 */
 
@@ -401,17 +401,17 @@ string/length pair.
     Perl_sv_catxmlpvn(aTHX_ dsv, STR_WITH_LEN(str), utf8)
 #define hv_fetchs(hv,key,lval)						\
   ((SV **)Perl_hv_common(aTHX_ (hv), NULL, STR_WITH_LEN(key), 0,	\
-			 (lval) ? (HV_FETCH_JUST_SV | HV_FETCH_LVALUE)	\
-			 : HV_FETCH_JUST_SV, NULL, 0))
+                         (lval) ? (HV_FETCH_JUST_SV | HV_FETCH_LVALUE)	\
+                         : HV_FETCH_JUST_SV, NULL, 0))
 
 #define hv_stores(hv,key,val)						\
   ((SV **)Perl_hv_common(aTHX_ (hv), NULL, STR_WITH_LEN(key), 0,	\
-			 (HV_FETCH_ISSTORE|HV_FETCH_JUST_SV), (val), 0))
+                         (HV_FETCH_ISSTORE|HV_FETCH_JUST_SV), (val), 0))
 
 #define lex_stuff_pvs(pv,flags) Perl_lex_stuff_pvn(aTHX_ STR_WITH_LEN(pv), flags)
 
 #define get_cvs(str, flags)					\
-	Perl_get_cvn_flags(aTHX_ STR_WITH_LEN(str), (flags))
+        Perl_get_cvn_flags(aTHX_ STR_WITH_LEN(str), (flags))
 
 /*
 =head1 Miscellaneous Functions
@@ -480,7 +480,7 @@ Returns zero if non-equal, or non-zero if equal.
 #endif
 
 #define memEQs(s1, l, s2) \
-	(sizeof(s2)-1 == l && memEQ(s1, ("" s2 ""), (sizeof(s2)-1)))
+        (sizeof(s2)-1 == l && memEQ(s1, ("" s2 ""), (sizeof(s2)-1)))
 #define memNEs(s1, l, s2) !memEQs(s1, l, s2)
 
 /*
@@ -1736,16 +1736,16 @@ typedef U32 line_t;
 
 /* Helpful alias for version prescan */
 #define is_LAX_VERSION(a,b) \
-	(a != Perl_prescan_version(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version(aTHX_ a, FALSE, b, NULL, NULL, NULL, NULL))
 
 #define is_STRICT_VERSION(a,b) \
-	(a != Perl_prescan_version(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
+        (a != Perl_prescan_version(aTHX_ a, TRUE, b, NULL, NULL, NULL, NULL))
 
 #define BADVERSION(a,b,c) \
-	if (b) { \
-	    *b = c; \
-	} \
-	return a;
+        if (b) { \
+            *b = c; \
+        } \
+        return a;
 
 /* Converts a character known to represent a hexadecimal digit (0-9, A-F, or
  * a-f) to its numeric value.  READ_XDIGIT's argument is a string pointer,
@@ -1922,12 +1922,12 @@ PoisonWith(0xEF) for catching access to freed memory.
             MEM_SIZE_MAX/sizeof(t)) > MEM_SIZE_MAX/sizeof(t))
 
 #  define MEM_WRAP_CHECK(n,t) \
-	(void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
+        (void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
         && (croak_memory_wrap(),0))
 
 #  define MEM_WRAP_CHECK_1(n,t,a) \
-	(void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
-	&& (Perl_croak_nocontext("%s",(a)),0))
+        (void)(UNLIKELY(_MEM_WRAP_WILL_WRAP(n,t)) \
+        && (Perl_croak_nocontext("%s",(a)),0))
 
 #define MEM_WRAP_CHECK_(n,t) MEM_WRAP_CHECK(n,t),
 
@@ -2028,9 +2028,9 @@ void Perl_mem_log_del_sv(const SV *sv, const char *filename, const int linenumbe
 #endif
 
 #define Renew(v,n,t) \
-	  (v = (MEM_WRAP_CHECK_(n,t) (t*)MEM_LOG_REALLOC(n,t,v,saferealloc((Malloc_t)(v),(MEM_SIZE)((n)*sizeof(t))))))
+          (v = (MEM_WRAP_CHECK_(n,t) (t*)MEM_LOG_REALLOC(n,t,v,saferealloc((Malloc_t)(v),(MEM_SIZE)((n)*sizeof(t))))))
 #define Renewc(v,n,t,c) \
-	  (v = (MEM_WRAP_CHECK_(n,t) (c*)MEM_LOG_REALLOC(n,t,v,saferealloc((Malloc_t)(v),(MEM_SIZE)((n)*sizeof(t))))))
+          (v = (MEM_WRAP_CHECK_(n,t) (c*)MEM_LOG_REALLOC(n,t,v,saferealloc((Malloc_t)(v),(MEM_SIZE)((n)*sizeof(t))))))
 
 #ifdef PERL_POISON
 #define Safefree(d) \

@@ -76,7 +76,7 @@ than just the ASCII characters, so C<is_invariant_string> is preferred.
 #define is_utf8_string_loc(s, len, ep)	is_utf8_string_loclen(s, len, ep, 0)
 
 #define foldEQ_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2) \
-		    foldEQ_utf8_flags(s1, pe1, l1, u1, s2, pe2, l2, u2, 0)
+                    foldEQ_utf8_flags(s1, pe1, l1, u1, s2, pe2, l2, u2, 0)
 #define FOLDEQ_UTF8_NOMIX_ASCII   (1 << 0)
 #define FOLDEQ_LOCALE             (1 << 1)
 #define FOLDEQ_S1_ALREADY_FOLDED  (1 << 2)
@@ -85,7 +85,7 @@ than just the ASCII characters, so C<is_invariant_string> is preferred.
 #define FOLDEQ_S2_FOLDS_SANE      (1 << 5)
 
 #define ibcmp_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2) \
-		    cBOOL(! foldEQ_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2))
+                    cBOOL(! foldEQ_utf8(s1, pe1, l1, u1, s2, pe2, l2, u2))
 
 #ifdef EBCDIC
 /* The equivalent of these macros but implementing UTF-EBCDIC
@@ -117,7 +117,7 @@ EXTCONST unsigned char PL_utf8skip[] = {
 /* 0xE0 */ 3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3, /* U+0800 to U+FFFF */
 /* 0xF0 */ 4,4,4,4,4,4,4,4,5,5,5,5,6,6,	    /* above BMP to 2**31 - 1 */
 /* 0xFE */ 7,13, /* Perl extended (never was official UTF-8).  Up to 72bit
-		    allowed (64-bit + reserved). */
+                    allowed (64-bit + reserved). */
 };
 #else
 EXTCONST unsigned char PL_utf8skip[];
@@ -252,20 +252,20 @@ Perl's extended UTF-8 means we can have start bytes up to FF.
 
 /* Input is a true Unicode (not-native) code point */
 #define OFFUNISKIP(uv) ( (uv) < 0x80        ? 1 : \
-		      (uv) < 0x800          ? 2 : \
-		      (uv) < 0x10000        ? 3 : \
-		      (uv) < 0x200000       ? 4 : \
-		      (uv) < 0x4000000      ? 5 : \
-		      (uv) < 0x80000000     ? 6 : \
+                      (uv) < 0x800          ? 2 : \
+                      (uv) < 0x10000        ? 3 : \
+                      (uv) < 0x200000       ? 4 : \
+                      (uv) < 0x4000000      ? 5 : \
+                      (uv) < 0x80000000     ? 6 : \
                       (uv) < UTF8_QUAD_MAX ? 7 : 13 )
 #else
 /* No, I'm not even going to *TRY* putting #ifdef inside a #define */
 #define OFFUNISKIP(uv) ( (uv) < 0x80        ? 1 : \
-		      (uv) < 0x800          ? 2 : \
-		      (uv) < 0x10000        ? 3 : \
-		      (uv) < 0x200000       ? 4 : \
-		      (uv) < 0x4000000      ? 5 : \
-		      (uv) < 0x80000000     ? 6 : 7 )
+                      (uv) < 0x800          ? 2 : \
+                      (uv) < 0x10000        ? 3 : \
+                      (uv) < 0x200000       ? 4 : \
+                      (uv) < 0x4000000      ? 5 : \
+                      (uv) < 0x80000000     ? 6 : 7 )
 #endif
 
 /* How wide can a single UTF-8 encoded character become in bytes. */
@@ -439,11 +439,11 @@ only) byte is pointed to by C<s>.
  * no need to do it again here
  */
 #define isIDFIRST_lazy_if(p,UTF) ((IN_BYTES || !UTF ) \
-				 ? isIDFIRST(*(p)) \
-				 : isIDFIRST_utf8((const U8*)p))
+                                 ? isIDFIRST(*(p)) \
+                                 : isIDFIRST_utf8((const U8*)p))
 #define isWORDCHAR_lazy_if(p,UTF)   ((IN_BYTES || (!UTF )) \
-				 ? isWORDCHAR(*(p)) \
-				 : isWORDCHAR_utf8((const U8*)p))
+                                 ? isWORDCHAR(*(p)) \
+                                 : isWORDCHAR_utf8((const U8*)p))
 #define isALNUM_lazy_if(p,UTF)   isWORDCHAR_lazy_if(p,UTF)
 
 #define UTF8_MAXLEN UTF8_MAXBYTES
@@ -466,7 +466,7 @@ case any call to string overloading updates the internal UTF-8 encoding flag.
 */
 #define DO_UTF8(sv) (SvUTF8(sv) && !IN_BYTES)
 #define IN_UNI_8_BIT \
-	    (((CopHINTS_get(PL_curcop) & (HINT_UNI_8_BIT))                       \
+            (((CopHINTS_get(PL_curcop) & (HINT_UNI_8_BIT))                       \
                || (CopHINTS_get(PL_curcop) & HINT_LOCALE_PARTIAL                 \
                    /* -1 below is for :not_characters */                         \
                    && _is_in_locale_category(FALSE, -1)))                        \
@@ -513,14 +513,14 @@ case any call to string overloading updates the internal UTF-8 encoding flag.
 
 #define UTF8_DISALLOW_ILLEGAL_INTERCHANGE (UTF8_DISALLOW_SUPER|UTF8_DISALLOW_NONCHAR|UTF8_DISALLOW_SURROGATE|UTF8_DISALLOW_FE_FF)
 #define UTF8_WARN_ILLEGAL_INTERCHANGE \
-	(UTF8_WARN_SUPER|UTF8_WARN_NONCHAR|UTF8_WARN_SURROGATE|UTF8_WARN_FE_FF)
+        (UTF8_WARN_SUPER|UTF8_WARN_NONCHAR|UTF8_WARN_SURROGATE|UTF8_WARN_FE_FF)
 #define UTF8_ALLOW_ANY \
-	    (~(UTF8_DISALLOW_ILLEGAL_INTERCHANGE|UTF8_WARN_ILLEGAL_INTERCHANGE))
+            (~(UTF8_DISALLOW_ILLEGAL_INTERCHANGE|UTF8_WARN_ILLEGAL_INTERCHANGE))
 #define UTF8_ALLOW_ANYUV                                                        \
          (UTF8_ALLOW_EMPTY                                                      \
-	  & ~(UTF8_DISALLOW_ILLEGAL_INTERCHANGE|UTF8_WARN_ILLEGAL_INTERCHANGE))
+          & ~(UTF8_DISALLOW_ILLEGAL_INTERCHANGE|UTF8_WARN_ILLEGAL_INTERCHANGE))
 #define UTF8_ALLOW_DEFAULT		(ckWARN(WARN_UTF8) ? 0 : \
-					 UTF8_ALLOW_ANYUV)
+                                         UTF8_ALLOW_ANYUV)
 
 /* Surrogates, non-character code points and above-Unicode code points are
  * problematic in some contexts.  This allows code that needs to check for
@@ -583,16 +583,16 @@ case any call to string overloading updates the internal UTF-8 encoding flag.
 #define UNICODE_ALLOW_ANY	0
 
 #define UNICODE_IS_SURROGATE(c)		((c) >= UNICODE_SURROGATE_FIRST && \
-					 (c) <= UNICODE_SURROGATE_LAST)
+                                         (c) <= UNICODE_SURROGATE_LAST)
 #define UNICODE_IS_REPLACEMENT(c)	((c) == UNICODE_REPLACEMENT)
 #define UNICODE_IS_BYTE_ORDER_MARK(c)	((c) == UNICODE_BYTE_ORDER_MARK)
 #define UNICODE_IS_NONCHAR(c)		((c >= 0xFDD0 && c <= 0xFDEF) \
-			/* The other noncharacters end in FFFE or FFFF, which  \
-			 * the mask below catches both of, but beyond the last \
-			 * official unicode code point, they aren't            \
-			 * noncharacters, since those aren't Unicode           \
-			 * characters at all */                                \
-			|| ((((c & 0xFFFE) == 0xFFFE)) && ! UNICODE_IS_SUPER(c)))
+                        /* The other noncharacters end in FFFE or FFFF, which  \
+                         * the mask below catches both of, but beyond the last \
+                         * official unicode code point, they aren't            \
+                         * noncharacters, since those aren't Unicode           \
+                         * characters at all */                                \
+                        || ((((c & 0xFFFE) == 0xFFFE)) && ! UNICODE_IS_SUPER(c)))
 #define UNICODE_IS_SUPER(c)		((c) > PERL_UNICODE_MAX)
 #define UNICODE_IS_FE_FF(c)		((c) > 0x7FFFFFFF)
 
@@ -624,11 +624,11 @@ case any call to string overloading updates the internal UTF-8 encoding flag.
 #define UNI_DISPLAY_REGEX	(UNI_DISPLAY_ISPRINT|UNI_DISPLAY_BACKSLASH)
 
 #define ANYOF_FOLD_SHARP_S(node, input, end)	\
-	(ANYOF_BITMAP_TEST(node, LATIN_SMALL_LETTER_SHARP_S) && \
-	 (ANYOF_NONBITMAP(node)) && \
-	 (ANYOF_FLAGS(node) & ANYOF_LOC_NONBITMAP_FOLD) && \
-	 ((end) > (input) + 1) && \
-	 isALPHA_FOLD_EQ((input)[0], 's'))
+        (ANYOF_BITMAP_TEST(node, LATIN_SMALL_LETTER_SHARP_S) && \
+         (ANYOF_NONBITMAP(node)) && \
+         (ANYOF_FLAGS(node) & ANYOF_LOC_NONBITMAP_FOLD) && \
+         ((end) > (input) + 1) && \
+         isALPHA_FOLD_EQ((input)[0], 's'))
 
 #define SHARP_S_SKIP 2
 
@@ -658,9 +658,9 @@ case any call to string overloading updates the internal UTF-8 encoding flag.
  * don't take too long to generate, and there is a separate one for each code
  * page, so they are in regcharclass.h instead of here */
 /*
-	UTF8_CHAR: Matches legal UTF-8 encoded characters from 2 through 4 bytes
+        UTF8_CHAR: Matches legal UTF-8 encoded characters from 2 through 4 bytes
 
-	0x80 - 0x1FFFFF
+        0x80 - 0x1FFFFF
 */
 /*** GENERATED CODE ***/
 #define is_UTF8_CHAR_utf8_no_length_checks(s)                               \

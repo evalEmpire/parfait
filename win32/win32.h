@@ -168,10 +168,10 @@ WINBASEAPI LPCH WINAPI GetEnvironmentStringsA(VOID);
 #endif
 
 struct tms {
-	long	tms_utime;
-	long	tms_stime;
-	long	tms_cutime;
-	long	tms_cstime;
+        long	tms_utime;
+        long	tms_stime;
+        long	tms_cutime;
+        long	tms_cstime;
 };
 
 #ifndef SYS_NMLN

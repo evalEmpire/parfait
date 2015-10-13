@@ -121,7 +121,7 @@
 
 #ifndef PERL_SYS_TERM_BODY
 #define PERL_SYS_TERM_BODY()	HINTS_REFCNT_TERM; OP_REFCNT_TERM; \
-				PERLIO_TERM; MALLOC_TERM; CloseSTDLIB();
+                                PERLIO_TERM; MALLOC_TERM; CloseSTDLIB();
 #endif
 
 #define BIT_BUCKET "NUL:"

@@ -20,15 +20,15 @@ S_regcurly(const char *s)
     PERL_ARGS_ASSERT_REGCURLY;
 
     if (*s++ != '{')
-	return FALSE;
+        return FALSE;
     if (!isDIGIT(*s))
-	return FALSE;
+        return FALSE;
     while (isDIGIT(*s))
-	s++;
+        s++;
     if (*s == ',') {
-	s++;
-	while (isDIGIT(*s))
-	    s++;
+        s++;
+        while (isDIGIT(*s))
+            s++;
     }
 
     return *s == '}';
@@ -115,10 +115,10 @@ S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
     char* e;
     STRLEN numbers_len;
     I32 flags = PERL_SCAN_ALLOW_UNDERSCORES
-		| PERL_SCAN_DISALLOW_PREFIX
-		/* XXX Until the message is improved in grok_oct, handle errors
-		 * ourselves */
-	        | PERL_SCAN_SILENT_ILLDIGIT;
+                | PERL_SCAN_DISALLOW_PREFIX
+                /* XXX Until the message is improved in grok_oct, handle errors
+                 * ourselves */
+                | PERL_SCAN_SILENT_ILLDIGIT;
 
 #ifdef DEBUGGING
     char *start = *s - 1;
@@ -132,8 +132,8 @@ S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
     (*s)++;
 
     if (**s != '{') {
-	*error_msg = "Missing braces on \\o{}";
-	return FALSE;
+        *error_msg = "Missing braces on \\o{}";
+        return FALSE;
     }
 
     e = strchr(*s, '}');
@@ -143,7 +143,7 @@ S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
             (*s)++;
         }
         *error_msg = "Missing right brace on \\o{";
-	return FALSE;
+        return FALSE;
     }
 
     (*s)++;    /* Point to expected first digit (could be first byte of utf8
@@ -151,8 +151,8 @@ S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
     numbers_len = e - *s;
     if (numbers_len == 0) {
         (*s)++;    /* Move past the } */
-	*error_msg = "Number with no digits";
-	return FALSE;
+        *error_msg = "Number with no digits";
+        return FALSE;
     }
 
     if (silence_non_portable) {
@@ -246,8 +246,8 @@ S_grok_bslash_x(pTHX_ char **s, UV *uv, const char** error_msg,
     if (**s != '{') {
         STRLEN len = (strict) ? 3 : 2;
 
-	*uv = grok_hex(*s, &len, &flags, NULL);
-	*s += len;
+        *uv = grok_hex(*s, &len, &flags, NULL);
+        *s += len;
         if (strict && len != 2) {
             if (len < 2) {
                 *s += (UTF) ? UTF8SKIP(*s) : 1;
@@ -258,7 +258,7 @@ S_grok_bslash_x(pTHX_ char **s, UV *uv, const char** error_msg,
             }
             return FALSE;
         }
-	goto ok;
+        goto ok;
     }
 
     e = strchr(*s, '}');
@@ -270,8 +270,8 @@ S_grok_bslash_x(pTHX_ char **s, UV *uv, const char** error_msg,
         /* XXX The corresponding message above for \o is just '\\o{'; other
          * messages for other constructs include the '}', so are inconsistent.
          */
-	*error_msg = "Missing right brace on \\x{}";
-	return FALSE;
+        *error_msg = "Missing right brace on \\x{}";
+        return FALSE;
     }
 
     (*s)++;    /* Point to expected first digit (could be first byte of utf8

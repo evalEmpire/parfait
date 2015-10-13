@@ -176,43 +176,43 @@ Perl_grok_bin(pTHX_ const char *start, STRLEN *len_p, I32 *flags, NV *result)
                     continue;
                 }
                 /* Bah. We're just overflowed.  */
-		/* diag_listed_as: Integer overflow in %s number */
-		Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
-				 "Integer overflow in binary number");
+                /* diag_listed_as: Integer overflow in %s number */
+                Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
+                                 "Integer overflow in binary number");
                 overflowed = TRUE;
                 value_nv = (NV) value;
             }
             value_nv *= 2.0;
-	    /* If an NV has not enough bits in its mantissa to
-	     * represent a UV this summing of small low-order numbers
-	     * is a waste of time (because the NV cannot preserve
-	     * the low-order bits anyway): we could just remember when
-	     * did we overflow and in the end just multiply value_nv by the
-	     * right amount. */
+            /* If an NV has not enough bits in its mantissa to
+             * represent a UV this summing of small low-order numbers
+             * is a waste of time (because the NV cannot preserve
+             * the low-order bits anyway): we could just remember when
+             * did we overflow and in the end just multiply value_nv by the
+             * right amount. */
             value_nv += (NV)(bit - '0');
             continue;
         }
         if (bit == '_' && len && allow_underscores && (bit = s[1])
             && (bit == '0' || bit == '1'))
-	    {
-		--len;
-		++s;
+            {
+                --len;
+                ++s;
                 goto redo;
-	    }
+            }
         if (!(*flags & PERL_SCAN_SILENT_ILLDIGIT))
             Perl_ck_warner(aTHX_ packWARN(WARN_DIGIT),
-			   "Illegal binary digit '%c' ignored", *s);
+                           "Illegal binary digit '%c' ignored", *s);
         break;
     }
     
     if (   ( overflowed && value_nv > 4294967295.0)
 #if UVSIZE > 4
-	|| (!overflowed && value > 0xffffffff
-	    && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
+        || (!overflowed && value > 0xffffffff
+            && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
 #endif
-	) {
-	Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
-		       "Binary number > 0b11111111111111111111111111111111 non-portable");
+        ) {
+        Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
+                       "Binary number > 0b11111111111111111111111111111111 non-portable");
     }
     *len_p = s - start;
     if (!overflowed) {
@@ -297,29 +297,29 @@ Perl_grok_hex(pTHX_ const char *start, STRLEN *len_p, I32 *flags, NV *result)
                     continue;
                 }
                 /* Bah. We're just overflowed.  */
-		/* diag_listed_as: Integer overflow in %s number */
-		Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
-				 "Integer overflow in hexadecimal number");
+                /* diag_listed_as: Integer overflow in %s number */
+                Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
+                                 "Integer overflow in hexadecimal number");
                 overflowed = TRUE;
                 value_nv = (NV) value;
             }
             value_nv *= 16.0;
-	    /* If an NV has not enough bits in its mantissa to
-	     * represent a UV this summing of small low-order numbers
-	     * is a waste of time (because the NV cannot preserve
-	     * the low-order bits anyway): we could just remember when
-	     * did we overflow and in the end just multiply value_nv by the
-	     * right amount of 16-tuples. */
+            /* If an NV has not enough bits in its mantissa to
+             * represent a UV this summing of small low-order numbers
+             * is a waste of time (because the NV cannot preserve
+             * the low-order bits anyway): we could just remember when
+             * did we overflow and in the end just multiply value_nv by the
+             * right amount of 16-tuples. */
             value_nv += (NV) XDIGIT_VALUE(*s);
             continue;
         }
         if (*s == '_' && len && allow_underscores && s[1]
-		&& isXDIGIT(s[1]))
-	    {
-		--len;
-		++s;
+                && isXDIGIT(s[1]))
+            {
+                --len;
+                ++s;
                 goto redo;
-	    }
+            }
         if (!(*flags & PERL_SCAN_SILENT_ILLDIGIT))
             Perl_ck_warner(aTHX_ packWARN(WARN_DIGIT),
                         "Illegal hexadecimal digit '%c' ignored", *s);
@@ -328,12 +328,12 @@ Perl_grok_hex(pTHX_ const char *start, STRLEN *len_p, I32 *flags, NV *result)
     
     if (   ( overflowed && value_nv > 4294967295.0)
 #if UVSIZE > 4
-	|| (!overflowed && value > 0xffffffff
-	    && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
+        || (!overflowed && value > 0xffffffff
+            && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
 #endif
-	) {
-	Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
-		       "Hexadecimal number > 0xffffffff non-portable");
+        ) {
+        Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
+                       "Hexadecimal number > 0xffffffff non-portable");
     }
     *len_p = s - start;
     if (!overflowed) {
@@ -400,19 +400,19 @@ Perl_grok_oct(pTHX_ const char *start, STRLEN *len_p, I32 *flags, NV *result)
                     continue;
                 }
                 /* Bah. We're just overflowed.  */
-		/* diag_listed_as: Integer overflow in %s number */
-		Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
-			       "Integer overflow in octal number");
+                /* diag_listed_as: Integer overflow in %s number */
+                Perl_ck_warner_d(aTHX_ packWARN(WARN_OVERFLOW),
+                               "Integer overflow in octal number");
                 overflowed = TRUE;
                 value_nv = (NV) value;
             }
             value_nv *= 8.0;
-	    /* If an NV has not enough bits in its mantissa to
-	     * represent a UV this summing of small low-order numbers
-	     * is a waste of time (because the NV cannot preserve
-	     * the low-order bits anyway): we could just remember when
-	     * did we overflow and in the end just multiply value_nv by the
-	     * right amount of 8-tuples. */
+            /* If an NV has not enough bits in its mantissa to
+             * represent a UV this summing of small low-order numbers
+             * is a waste of time (because the NV cannot preserve
+             * the low-order bits anyway): we could just remember when
+             * did we overflow and in the end just multiply value_nv by the
+             * right amount of 8-tuples. */
             value_nv += (NV) OCTAL_VALUE(*s);
             continue;
         }
@@ -428,19 +428,19 @@ Perl_grok_oct(pTHX_ const char *start, STRLEN *len_p, I32 *flags, NV *result)
         if (isDIGIT(*s)) {
             if (!(*flags & PERL_SCAN_SILENT_ILLDIGIT))
                 Perl_ck_warner(aTHX_ packWARN(WARN_DIGIT),
-			       "Illegal octal digit '%c' ignored", *s);
+                               "Illegal octal digit '%c' ignored", *s);
         }
         break;
     }
     
     if (   ( overflowed && value_nv > 4294967295.0)
 #if UVSIZE > 4
-	|| (!overflowed && value > 0xffffffff
-	    && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
+        || (!overflowed && value > 0xffffffff
+            && ! (*flags & PERL_SCAN_SILENT_NON_PORTABLE))
 #endif
-	) {
-	Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
-		       "Octal number > 037777777777 non-portable");
+        ) {
+        Perl_ck_warner(aTHX_ packWARN(WARN_PORTABLE),
+                       "Octal number > 037777777777 non-portable");
     }
     *len_p = s - start;
     if (!overflowed) {
@@ -894,7 +894,7 @@ Perl_grok_number_flags(pTHX_ const char *pv, STRLEN len, UV *valuep, U32 flags)
               digit = *s - '0';
               if (digit >= 0 && digit <= 9) {
                 value = value * 10 + digit;
-		if (++s < send) {
+                if (++s < send) {
                   digit = *s - '0';
                   if (digit >= 0 && digit <= 9) {
                     value = value * 10 + digit;
@@ -942,7 +942,7 @@ Perl_grok_number_flags(pTHX_ const char *pv, STRLEN len, UV *valuep, U32 flags)
                                       }
                                     }
                                   }
-				}
+                                }
                               }
                             }
                           }
@@ -954,7 +954,7 @@ Perl_grok_number_flags(pTHX_ const char *pv, STRLEN len, UV *valuep, U32 flags)
               }
             }
           }
-	}
+        }
       }
     }
     numtype |= IS_NUMBER_IN_UV;
@@ -1114,9 +1114,9 @@ S_mulexp10(NV value, I32 exponent)
     I32 bit;
 
     if (exponent == 0)
-	return value;
+        return value;
     if (value == 0)
-	return (NV)0;
+        return (NV)0;
 
     /* On OpenVMS VAX we by default use the D_FLOAT double format,
      * and that format does not have *easy* capabilities [1] for
@@ -1140,24 +1140,24 @@ S_mulexp10(NV value, I32 exponent)
 
 #if ((defined(VMS) && !defined(_IEEE_FP)) || defined(_UNICOS)) && defined(NV_MAX_10_EXP)
     STMT_START {
-	const NV exp_v = log10(value);
-	if (exponent >= NV_MAX_10_EXP || exponent + exp_v >= NV_MAX_10_EXP)
-	    return NV_MAX;
-	if (exponent < 0) {
-	    if (-(exponent + exp_v) >= NV_MAX_10_EXP)
-		return 0.0;
-	    while (-exponent >= NV_MAX_10_EXP) {
-		/* combination does not overflow, but 10^(-exponent) does */
-		value /= 10;
-		++exponent;
-	    }
-	}
+        const NV exp_v = log10(value);
+        if (exponent >= NV_MAX_10_EXP || exponent + exp_v >= NV_MAX_10_EXP)
+            return NV_MAX;
+        if (exponent < 0) {
+            if (-(exponent + exp_v) >= NV_MAX_10_EXP)
+                return 0.0;
+            while (-exponent >= NV_MAX_10_EXP) {
+                /* combination does not overflow, but 10^(-exponent) does */
+                value /= 10;
+                ++exponent;
+            }
+        }
     } STMT_END;
 #endif
 
     if (exponent < 0) {
-	negative = 1;
-	exponent = -exponent;
+        negative = 1;
+        exponent = -exponent;
 #ifdef NV_MAX_10_EXP
         /* for something like 1234 x 10^-309, the action of calculating
          * the intermediate value 10^309 then returning 1234 / (10^309)
@@ -1180,19 +1180,19 @@ S_mulexp10(NV value, I32 exponent)
 #  define FP_OVERFLOWS_TO_ZERO
 #endif
     for (bit = 1; exponent; bit <<= 1) {
-	if (exponent & bit) {
-	    exponent ^= bit;
-	    result *= power;
+        if (exponent & bit) {
+            exponent ^= bit;
+            result *= power;
 #ifdef FP_OVERFLOWS_TO_ZERO
             if (result == 0)
                 return value < 0 ? -NV_INF : NV_INF;
 #endif
-	    /* Floating point exceptions are supposed to be turned off,
-	     *  but if we're obviously done, don't risk another iteration.  
-	     */
-	     if (exponent == 0) break;
-	}
-	power *= power;
+            /* Floating point exceptions are supposed to be turned off,
+             *  but if we're obviously done, don't risk another iteration.  
+             */
+             if (exponent == 0) break;
+        }
+        power *= power;
     }
     return negative ? value / result : value * result;
 }
@@ -1354,15 +1354,15 @@ Perl_my_atof2(pTHX_ const char* orig, NV* value)
 
     /* leading whitespace */
     while (isSPACE(*s))
-	++s;
+        ++s;
 
     /* sign */
     switch (*s) {
-	case '-':
-	    negative = 1;
-	    /* FALLTHROUGH */
-	case '+':
-	    ++s;
+        case '-':
+            negative = 1;
+            /* FALLTHROUGH */
+        case '+':
+            ++s;
     }
 #endif
 
@@ -1419,88 +1419,88 @@ Perl_my_atof2(pTHX_ const char* orig, NV* value)
      * large, we add the total to NV and start again */
 
     while (1) {
-	if (isDIGIT(*s)) {
-	    seen_digit = 1;
-	    old_digit = digit;
-	    digit = *s++ - '0';
-	    if (seen_dp)
-		exp_adjust[1]++;
+        if (isDIGIT(*s)) {
+            seen_digit = 1;
+            old_digit = digit;
+            digit = *s++ - '0';
+            if (seen_dp)
+                exp_adjust[1]++;
 
-	    /* don't start counting until we see the first significant
-	     * digit, eg the 5 in 0.00005... */
-	    if (!sig_digits && digit == 0)
-		continue;
+            /* don't start counting until we see the first significant
+             * digit, eg the 5 in 0.00005... */
+            if (!sig_digits && digit == 0)
+                continue;
 
-	    if (++sig_digits > MAX_SIG_DIGITS) {
-		/* limits of precision reached */
-	        if (digit > 5) {
-		    ++accumulator[seen_dp];
-		} else if (digit == 5) {
-		    if (old_digit % 2) { /* round to even - Allen */
-			++accumulator[seen_dp];
-		    }
-		}
-		if (seen_dp) {
-		    exp_adjust[1]--;
-		} else {
-		    exp_adjust[0]++;
-		}
-		/* skip remaining digits */
-		while (isDIGIT(*s)) {
-		    ++s;
-		    if (! seen_dp) {
-			exp_adjust[0]++;
-		    }
-		}
-		/* warn of loss of precision? */
-	    }
-	    else {
-		if (accumulator[seen_dp] > MAX_ACCUMULATE) {
-		    /* add accumulator to result and start again */
-		    result[seen_dp] = S_mulexp10(result[seen_dp],
-						 exp_acc[seen_dp])
-			+ (NV)accumulator[seen_dp];
-		    accumulator[seen_dp] = 0;
-		    exp_acc[seen_dp] = 0;
-		}
-		accumulator[seen_dp] = accumulator[seen_dp] * 10 + digit;
-		++exp_acc[seen_dp];
-	    }
-	}
-	else if (!seen_dp && GROK_NUMERIC_RADIX(&s, send)) {
-	    seen_dp = 1;
-	    if (sig_digits > MAX_SIG_DIGITS) {
-		do {
-		    ++s;
-		} while (isDIGIT(*s));
-		break;
-	    }
-	}
-	else {
-	    break;
-	}
+            if (++sig_digits > MAX_SIG_DIGITS) {
+                /* limits of precision reached */
+                if (digit > 5) {
+                    ++accumulator[seen_dp];
+                } else if (digit == 5) {
+                    if (old_digit % 2) { /* round to even - Allen */
+                        ++accumulator[seen_dp];
+                    }
+                }
+                if (seen_dp) {
+                    exp_adjust[1]--;
+                } else {
+                    exp_adjust[0]++;
+                }
+                /* skip remaining digits */
+                while (isDIGIT(*s)) {
+                    ++s;
+                    if (! seen_dp) {
+                        exp_adjust[0]++;
+                    }
+                }
+                /* warn of loss of precision? */
+            }
+            else {
+                if (accumulator[seen_dp] > MAX_ACCUMULATE) {
+                    /* add accumulator to result and start again */
+                    result[seen_dp] = S_mulexp10(result[seen_dp],
+                                                 exp_acc[seen_dp])
+                        + (NV)accumulator[seen_dp];
+                    accumulator[seen_dp] = 0;
+                    exp_acc[seen_dp] = 0;
+                }
+                accumulator[seen_dp] = accumulator[seen_dp] * 10 + digit;
+                ++exp_acc[seen_dp];
+            }
+        }
+        else if (!seen_dp && GROK_NUMERIC_RADIX(&s, send)) {
+            seen_dp = 1;
+            if (sig_digits > MAX_SIG_DIGITS) {
+                do {
+                    ++s;
+                } while (isDIGIT(*s));
+                break;
+            }
+        }
+        else {
+            break;
+        }
     }
 
     result[0] = S_mulexp10(result[0], exp_acc[0]) + (NV)accumulator[0];
     if (seen_dp) {
-	result[1] = S_mulexp10(result[1], exp_acc[1]) + (NV)accumulator[1];
+        result[1] = S_mulexp10(result[1], exp_acc[1]) + (NV)accumulator[1];
     }
 
     if (seen_digit && (isALPHA_FOLD_EQ(*s, 'e'))) {
-	bool expnegative = 0;
+        bool expnegative = 0;
 
-	++s;
-	switch (*s) {
-	    case '-':
-		expnegative = 1;
-		/* FALLTHROUGH */
-	    case '+':
-		++s;
-	}
-	while (isDIGIT(*s))
-	    exponent = exponent * 10 + (*s++ - '0');
-	if (expnegative)
-	    exponent = -exponent;
+        ++s;
+        switch (*s) {
+            case '-':
+                expnegative = 1;
+                /* FALLTHROUGH */
+            case '+':
+                ++s;
+        }
+        while (isDIGIT(*s))
+            exponent = exponent * 10 + (*s++ - '0');
+        if (expnegative)
+            exponent = -exponent;
     }
 
 
@@ -1508,15 +1508,15 @@ Perl_my_atof2(pTHX_ const char* orig, NV* value)
     /* now apply the exponent */
 
     if (seen_dp) {
-	result[2] = S_mulexp10(result[0],exponent+exp_adjust[0])
-		+ S_mulexp10(result[1],exponent-exp_adjust[1]);
+        result[2] = S_mulexp10(result[0],exponent+exp_adjust[0])
+                + S_mulexp10(result[1],exponent-exp_adjust[1]);
     } else {
-	result[2] = S_mulexp10(result[0],exponent+exp_adjust[0]);
+        result[2] = S_mulexp10(result[0],exponent+exp_adjust[0]);
     }
 
     /* now apply the sign */
     if (negative)
-	result[2] = -result[2];
+        result[2] = -result[2];
 #endif /* USE_PERL_ATOF */
     *value = result[2];
     return (char *)s;

@@ -99,9 +99,9 @@ typedef PerlIOl *PerlIO;
 PERL_EXPORT_C void PerlIO_define_layer(pTHX_ PerlIO_funcs *tab);
 PERL_EXPORT_C PerlIO_funcs *PerlIO_find_layer(pTHX_ const char *name,
                                               STRLEN len,
-				              int load);
+                                              int load);
 PERL_EXPORT_C PerlIO *PerlIO_push(pTHX_ PerlIO *f, PERLIO_FUNCS_DECL(*tab),
-			          const char *mode, SV *arg);
+                                  const char *mode, SV *arg);
 PERL_EXPORT_C void PerlIO_pop(pTHX_ PerlIO *f);
 PERL_EXPORT_C AV* PerlIO_get_layers(pTHX_ PerlIO *f);
 PERL_EXPORT_C void PerlIO_clone(pTHX_ PerlInterpreter *proto,
@@ -216,8 +216,8 @@ PERL_EXPORT_C PerlIO *PerlIO_open(const char *, const char *);
 #endif
 #ifndef PerlIO_openn
 PERL_EXPORT_C PerlIO *PerlIO_openn(pTHX_ const char *layers, const char *mode,
-				   int fd, int imode, int perm, PerlIO *old,
-				   int narg, SV **arg);
+                                   int fd, int imode, int perm, PerlIO *old,
+                                   int narg, SV **arg);
 #endif
 #ifndef PerlIO_eof
 PERL_EXPORT_C int PerlIO_eof(PerlIO *);
@@ -339,11 +339,11 @@ PERL_EXPORT_C int PerlIO_isutf8(PerlIO *);
 #endif
 #ifndef PerlIO_apply_layers
 PERL_EXPORT_C int PerlIO_apply_layers(pTHX_ PerlIO *f, const char *mode,
-				      const char *names);
+                                      const char *names);
 #endif
 #ifndef PerlIO_binmode
 PERL_EXPORT_C int PerlIO_binmode(pTHX_ PerlIO *f, int iotype, int omode,
-			  	 const char *names);
+                                   const char *names);
 #endif
 #ifndef PerlIO_getname
 PERL_EXPORT_C char *PerlIO_getname(PerlIO *, char *);

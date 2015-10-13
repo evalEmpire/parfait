@@ -40,7 +40,7 @@ PERLVAR(I, stack_base,	SV **)
 PERLVAR(I, stack_max,	SV **)
 
 PERLVAR(I, savestack,	ANY *)		/* items that need to be restored when
-					   LEAVEing scopes we've ENTERed */
+                                           LEAVEing scopes we've ENTERed */
 PERLVAR(I, savestack_ix, I32)
 PERLVAR(I, savestack_max, I32)
 
@@ -56,12 +56,12 @@ PERLVAR(I, tmps_max,	SSize_t)
 PERLVARI(I, sub_generation, U32, 1)	/* incr to invalidate method cache */
 
 PERLVAR(I, markstack,	I32 *)		/* stack_sp locations we're
-					   remembering */
+                                           remembering */
 PERLVAR(I, markstack_ptr, I32 *)
 PERLVAR(I, markstack_max, I32 *)
 
 PERLVARI(I, sawalias,	bool,	FALSE)	/* must enable common-vars
-					   pessimisation */
+                                           pessimisation */
 
 #ifdef PERL_HASH_RANDOMIZE_KEYS
 #ifdef USE_PERL_PERTURB_KEYS
@@ -111,7 +111,7 @@ PERLVAR(I, curcop,	COP *)
 PERLVAR(I, curstack,	AV *)		/* THE STACK */
 PERLVAR(I, curstackinfo, PERL_SI *)	/* current stack + context */
 PERLVAR(I, mainstack,	AV *)		/* the stack when nothing funny is
-					   happening */
+                                           happening */
 
 /* memory management */
 PERLVAR(I, sv_count,	IV)		/* how many SV* are currently allocated */
@@ -170,7 +170,7 @@ C<SvPV_nolen> macro.
 */
 
 PERLVAR(I, na,		STRLEN)		/* for use in SvPV when length is
-					   Not Applicable */
+                                           Not Applicable */
 
 /* stat stuff */
 PERLVAR(I, statbuf,	Stat_t)
@@ -232,7 +232,7 @@ PERLVAR(I, efloatbuf,	char *)
 PERLVAR(I, efloatsize,	STRLEN)
 
 PERLVARI(I, dumpindent,	U16,	4)	/* number of blanks per dump
-					   indentation level */
+                                           indentation level */
 
 PERLVAR(I, exit_flags,	U8)		/* was exit() unexpected, etc. */
 
@@ -345,7 +345,7 @@ PERLVAR(I, e_script,	SV *)
 PERLVAR(I, basetime,	Time_t)		/* $^T */
 
 PERLVARI(I, maxsysfd,	I32,	MAXSYSFD)
-					/* top fd to pass to subprocesses */
+                                        /* top fd to pass to subprocesses */
 PERLVAR(I, statusvalue,	I32)		/* $? */
 #ifdef VMS
 PERLVAR(I, statusvalue_vms, U32)
@@ -454,12 +454,12 @@ PERLVARI(I, laststype,	U16,	OP_STAT)
 PERLVARI(I, laststatval, int,	-1)
 
 PERLVAR(I, modcount,	I32)		/* how much op_lvalue()ification in
-					   assignment? */
+                                           assignment? */
 
 /* interpreter atexit processing */
 PERLVARI(I, exitlistlen, I32, 0)	/* length of same */
 PERLVARI(I, exitlist,	PerlExitListEntry *, NULL)
-					/* list of exit functions */
+                                        /* list of exit functions */
 
 /*
 =for apidoc Amn|HV*|PL_modglobal
@@ -487,7 +487,7 @@ PERLVAR(I, comppad_name_floor,	I32)	/* start of vars in innermost block */
 
 #ifdef HAVE_INTERP_INTERN
 PERLVAR(I, sys_intern,	struct interp_intern)
-					/* platform internals */
+                                        /* platform internals */
 #endif
 
 /* more statics moved here */
@@ -545,7 +545,7 @@ PERLVAR(I, min_intro_pending, I32)	/* start of vars to introduce */
 
 PERLVAR(I, max_intro_pending, I32)	/* end of vars to introduce */
 PERLVAR(I, padix,	I32)		/* lowest unused index - 1
-					   in current "register" pad */
+                                           in current "register" pad */
 PERLVAR(I, constpadix,	I32)		/* lowest unused for constants */
 
 PERLVAR(I, padix_floor,	I32)		/* how low may inner block reset padix */
@@ -556,7 +556,7 @@ PERLVAR(I, collxfrm_base, Size_t)	/* Basic overhead in *xfrm() */
 PERLVARI(I, collxfrm_mult,Size_t, 2)	/* Expansion factor in *xfrm() */
 PERLVARI(I, collation_ix, U32,	0)	/* Collation generation index */
 PERLVARI(I, collation_standard, bool, TRUE)
-					/* Assume simple collation */
+                                        /* Assume simple collation */
 #endif /* USE_LOCALE_COLLATE */
 
 #ifdef PERL_SAWAMPERSAND
@@ -581,9 +581,9 @@ PERLVARI(I, perl_destruct_level, signed char,	0)
 #ifdef USE_LOCALE_NUMERIC
 
 PERLVARI(I, numeric_standard, int, TRUE)
-					/* Assume simple numerics */
+                                        /* Assume simple numerics */
 PERLVARI(I, numeric_local, bool, TRUE)
-					/* Assume local numerics */
+                                        /* Assume local numerics */
 PERLVAR(I, numeric_name, char *)	/* Name of current numeric locale */
 PERLVAR(I, numeric_radix_sv, SV *)	/* The radix separator if not '.' */
 
@@ -657,12 +657,12 @@ PERLVAR(I, body_arenas, void *)		/* pointer to list of body-arenas */
 
 #if defined(USE_ITHREADS)
 PERLVAR(I, regex_pad,     SV **)	/* Shortcut into the array of
-					   regex_padav */
+                                           regex_padav */
 PERLVAR(I, regex_padav,   AV *)		/* All regex objects, indexed via the
-					   values in op_pmoffset of pmop.
-					   Entry 0 is an SV whose PV is a
-					   "packed" list of IVs listing
-					   the now-free slots in the array */
+                                           values in op_pmoffset of pmop.
+                                           Entry 0 is an SV whose PV is a
+                                           "packed" list of IVs listing
+                                           the now-free slots in the array */
 PERLVAR(I, stashpad,    HV **)		/* for CopSTASH */
 PERLVARI(I, stashpadmax, PADOFFSET, 64)
 PERLVARI(I, stashpadix, PADOFFSET, 0)
@@ -695,7 +695,7 @@ PERLVAR(I, sort_RealCmp, SVCOMPARE_t)
 
 PERLVARI(I, checkav_save, AV *, NULL)	/* save CHECK{}s when compiling */
 PERLVARI(I, unitcheckav_save, AV *, NULL)
-					/* save UNITCHECK{}s when compiling */
+                                        /* save UNITCHECK{}s when compiling */
 
 PERLVARI(I, clocktick,	long,	0)	/* this many times() ticks in a second */
 

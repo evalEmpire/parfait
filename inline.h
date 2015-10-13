@@ -29,8 +29,8 @@ PERL_STATIC_INLINE GV *
 S_CvGV(pTHX_ CV *sv)
 {
     return CvNAMED(sv)
-	? Perl_cvgv_from_hek(aTHX_ sv)
-	: ((XPVCV*)MUTABLE_PTR(SvANY(sv)))->xcv_gv_u.xcv_gv;
+        ? Perl_cvgv_from_hek(aTHX_ sv)
+        : ((XPVCV*)MUTABLE_PTR(SvANY(sv)))->xcv_gv_u.xcv_gv;
 }
 
 PERL_STATIC_INLINE I32 *
@@ -60,13 +60,13 @@ S_strip_spaces(pTHX_ const char * orig, STRLEN * const len)
     tmpsv = newSVpvn_flags(orig, *len, SVs_TEMP);
     tmps = SvPVX(tmpsv);
     while ((*len)--) {
-	if (!isSPACE(*orig))
-	    *tmps++ = *orig;
-	orig++;
+        if (!isSPACE(*orig))
+            *tmps++ = *orig;
+        orig++;
     }
     *tmps = '\0';
     *len = tmps - SvPVX(tmpsv);
-		return SvPVX(tmpsv);
+                return SvPVX(tmpsv);
 }
 #endif
 
@@ -80,12 +80,12 @@ S_MgBYTEPOS(pTHX_ MAGIC *mg, SV *sv, const char *s, STRLEN len)
     assert(mg->mg_type == PERL_MAGIC_regex_global);
     assert(mg->mg_len != -1);
     if (mg->mg_flags & MGf_BYTES || !DO_UTF8(sv))
-	return (STRLEN)mg->mg_len;
+        return (STRLEN)mg->mg_len;
     else {
-	const STRLEN pos = (STRLEN)mg->mg_len;
-	/* Without this check, we may read past the end of the buffer: */
-	if (pos > sv_or_pv_len_utf8(sv, s, len)) return len+1;
-	return sv_or_pv_pos_u2b(sv, s, pos, NULL);
+        const STRLEN pos = (STRLEN)mg->mg_len;
+        /* Without this check, we may read past the end of the buffer: */
+        if (pos > sv_or_pv_len_utf8(sv, s, len)) return len+1;
+        return sv_or_pv_pos_u2b(sv, s, pos, NULL);
     }
 }
 #endif
@@ -100,27 +100,27 @@ PadnameIN_SCOPE(const PADNAME * const pn, const U32 seq)
      * This is complicated by the fact that PL_cop_seqmax
      * may have wrapped around at some point */
     if (COP_SEQ_RANGE_LOW(pn) == PERL_PADSEQ_INTRO)
-	return FALSE; /* not yet introduced */
+        return FALSE; /* not yet introduced */
 
     if (COP_SEQ_RANGE_HIGH(pn) == PERL_PADSEQ_INTRO) {
     /* in compiling scope */
-	if (
-	    (seq >  COP_SEQ_RANGE_LOW(pn))
-	    ? (seq - COP_SEQ_RANGE_LOW(pn) < (U32_MAX >> 1))
-	    : (COP_SEQ_RANGE_LOW(pn) - seq > (U32_MAX >> 1))
-	)
-	    return TRUE;
+        if (
+            (seq >  COP_SEQ_RANGE_LOW(pn))
+            ? (seq - COP_SEQ_RANGE_LOW(pn) < (U32_MAX >> 1))
+            : (COP_SEQ_RANGE_LOW(pn) - seq > (U32_MAX >> 1))
+        )
+            return TRUE;
     }
     else if (
-	(COP_SEQ_RANGE_LOW(pn) > COP_SEQ_RANGE_HIGH(pn))
-	?
-	    (  seq >  COP_SEQ_RANGE_LOW(pn)
-	    || seq <= COP_SEQ_RANGE_HIGH(pn))
+        (COP_SEQ_RANGE_LOW(pn) > COP_SEQ_RANGE_HIGH(pn))
+        ?
+            (  seq >  COP_SEQ_RANGE_LOW(pn)
+            || seq <= COP_SEQ_RANGE_HIGH(pn))
 
-	:    (  seq >  COP_SEQ_RANGE_LOW(pn)
-	     && seq <= COP_SEQ_RANGE_HIGH(pn))
+        :    (  seq >  COP_SEQ_RANGE_LOW(pn)
+             && seq <= COP_SEQ_RANGE_HIGH(pn))
     )
-	return TRUE;
+        return TRUE;
     return FALSE;
 }
 #endif
@@ -140,7 +140,7 @@ PERL_STATIC_INLINE SV *
 S_SvREFCNT_inc(SV *sv)
 {
     if (LIKELY(sv != NULL))
-	SvREFCNT(sv)++;
+        SvREFCNT(sv)++;
     return sv;
 }
 PERL_STATIC_INLINE SV *
@@ -153,17 +153,17 @@ PERL_STATIC_INLINE void
 S_SvREFCNT_inc_void(SV *sv)
 {
     if (LIKELY(sv != NULL))
-	SvREFCNT(sv)++;
+        SvREFCNT(sv)++;
 }
 PERL_STATIC_INLINE void
 S_SvREFCNT_dec(pTHX_ SV *sv)
 {
     if (LIKELY(sv != NULL)) {
-	U32 rc = SvREFCNT(sv);
-	if (LIKELY(rc > 1))
-	    SvREFCNT(sv) = rc - 1;
-	else
-	    Perl_sv_free2(aTHX_ sv, rc);
+        U32 rc = SvREFCNT(sv);
+        if (LIKELY(rc > 1))
+            SvREFCNT(sv) = rc - 1;
+        else
+            Perl_sv_free2(aTHX_ sv, rc);
     }
 }
 
@@ -172,9 +172,9 @@ S_SvREFCNT_dec_NN(pTHX_ SV *sv)
 {
     U32 rc = SvREFCNT(sv);
     if (LIKELY(rc > 1))
-	SvREFCNT(sv) = rc - 1;
+        SvREFCNT(sv) = rc - 1;
     else
-	Perl_sv_free2(aTHX_ sv, rc);
+        Perl_sv_free2(aTHX_ sv, rc);
 }
 
 PERL_STATIC_INLINE void
@@ -187,7 +187,7 @@ PERL_STATIC_INLINE void
 SvAMAGIC_off(SV *sv)
 {
     if (SvROK(sv) && SvOBJECT(SvRV(sv)))
-	HvAMAGIC_off(SvSTASH(SvRV(sv)));
+        HvAMAGIC_off(SvSTASH(SvRV(sv)));
 }
 
 PERL_STATIC_INLINE U32
@@ -208,9 +208,9 @@ S_sv_or_pv_pos_u2b(pTHX_ SV *sv, const char *pv, STRLEN pos, STRLEN *lenp)
 {
     PERL_ARGS_ASSERT_SV_OR_PV_POS_U2B;
     if (SvGAMAGIC(sv)) {
-	U8 *hopped = utf8_hop((U8 *)pv, pos);
-	if (lenp) *lenp = (STRLEN)(utf8_hop(hopped, *lenp) - hopped);
-	return (STRLEN)(hopped - (U8 *)pv);
+        U8 *hopped = utf8_hop((U8 *)pv, pos);
+        if (lenp) *lenp = (STRLEN)(utf8_hop(hopped, *lenp) - hopped);
+        return (STRLEN)(hopped - (U8 *)pv);
     }
     return sv_pos_u2b_flags(sv,pos,lenp,SV_CONST_RETURN);
 }
@@ -366,10 +366,10 @@ get_regex_charset_name(const U32 flags, STRLEN* const lenp)
         case REGEX_DEPENDS_CHARSET: return DEPENDS_PAT_MODS;
         case REGEX_LOCALE_CHARSET:  return LOCALE_PAT_MODS;
         case REGEX_UNICODE_CHARSET: return UNICODE_PAT_MODS;
-	case REGEX_ASCII_RESTRICTED_CHARSET: return ASCII_RESTRICT_PAT_MODS;
-	case REGEX_ASCII_MORE_RESTRICTED_CHARSET:
-	    *lenp = 2;
-	    return ASCII_MORE_RESTRICT_PAT_MODS;
+        case REGEX_ASCII_RESTRICTED_CHARSET: return ASCII_RESTRICT_PAT_MODS;
+        case REGEX_ASCII_MORE_RESTRICTED_CHARSET:
+            *lenp = 2;
+            return ASCII_MORE_RESTRICT_PAT_MODS;
     }
     /* The NOT_REACHED; hides an assert() which has a rather complex
      * definition in perl.h. */

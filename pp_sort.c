@@ -196,63 +196,63 @@ dynprep(pTHX_ gptr *list1, gptr *list2, size_t nmemb, const SVCOMPARE_t cmp)
     last = PINDEX(b, nmemb);
     sense = (cmp(aTHX_ *b, *(b+1)) > 0);
     for (p2 = list2; b < last; ) {
-	/* We just started, or just reversed sense.
-	** Set t at end of pairs with the prevailing sense.
-	*/
-	for (p = b+2, t = p; ++p < last; t = ++p) {
-	    if ((cmp(aTHX_ *t, *p) > 0) != sense) break;
-	}
-	q = b;
-	/* Having laid out the playing field, look for long runs */
-	do {
-	    p = r = b + (2 * PTHRESH);
-	    if (r >= t) p = r = t;	/* too short to care about */
-	    else {
-		while (((cmp(aTHX_ *(p-1), *p) > 0) == sense) &&
-		       ((p -= 2) > q)) {}
-		if (p <= q) {
-		    /* b through r is a (long) run.
-		    ** Extend it as far as possible.
-		    */
-		    p = q = r;
-		    while (((p += 2) < t) &&
-			   ((cmp(aTHX_ *(p-1), *p) > 0) == sense)) q = p;
-		    r = p = q + 2;	/* no simple pairs, no after-run */
-		}
-	    }
-	    if (q > b) {		/* run of greater than 2 at b */
-		gptr *savep = p;
+        /* We just started, or just reversed sense.
+        ** Set t at end of pairs with the prevailing sense.
+        */
+        for (p = b+2, t = p; ++p < last; t = ++p) {
+            if ((cmp(aTHX_ *t, *p) > 0) != sense) break;
+        }
+        q = b;
+        /* Having laid out the playing field, look for long runs */
+        do {
+            p = r = b + (2 * PTHRESH);
+            if (r >= t) p = r = t;	/* too short to care about */
+            else {
+                while (((cmp(aTHX_ *(p-1), *p) > 0) == sense) &&
+                       ((p -= 2) > q)) {}
+                if (p <= q) {
+                    /* b through r is a (long) run.
+                    ** Extend it as far as possible.
+                    */
+                    p = q = r;
+                    while (((p += 2) < t) &&
+                           ((cmp(aTHX_ *(p-1), *p) > 0) == sense)) q = p;
+                    r = p = q + 2;	/* no simple pairs, no after-run */
+                }
+            }
+            if (q > b) {		/* run of greater than 2 at b */
+                gptr *savep = p;
 
-		p = q += 2;
-		/* pick up singleton, if possible */
-		if ((p == t) &&
-		    ((t + 1) == last) &&
-		    ((cmp(aTHX_ *(p-1), *p) > 0) == sense))
-		    savep = r = p = q = last;
-		p2 = NEXT(p2) = p2 + (p - b); ++runs;
-		if (sense)
-		    while (b < --p) {
-			const gptr c = *b;
-			*b++ = *p;
-			*p = c;
-		    }
-		p = savep;
-	    }
-	    while (q < p) {		/* simple pairs */
-		p2 = NEXT(p2) = p2 + 2; ++runs;
-		if (sense) {
-		    const gptr c = *q++;
-		    *(q-1) = *q;
-		    *q++ = c;
-		} else q += 2;
-	    }
-	    if (((b = p) == t) && ((t+1) == last)) {
-		NEXT(p2) = p2 + 1; ++runs;
-		b++;
-	    }
-	    q = r;
-	} while (b < t);
-	sense = !sense;
+                p = q += 2;
+                /* pick up singleton, if possible */
+                if ((p == t) &&
+                    ((t + 1) == last) &&
+                    ((cmp(aTHX_ *(p-1), *p) > 0) == sense))
+                    savep = r = p = q = last;
+                p2 = NEXT(p2) = p2 + (p - b); ++runs;
+                if (sense)
+                    while (b < --p) {
+                        const gptr c = *b;
+                        *b++ = *p;
+                        *p = c;
+                    }
+                p = savep;
+            }
+            while (q < p) {		/* simple pairs */
+                p2 = NEXT(p2) = p2 + 2; ++runs;
+                if (sense) {
+                    const gptr c = *q++;
+                    *(q-1) = *q;
+                    *q++ = c;
+                } else q += 2;
+            }
+            if (((b = p) == t) && ((t+1) == last)) {
+                NEXT(p2) = p2 + 1; ++runs;
+                b++;
+            }
+            q = r;
+        } while (b < t);
+        sense = !sense;
     }
     return runs;
 }
@@ -367,9 +367,9 @@ S_mergesortsv(pTHX_ gptr *base, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
     if (nmemb <= 1) return;			/* sorted trivially */
 
     if ((flags & SORTf_DESC) != 0) {
-	savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
-	PL_sort_RealCmp = cmp;	/* Put comparison routine where cmp_desc can find it */
-	cmp = cmp_desc;
+        savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
+        PL_sort_RealCmp = cmp;	/* Put comparison routine where cmp_desc can find it */
+        cmp = cmp_desc;
     }
 
     if (nmemb <= SMALLSORT) aux = small;	/* use stack for aux array */
@@ -381,184 +381,184 @@ S_mergesortsv(pTHX_ gptr *base, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
     which[0] = which[2] = base;
     which[1] = aux;
     for (;;) {
-	/* On levels where both runs have be constructed (stackp->runs == 0),
-	 * merge them, and note the offset of their end, in case the offset
-	 * is needed at the next level up.  Hop up a level, and,
-	 * as long as stackp->runs is 0, keep merging.
-	 */
-	IV runs = stackp->runs;
-	if (runs == 0) {
-	    gptr *list1, *list2;
-	    iwhich = level & 1;
-	    list1 = which[iwhich];		/* area where runs are now */
-	    list2 = which[++iwhich];		/* area for merged runs */
-	    do {
-		gptr *l1, *l2, *tp2;
-		offset = stackp->offset;
-		f1 = p1 = list1 + offset;		/* start of first run */
-		p = tp2 = list2 + offset;	/* where merged run will go */
-		t = NEXT(p);			/* where first run ends */
-		f2 = l1 = POTHER(t, list2, list1); /* ... on the other side */
-		t = NEXT(t);			/* where second runs ends */
-		l2 = POTHER(t, list2, list1);	/* ... on the other side */
-		offset = PNELEM(list2, t);
-		while (f1 < l1 && f2 < l2) {
-		    /* If head 1 is larger than head 2, find ALL the elements
-		    ** in list 2 strictly less than head1, write them all,
-		    ** then head 1.  Then compare the new heads, and repeat,
-		    ** until one or both lists are exhausted.
-		    **
-		    ** In all comparisons (after establishing
-		    ** which head to merge) the item to merge
-		    ** (at pointer q) is the first operand of
-		    ** the comparison.  When we want to know
-		    ** if "q is strictly less than the other",
-		    ** we can't just do
-		    **    cmp(q, other) < 0
-		    ** because stability demands that we treat equality
-		    ** as high when q comes from l2, and as low when
-		    ** q was from l1.  So we ask the question by doing
-		    **    cmp(q, other) <= sense
-		    ** and make sense == 0 when equality should look low,
-		    ** and -1 when equality should look high.
-		    */
+        /* On levels where both runs have be constructed (stackp->runs == 0),
+         * merge them, and note the offset of their end, in case the offset
+         * is needed at the next level up.  Hop up a level, and,
+         * as long as stackp->runs is 0, keep merging.
+         */
+        IV runs = stackp->runs;
+        if (runs == 0) {
+            gptr *list1, *list2;
+            iwhich = level & 1;
+            list1 = which[iwhich];		/* area where runs are now */
+            list2 = which[++iwhich];		/* area for merged runs */
+            do {
+                gptr *l1, *l2, *tp2;
+                offset = stackp->offset;
+                f1 = p1 = list1 + offset;		/* start of first run */
+                p = tp2 = list2 + offset;	/* where merged run will go */
+                t = NEXT(p);			/* where first run ends */
+                f2 = l1 = POTHER(t, list2, list1); /* ... on the other side */
+                t = NEXT(t);			/* where second runs ends */
+                l2 = POTHER(t, list2, list1);	/* ... on the other side */
+                offset = PNELEM(list2, t);
+                while (f1 < l1 && f2 < l2) {
+                    /* If head 1 is larger than head 2, find ALL the elements
+                    ** in list 2 strictly less than head1, write them all,
+                    ** then head 1.  Then compare the new heads, and repeat,
+                    ** until one or both lists are exhausted.
+                    **
+                    ** In all comparisons (after establishing
+                    ** which head to merge) the item to merge
+                    ** (at pointer q) is the first operand of
+                    ** the comparison.  When we want to know
+                    ** if "q is strictly less than the other",
+                    ** we can't just do
+                    **    cmp(q, other) < 0
+                    ** because stability demands that we treat equality
+                    ** as high when q comes from l2, and as low when
+                    ** q was from l1.  So we ask the question by doing
+                    **    cmp(q, other) <= sense
+                    ** and make sense == 0 when equality should look low,
+                    ** and -1 when equality should look high.
+                    */
 
-		    gptr *q;
-		    if (cmp(aTHX_ *f1, *f2) <= 0) {
-			q = f2; b = f1; t = l1;
-			sense = -1;
-		    } else {
-			q = f1; b = f2; t = l2;
-			sense = 0;
-		    }
-
-
-		    /* ramp up
-		    **
-		    ** Leave t at something strictly
-		    ** greater than q (or at the end of the list),
-		    ** and b at something strictly less than q.
-		    */
-		    for (i = 1, run = 0 ;;) {
-			if ((p = PINDEX(b, i)) >= t) {
-			    /* off the end */
-			    if (((p = PINDEX(t, -1)) > b) &&
-				(cmp(aTHX_ *q, *p) <= sense))
-				 t = p;
-			    else b = p;
-			    break;
-			} else if (cmp(aTHX_ *q, *p) <= sense) {
-			    t = p;
-			    break;
-			} else b = p;
-			if (++run >= RTHRESH) i += i;
-		    }
+                    gptr *q;
+                    if (cmp(aTHX_ *f1, *f2) <= 0) {
+                        q = f2; b = f1; t = l1;
+                        sense = -1;
+                    } else {
+                        q = f1; b = f2; t = l2;
+                        sense = 0;
+                    }
 
 
-		    /* q is known to follow b and must be inserted before t.
-		    ** Increment b, so the range of possibilities is [b,t).
-		    ** Round binary split down, to favor early appearance.
-		    ** Adjust b and t until q belongs just before t.
-		    */
-
-		    b++;
-		    while (b < t) {
-			p = PINDEX(b, (PNELEM(b, t) - 1) / 2);
-			if (cmp(aTHX_ *q, *p) <= sense) {
-			    t = p;
-			} else b = p + 1;
-		    }
-
-
-		    /* Copy all the strictly low elements */
-
-		    if (q == f1) {
-			FROMTOUPTO(f2, tp2, t);
-			*tp2++ = *f1++;
-		    } else {
-			FROMTOUPTO(f1, tp2, t);
-			*tp2++ = *f2++;
-		    }
-		}
+                    /* ramp up
+                    **
+                    ** Leave t at something strictly
+                    ** greater than q (or at the end of the list),
+                    ** and b at something strictly less than q.
+                    */
+                    for (i = 1, run = 0 ;;) {
+                        if ((p = PINDEX(b, i)) >= t) {
+                            /* off the end */
+                            if (((p = PINDEX(t, -1)) > b) &&
+                                (cmp(aTHX_ *q, *p) <= sense))
+                                 t = p;
+                            else b = p;
+                            break;
+                        } else if (cmp(aTHX_ *q, *p) <= sense) {
+                            t = p;
+                            break;
+                        } else b = p;
+                        if (++run >= RTHRESH) i += i;
+                    }
 
 
-		/* Run out remaining list */
-		if (f1 == l1) {
-		       if (f2 < l2) FROMTOUPTO(f2, tp2, l2);
-		} else              FROMTOUPTO(f1, tp2, l1);
-		p1 = NEXT(p1) = POTHER(tp2, list2, list1);
+                    /* q is known to follow b and must be inserted before t.
+                    ** Increment b, so the range of possibilities is [b,t).
+                    ** Round binary split down, to favor early appearance.
+                    ** Adjust b and t until q belongs just before t.
+                    */
 
-		if (--level == 0) goto done;
-		--stackp;
-		t = list1; list1 = list2; list2 = t;	/* swap lists */
-	    } while ((runs = stackp->runs) == 0);
-	}
+                    b++;
+                    while (b < t) {
+                        p = PINDEX(b, (PNELEM(b, t) - 1) / 2);
+                        if (cmp(aTHX_ *q, *p) <= sense) {
+                            t = p;
+                        } else b = p + 1;
+                    }
 
 
-	stackp->runs = 0;		/* current run will finish level */
-	/* While there are more than 2 runs remaining,
-	 * turn them into exactly 2 runs (at the "other" level),
-	 * each made up of approximately half the runs.
-	 * Stack the second half for later processing,
-	 * and set about producing the first half now.
-	 */
-	while (runs > 2) {
-	    ++level;
-	    ++stackp;
-	    stackp->offset = offset;
-	    runs -= stackp->runs = runs / 2;
-	}
-	/* We must construct a single run from 1 or 2 runs.
-	 * All the original runs are in which[0] == base.
-	 * The run we construct must end up in which[level&1].
-	 */
-	iwhich = level & 1;
-	if (runs == 1) {
-	    /* Constructing a single run from a single run.
-	     * If it's where it belongs already, there's nothing to do.
-	     * Otherwise, copy it to where it belongs.
-	     * A run of 1 is either a singleton at level 0,
-	     * or the second half of a split 3.  In neither event
-	     * is it necessary to set offset.  It will be set by the merge
-	     * that immediately follows.
-	     */
-	    if (iwhich) {	/* Belongs in aux, currently in base */
-		f1 = b = PINDEX(base, offset);	/* where list starts */
-		f2 = PINDEX(aux, offset);	/* where list goes */
-		t = NEXT(f2);			/* where list will end */
-		offset = PNELEM(aux, t);	/* offset thereof */
-		t = PINDEX(base, offset);	/* where it currently ends */
-		FROMTOUPTO(f1, f2, t);		/* copy */
-		NEXT(b) = t;			/* set up parallel pointer */
-	    } else if (level == 0) goto done;	/* single run at level 0 */
-	} else {
-	    /* Constructing a single run from two runs.
-	     * The merge code at the top will do that.
-	     * We need only make sure the two runs are in the "other" array,
-	     * so they'll end up in the correct array after the merge.
-	     */
-	    ++level;
-	    ++stackp;
-	    stackp->offset = offset;
-	    stackp->runs = 0;	/* take care of both runs, trigger merge */
-	    if (!iwhich) {	/* Merged runs belong in aux, copy 1st */
-		f1 = b = PINDEX(base, offset);	/* where first run starts */
-		f2 = PINDEX(aux, offset);	/* where it will be copied */
-		t = NEXT(f2);			/* where first run will end */
-		offset = PNELEM(aux, t);	/* offset thereof */
-		p = PINDEX(base, offset);	/* end of first run */
-		t = NEXT(t);			/* where second run will end */
-		t = PINDEX(base, PNELEM(aux, t)); /* where it now ends */
-		FROMTOUPTO(f1, f2, t);		/* copy both runs */
-		NEXT(b) = p;			/* paralleled pointer for 1st */
-		NEXT(p) = t;			/* ... and for second */
-	    }
-	}
+                    /* Copy all the strictly low elements */
+
+                    if (q == f1) {
+                        FROMTOUPTO(f2, tp2, t);
+                        *tp2++ = *f1++;
+                    } else {
+                        FROMTOUPTO(f1, tp2, t);
+                        *tp2++ = *f2++;
+                    }
+                }
+
+
+                /* Run out remaining list */
+                if (f1 == l1) {
+                       if (f2 < l2) FROMTOUPTO(f2, tp2, l2);
+                } else              FROMTOUPTO(f1, tp2, l1);
+                p1 = NEXT(p1) = POTHER(tp2, list2, list1);
+
+                if (--level == 0) goto done;
+                --stackp;
+                t = list1; list1 = list2; list2 = t;	/* swap lists */
+            } while ((runs = stackp->runs) == 0);
+        }
+
+
+        stackp->runs = 0;		/* current run will finish level */
+        /* While there are more than 2 runs remaining,
+         * turn them into exactly 2 runs (at the "other" level),
+         * each made up of approximately half the runs.
+         * Stack the second half for later processing,
+         * and set about producing the first half now.
+         */
+        while (runs > 2) {
+            ++level;
+            ++stackp;
+            stackp->offset = offset;
+            runs -= stackp->runs = runs / 2;
+        }
+        /* We must construct a single run from 1 or 2 runs.
+         * All the original runs are in which[0] == base.
+         * The run we construct must end up in which[level&1].
+         */
+        iwhich = level & 1;
+        if (runs == 1) {
+            /* Constructing a single run from a single run.
+             * If it's where it belongs already, there's nothing to do.
+             * Otherwise, copy it to where it belongs.
+             * A run of 1 is either a singleton at level 0,
+             * or the second half of a split 3.  In neither event
+             * is it necessary to set offset.  It will be set by the merge
+             * that immediately follows.
+             */
+            if (iwhich) {	/* Belongs in aux, currently in base */
+                f1 = b = PINDEX(base, offset);	/* where list starts */
+                f2 = PINDEX(aux, offset);	/* where list goes */
+                t = NEXT(f2);			/* where list will end */
+                offset = PNELEM(aux, t);	/* offset thereof */
+                t = PINDEX(base, offset);	/* where it currently ends */
+                FROMTOUPTO(f1, f2, t);		/* copy */
+                NEXT(b) = t;			/* set up parallel pointer */
+            } else if (level == 0) goto done;	/* single run at level 0 */
+        } else {
+            /* Constructing a single run from two runs.
+             * The merge code at the top will do that.
+             * We need only make sure the two runs are in the "other" array,
+             * so they'll end up in the correct array after the merge.
+             */
+            ++level;
+            ++stackp;
+            stackp->offset = offset;
+            stackp->runs = 0;	/* take care of both runs, trigger merge */
+            if (!iwhich) {	/* Merged runs belong in aux, copy 1st */
+                f1 = b = PINDEX(base, offset);	/* where first run starts */
+                f2 = PINDEX(aux, offset);	/* where it will be copied */
+                t = NEXT(f2);			/* where first run will end */
+                offset = PNELEM(aux, t);	/* offset thereof */
+                p = PINDEX(base, offset);	/* end of first run */
+                t = NEXT(t);			/* where second run will end */
+                t = PINDEX(base, PNELEM(aux, t)); /* where it now ends */
+                FROMTOUPTO(f1, f2, t);		/* copy both runs */
+                NEXT(b) = p;			/* paralleled pointer for 1st */
+                NEXT(p) = t;			/* ... and for second */
+            }
+        }
     }
   done:
     if (aux != small) Safefree(aux);	/* free iff allocated */
     if (flags) {
-	 PL_sort_RealCmp = savecmp;	/* Restore current comparison routine, if any */
+         PL_sort_RealCmp = savecmp;	/* Restore current comparison routine, if any */
     }
     return;
 }
@@ -579,11 +579,11 @@ S_mergesortsv(pTHX_ gptr *base, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
     This program is free software; you can redistribute it and/or modify
     it under the terms of either:
 
-	a) the GNU General Public License as published by the Free
-	Software Foundation; either version 1, or (at your option) any
-	later version, or
+        a) the GNU General Public License as published by the Free
+        Software Foundation; either version 1, or (at your option) any
+        later version, or
 
-	b) the "Artistic License" which comes with this Kit.
+        b) the "Artistic License" which comes with this Kit.
 
    Details on the perl license can be found in the perl source code which
    may be located via the www.perl.com web page.
@@ -1237,10 +1237,10 @@ S_qsortsvu(pTHX_ SV ** array, size_t num_elts, SVCOMPARE_t compare)
             if (j != i) {
                /* Looks like we really need to move some things
                */
-	       int k;
-	       temp = array[i];
-	       for (k = i - 1; k >= j; --k)
-		  array[k + 1] = array[k];
+               int k;
+               temp = array[i];
+               for (k = i - 1; k >= j; --k)
+                  array[k + 1] = array[k];
                array[j] = temp;
             }
          }
@@ -1325,7 +1325,7 @@ cmpindir(pTHX_ gptr const a, gptr const b)
     const I32 sense = PL_sort_RealCmp(aTHX_ *ap, *bp);
 
     if (sense)
-	return sense;
+        return sense;
     return (ap > bp) ? 1 : ((ap < bp) ? -1 : 0);
 }
 
@@ -1338,7 +1338,7 @@ cmpindir_desc(pTHX_ gptr const a, gptr const b)
 
     /* Reverse the default */
     if (sense)
-	return -sense;
+        return -sense;
     /* But don't reverse the stability test.  */
     return (ap > bp) ? 1 : ((ap < bp) ? -1 : 0);
 
@@ -1348,78 +1348,78 @@ STATIC void
 S_qsortsv(pTHX_ gptr *list1, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
 {
     if ((flags & SORTf_STABLE) != 0) {
-	 gptr **pp, *q;
-	 size_t n, j, i;
-	 gptr *small[SMALLSORT], **indir, tmp;
-	 SVCOMPARE_t savecmp;
-	 if (nmemb <= 1) return;     /* sorted trivially */
+         gptr **pp, *q;
+         size_t n, j, i;
+         gptr *small[SMALLSORT], **indir, tmp;
+         SVCOMPARE_t savecmp;
+         if (nmemb <= 1) return;     /* sorted trivially */
 
-	 /* Small arrays can use the stack, big ones must be allocated */
-	 if (nmemb <= SMALLSORT) indir = small;
-	 else { Newx(indir, nmemb, gptr *); }
+         /* Small arrays can use the stack, big ones must be allocated */
+         if (nmemb <= SMALLSORT) indir = small;
+         else { Newx(indir, nmemb, gptr *); }
 
-	 /* Copy pointers to original array elements into indirect array */
-	 for (n = nmemb, pp = indir, q = list1; n--; ) *pp++ = q++;
+         /* Copy pointers to original array elements into indirect array */
+         for (n = nmemb, pp = indir, q = list1; n--; ) *pp++ = q++;
 
-	 savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
-	 PL_sort_RealCmp = cmp;	/* Put comparison routine where cmpindir can find it */
+         savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
+         PL_sort_RealCmp = cmp;	/* Put comparison routine where cmpindir can find it */
 
-	 /* sort, with indirection */
-	 if (flags & SORTf_DESC)
-	    qsortsvu((gptr *)indir, nmemb, cmpindir_desc);
-	else
-	    qsortsvu((gptr *)indir, nmemb, cmpindir);
+         /* sort, with indirection */
+         if (flags & SORTf_DESC)
+            qsortsvu((gptr *)indir, nmemb, cmpindir_desc);
+        else
+            qsortsvu((gptr *)indir, nmemb, cmpindir);
 
-	 pp = indir;
-	 q = list1;
-	 for (n = nmemb; n--; ) {
-	      /* Assert A: all elements of q with index > n are already
-	       * in place.  This is vacuously true at the start, and we
-	       * put element n where it belongs below (if it wasn't
-	       * already where it belonged). Assert B: we only move
-	       * elements that aren't where they belong,
-	       * so, by A, we never tamper with elements above n.
-	       */
-	      j = pp[n] - q;		/* This sets j so that q[j] is
-					 * at pp[n].  *pp[j] belongs in
-					 * q[j], by construction.
-					 */
-	      if (n != j) {		/* all's well if n == j */
-		   tmp = q[j];		/* save what's in q[j] */
-		   do {
-			q[j] = *pp[j];	/* put *pp[j] where it belongs */
-			i = pp[j] - q;	/* the index in q of the element
-					 * just moved */
-			pp[j] = q + j;	/* this is ok now */
-		   } while ((j = i) != n);
-		   /* There are only finitely many (nmemb) addresses
-		    * in the pp array.
-		    * So we must eventually revisit an index we saw before.
-		    * Suppose the first revisited index is k != n.
-		    * An index is visited because something else belongs there.
-		    * If we visit k twice, then two different elements must
-		    * belong in the same place, which cannot be.
-		    * So j must get back to n, the loop terminates,
-		    * and we put the saved element where it belongs.
-		    */
-		   q[n] = tmp;		/* put what belongs into
-					 * the n-th element */
-	      }
-	 }
+         pp = indir;
+         q = list1;
+         for (n = nmemb; n--; ) {
+              /* Assert A: all elements of q with index > n are already
+               * in place.  This is vacuously true at the start, and we
+               * put element n where it belongs below (if it wasn't
+               * already where it belonged). Assert B: we only move
+               * elements that aren't where they belong,
+               * so, by A, we never tamper with elements above n.
+               */
+              j = pp[n] - q;		/* This sets j so that q[j] is
+                                         * at pp[n].  *pp[j] belongs in
+                                         * q[j], by construction.
+                                         */
+              if (n != j) {		/* all's well if n == j */
+                   tmp = q[j];		/* save what's in q[j] */
+                   do {
+                        q[j] = *pp[j];	/* put *pp[j] where it belongs */
+                        i = pp[j] - q;	/* the index in q of the element
+                                         * just moved */
+                        pp[j] = q + j;	/* this is ok now */
+                   } while ((j = i) != n);
+                   /* There are only finitely many (nmemb) addresses
+                    * in the pp array.
+                    * So we must eventually revisit an index we saw before.
+                    * Suppose the first revisited index is k != n.
+                    * An index is visited because something else belongs there.
+                    * If we visit k twice, then two different elements must
+                    * belong in the same place, which cannot be.
+                    * So j must get back to n, the loop terminates,
+                    * and we put the saved element where it belongs.
+                    */
+                   q[n] = tmp;		/* put what belongs into
+                                         * the n-th element */
+              }
+         }
 
-	/* free iff allocated */
-	 if (indir != small) { Safefree(indir); }
-	 /* restore prevailing comparison routine */
-	 PL_sort_RealCmp = savecmp;
+        /* free iff allocated */
+         if (indir != small) { Safefree(indir); }
+         /* restore prevailing comparison routine */
+         PL_sort_RealCmp = savecmp;
     } else if ((flags & SORTf_DESC) != 0) {
-	 const SVCOMPARE_t savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
-	 PL_sort_RealCmp = cmp;	/* Put comparison routine where cmp_desc can find it */
-	 cmp = cmp_desc;
-	 qsortsvu(list1, nmemb, cmp);
-	 /* restore prevailing comparison routine */
-	 PL_sort_RealCmp = savecmp;
+         const SVCOMPARE_t savecmp = PL_sort_RealCmp;	/* Save current comparison routine, if any */
+         PL_sort_RealCmp = cmp;	/* Put comparison routine where cmp_desc can find it */
+         cmp = cmp_desc;
+         qsortsvu(list1, nmemb, cmp);
+         /* restore prevailing comparison routine */
+         PL_sort_RealCmp = savecmp;
     } else {
-	 qsortsvu(list1, nmemb, cmp);
+         qsortsvu(list1, nmemb, cmp);
     }
 }
 
@@ -1459,9 +1459,9 @@ Perl_sortsv_flags(pTHX_ SV **array, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
     PERL_ARGS_ASSERT_SORTSV_FLAGS;
 
     if (flags & SORTf_QSORT)
-	S_qsortsv(aTHX_ array, nmemb, cmp, flags);
+        S_qsortsv(aTHX_ array, nmemb, cmp, flags);
     else
-	S_mergesortsv(aTHX_ array, nmemb, cmp, flags);
+        S_mergesortsv(aTHX_ array, nmemb, cmp, flags);
 }
 
 #define SvNSIOK(sv) ((SvFLAGS(sv) & SVf_NOK) || ((SvFLAGS(sv) & (SVf_IOK|SVf_IVisUV)) == SVf_IOK))
@@ -1491,110 +1491,110 @@ PP(pp_sort)
     I32 all_SIVs = 1;
 
     if ((priv & OPpSORT_DESCEND) != 0)
-	sort_flags |= SORTf_DESC;
+        sort_flags |= SORTf_DESC;
     if ((priv & OPpSORT_QSORT) != 0)
-	sort_flags |= SORTf_QSORT;
+        sort_flags |= SORTf_QSORT;
     if ((priv & OPpSORT_STABLE) != 0)
-	sort_flags |= SORTf_STABLE;
+        sort_flags |= SORTf_STABLE;
 
     if (gimme != G_ARRAY) {
-	SP = MARK;
-	EXTEND(SP,1);
-	RETPUSHUNDEF;
+        SP = MARK;
+        EXTEND(SP,1);
+        RETPUSHUNDEF;
     }
 
     ENTER;
     SAVEVPTR(PL_sortcop);
     if (flags & OPf_STACKED) {
-	if (flags & OPf_SPECIAL) {
+        if (flags & OPf_SPECIAL) {
             OP *nullop = OpSIBLING(cLISTOP->op_first);  /* pass pushmark */
             assert(nullop->op_type == OP_NULL);
-	    PL_sortcop = nullop->op_next;
-	}
-	else {
-	    GV *autogv = NULL;
-	    HV *stash;
-	    cv = sv_2cv(*++MARK, &stash, &gv, GV_ADD);
-	  check_cv:
-	    if (cv && SvPOK(cv)) {
-		const char * const proto = SvPV_nolen_const(MUTABLE_SV(cv));
-		if (proto && strEQ(proto, "$$")) {
-		    hasargs = TRUE;
-		}
-	    }
-	    if (cv && CvISXSUB(cv) && CvXSUB(cv)) {
-		is_xsub = 1;
-	    }
-	    else if (!(cv && CvROOT(cv))) {
-		if (gv) {
-		    goto autoload;
-		}
-		else if (!CvANON(cv) && (gv = CvGV(cv))) {
-		  if (cv != GvCV(gv)) cv = GvCV(gv);
-		 autoload:
-		  if (!autogv && (
-			autogv = gv_autoload_pvn(
-			    GvSTASH(gv), GvNAME(gv), GvNAMELEN(gv),
-			    GvNAMEUTF8(gv) ? SVf_UTF8 : 0
-			)
-		     )) {
-		    cv = GvCVu(autogv);
-		    goto check_cv;
-		  }
-		  else {
-		    SV *tmpstr = sv_newmortal();
-		    gv_efullname3(tmpstr, gv, NULL);
-		    DIE(aTHX_ "Undefined sort subroutine \"%"SVf"\" called",
-			SVfARG(tmpstr));
-		  }
-		}
-		else {
-		    DIE(aTHX_ "Undefined subroutine in sort");
-		}
-	    }
+            PL_sortcop = nullop->op_next;
+        }
+        else {
+            GV *autogv = NULL;
+            HV *stash;
+            cv = sv_2cv(*++MARK, &stash, &gv, GV_ADD);
+          check_cv:
+            if (cv && SvPOK(cv)) {
+                const char * const proto = SvPV_nolen_const(MUTABLE_SV(cv));
+                if (proto && strEQ(proto, "$$")) {
+                    hasargs = TRUE;
+                }
+            }
+            if (cv && CvISXSUB(cv) && CvXSUB(cv)) {
+                is_xsub = 1;
+            }
+            else if (!(cv && CvROOT(cv))) {
+                if (gv) {
+                    goto autoload;
+                }
+                else if (!CvANON(cv) && (gv = CvGV(cv))) {
+                  if (cv != GvCV(gv)) cv = GvCV(gv);
+                 autoload:
+                  if (!autogv && (
+                        autogv = gv_autoload_pvn(
+                            GvSTASH(gv), GvNAME(gv), GvNAMELEN(gv),
+                            GvNAMEUTF8(gv) ? SVf_UTF8 : 0
+                        )
+                     )) {
+                    cv = GvCVu(autogv);
+                    goto check_cv;
+                  }
+                  else {
+                    SV *tmpstr = sv_newmortal();
+                    gv_efullname3(tmpstr, gv, NULL);
+                    DIE(aTHX_ "Undefined sort subroutine \"%"SVf"\" called",
+                        SVfARG(tmpstr));
+                  }
+                }
+                else {
+                    DIE(aTHX_ "Undefined subroutine in sort");
+                }
+            }
 
-	    if (is_xsub)
-		PL_sortcop = (OP*)cv;
-	    else
-		PL_sortcop = CvSTART(cv);
-	}
+            if (is_xsub)
+                PL_sortcop = (OP*)cv;
+            else
+                PL_sortcop = CvSTART(cv);
+        }
     }
     else {
-	PL_sortcop = NULL;
+        PL_sortcop = NULL;
     }
 
     /* optimiser converts "@a = sort @a" to "sort \@a";
      * in case of tied @a, pessimise: push (@a) onto stack, then assign
      * result back to @a at the end of this function */
     if (priv & OPpSORT_INPLACE) {
-	assert( MARK+1 == SP && *SP && SvTYPE(*SP) == SVt_PVAV);
-	(void)POPMARK; /* remove mark associated with ex-OP_AASSIGN */
-	av = MUTABLE_AV((*SP));
-	max = AvFILL(av) + 1;
-	if (SvMAGICAL(av)) {
-	    MEXTEND(SP, max);
-	    for (i=0; i < max; i++) {
-		SV **svp = av_fetch(av, i, FALSE);
-		*SP++ = (svp) ? *svp : NULL;
-	    }
-	    SP--;
-	    p1 = p2 = SP - (max-1);
-	}
-	else {
-	    if (SvREADONLY(av))
-		Perl_croak_no_modify();
-	    else
-	    {
-		SvREADONLY_on(av);
-		save_pushptr((void *)av, SAVEt_READONLY_OFF);
-	    }
-	    p1 = p2 = AvARRAY(av);
-	    sorting_av = 1;
-	}
+        assert( MARK+1 == SP && *SP && SvTYPE(*SP) == SVt_PVAV);
+        (void)POPMARK; /* remove mark associated with ex-OP_AASSIGN */
+        av = MUTABLE_AV((*SP));
+        max = AvFILL(av) + 1;
+        if (SvMAGICAL(av)) {
+            MEXTEND(SP, max);
+            for (i=0; i < max; i++) {
+                SV **svp = av_fetch(av, i, FALSE);
+                *SP++ = (svp) ? *svp : NULL;
+            }
+            SP--;
+            p1 = p2 = SP - (max-1);
+        }
+        else {
+            if (SvREADONLY(av))
+                Perl_croak_no_modify();
+            else
+            {
+                SvREADONLY_on(av);
+                save_pushptr((void *)av, SAVEt_READONLY_OFF);
+            }
+            p1 = p2 = AvARRAY(av);
+            sorting_av = 1;
+        }
     }
     else {
-	p2 = MARK+1;
-	max = SP - MARK;
+        p2 = MARK+1;
+        max = SP - MARK;
    }
 
     /* shuffle stack down, removing optional initial cv (p1!=p2), plus
@@ -1602,163 +1602,163 @@ PP(pp_sort)
      * required any args */
     copytmps = !sorting_av && PL_sortcop;
     for (i=max; i > 0 ; i--) {
-	if ((*p1 = *p2++)) {			/* Weed out nulls. */
-	    if (copytmps && SvPADTMP(*p1)) {
-		*p1 = sv_mortalcopy(*p1);
+        if ((*p1 = *p2++)) {			/* Weed out nulls. */
+            if (copytmps && SvPADTMP(*p1)) {
+                *p1 = sv_mortalcopy(*p1);
             }
-	    SvTEMP_off(*p1);
-	    if (!PL_sortcop) {
-		if (priv & OPpSORT_NUMERIC) {
-		    if (priv & OPpSORT_INTEGER) {
-			if (!SvIOK(*p1))
-			    (void)sv_2iv_flags(*p1, SV_GMAGIC|SV_SKIP_OVERLOAD);
-		    }
-		    else {
-			if (!SvNSIOK(*p1))
-			    (void)sv_2nv_flags(*p1, SV_GMAGIC|SV_SKIP_OVERLOAD);
-			if (all_SIVs && !SvSIOK(*p1))
-			    all_SIVs = 0;
-		    }
-		}
-		else {
-		    if (!SvPOK(*p1))
-			(void)sv_2pv_flags(*p1, 0,
-			    SV_GMAGIC|SV_CONST_RETURN|SV_SKIP_OVERLOAD);
-		}
-		if (SvAMAGIC(*p1))
-		    overloading = 1;
-	    }
-	    p1++;
-	}
-	else
-	    max--;
+            SvTEMP_off(*p1);
+            if (!PL_sortcop) {
+                if (priv & OPpSORT_NUMERIC) {
+                    if (priv & OPpSORT_INTEGER) {
+                        if (!SvIOK(*p1))
+                            (void)sv_2iv_flags(*p1, SV_GMAGIC|SV_SKIP_OVERLOAD);
+                    }
+                    else {
+                        if (!SvNSIOK(*p1))
+                            (void)sv_2nv_flags(*p1, SV_GMAGIC|SV_SKIP_OVERLOAD);
+                        if (all_SIVs && !SvSIOK(*p1))
+                            all_SIVs = 0;
+                    }
+                }
+                else {
+                    if (!SvPOK(*p1))
+                        (void)sv_2pv_flags(*p1, 0,
+                            SV_GMAGIC|SV_CONST_RETURN|SV_SKIP_OVERLOAD);
+                }
+                if (SvAMAGIC(*p1))
+                    overloading = 1;
+            }
+            p1++;
+        }
+        else
+            max--;
     }
     if (sorting_av)
-	AvFILLp(av) = max-1;
+        AvFILLp(av) = max-1;
 
     if (max > 1) {
-	SV **start;
-	if (PL_sortcop) {
-	    PERL_CONTEXT *cx;
-	    SV** newsp;
-	    const bool oldcatch = CATCH_GET;
+        SV **start;
+        if (PL_sortcop) {
+            PERL_CONTEXT *cx;
+            SV** newsp;
+            const bool oldcatch = CATCH_GET;
 
-	    SAVETMPS;
-	    SAVEOP();
+            SAVETMPS;
+            SAVEOP();
 
-	    CATCH_SET(TRUE);
-	    PUSHSTACKi(PERLSI_SORT);
-	    if (!hasargs && !is_xsub) {
-		SAVEGENERICSV(PL_firstgv);
-		SAVEGENERICSV(PL_secondgv);
-		PL_firstgv = MUTABLE_GV(SvREFCNT_inc(
-		    gv_fetchpvs("a", GV_ADD|GV_NOTQUAL, SVt_PV)
-		));
-		PL_secondgv = MUTABLE_GV(SvREFCNT_inc(
-		    gv_fetchpvs("b", GV_ADD|GV_NOTQUAL, SVt_PV)
-		));
-		SAVESPTR(GvSV(PL_firstgv));
-		SAVESPTR(GvSV(PL_secondgv));
-	    }
+            CATCH_SET(TRUE);
+            PUSHSTACKi(PERLSI_SORT);
+            if (!hasargs && !is_xsub) {
+                SAVEGENERICSV(PL_firstgv);
+                SAVEGENERICSV(PL_secondgv);
+                PL_firstgv = MUTABLE_GV(SvREFCNT_inc(
+                    gv_fetchpvs("a", GV_ADD|GV_NOTQUAL, SVt_PV)
+                ));
+                PL_secondgv = MUTABLE_GV(SvREFCNT_inc(
+                    gv_fetchpvs("b", GV_ADD|GV_NOTQUAL, SVt_PV)
+                ));
+                SAVESPTR(GvSV(PL_firstgv));
+                SAVESPTR(GvSV(PL_secondgv));
+            }
 
-	    PUSHBLOCK(cx, CXt_NULL, PL_stack_base);
-	    if (!(flags & OPf_SPECIAL)) {
-		cx->cx_type = CXt_SUB;
-		cx->blk_gimme = G_SCALAR;
-		/* If our comparison routine is already active (CvDEPTH is
-		 * is not 0),  then PUSHSUB does not increase the refcount,
-		 * so we have to do it ourselves, because the LEAVESUB fur-
-		 * ther down lowers it. */
-		if (CvDEPTH(cv)) SvREFCNT_inc_simple_void_NN(cv);
-		PUSHSUB(cx);
-		if (!is_xsub) {
-		    PADLIST * const padlist = CvPADLIST(cv);
+            PUSHBLOCK(cx, CXt_NULL, PL_stack_base);
+            if (!(flags & OPf_SPECIAL)) {
+                cx->cx_type = CXt_SUB;
+                cx->blk_gimme = G_SCALAR;
+                /* If our comparison routine is already active (CvDEPTH is
+                 * is not 0),  then PUSHSUB does not increase the refcount,
+                 * so we have to do it ourselves, because the LEAVESUB fur-
+                 * ther down lowers it. */
+                if (CvDEPTH(cv)) SvREFCNT_inc_simple_void_NN(cv);
+                PUSHSUB(cx);
+                if (!is_xsub) {
+                    PADLIST * const padlist = CvPADLIST(cv);
 
-		    if (++CvDEPTH(cv) >= 2) {
-			PERL_STACK_OVERFLOW_CHECK();
-			pad_push(padlist, CvDEPTH(cv));
-		    }
-		    SAVECOMPPAD();
-		    PAD_SET_CUR_NOSAVE(padlist, CvDEPTH(cv));
+                    if (++CvDEPTH(cv) >= 2) {
+                        PERL_STACK_OVERFLOW_CHECK();
+                        pad_push(padlist, CvDEPTH(cv));
+                    }
+                    SAVECOMPPAD();
+                    PAD_SET_CUR_NOSAVE(padlist, CvDEPTH(cv));
 
-		    if (hasargs) {
-			/* This is mostly copied from pp_entersub */
-			AV * const av = MUTABLE_AV(PAD_SVl(0));
+                    if (hasargs) {
+                        /* This is mostly copied from pp_entersub */
+                        AV * const av = MUTABLE_AV(PAD_SVl(0));
 
-			cx->blk_sub.savearray = GvAV(PL_defgv);
-			GvAV(PL_defgv) = MUTABLE_AV(SvREFCNT_inc_simple(av));
-			CX_CURPAD_SAVE(cx->blk_sub);
-			cx->blk_sub.argarray = av;
-		    }
+                        cx->blk_sub.savearray = GvAV(PL_defgv);
+                        GvAV(PL_defgv) = MUTABLE_AV(SvREFCNT_inc_simple(av));
+                        CX_CURPAD_SAVE(cx->blk_sub);
+                        cx->blk_sub.argarray = av;
+                    }
 
-		}
-	    }
-	    cx->cx_type |= CXp_MULTICALL;
-	    
-	    start = p1 - max;
-	    sortsvp(aTHX_ start, max,
-		    (is_xsub ? S_sortcv_xsub : hasargs ? S_sortcv_stacked : S_sortcv),
-		    sort_flags);
+                }
+            }
+            cx->cx_type |= CXp_MULTICALL;
+            
+            start = p1 - max;
+            sortsvp(aTHX_ start, max,
+                    (is_xsub ? S_sortcv_xsub : hasargs ? S_sortcv_stacked : S_sortcv),
+                    sort_flags);
 
-	    if (!(flags & OPf_SPECIAL)) {
-		SV *sv;
-		/* Reset cx, in case the context stack has been
-		   reallocated. */
-		cx = &cxstack[cxstack_ix];
-		POPSUB(cx, sv);
-		LEAVESUB(sv);
-	    }
-	    POPBLOCK(cx,PL_curpm);
-	    PL_stack_sp = newsp;
-	    POPSTACK;
-	    CATCH_SET(oldcatch);
-	}
-	else {
-	    MEXTEND(SP, 20);	/* Can't afford stack realloc on signal. */
-	    start = sorting_av ? AvARRAY(av) : ORIGMARK+1;
-	    sortsvp(aTHX_ start, max,
-		    (priv & OPpSORT_NUMERIC)
-		        ? ( ( ( priv & OPpSORT_INTEGER) || all_SIVs)
-			    ? ( overloading ? S_amagic_i_ncmp : S_sv_i_ncmp)
-			    : ( overloading ? S_amagic_ncmp : S_sv_ncmp ) )
-			: (
+            if (!(flags & OPf_SPECIAL)) {
+                SV *sv;
+                /* Reset cx, in case the context stack has been
+                   reallocated. */
+                cx = &cxstack[cxstack_ix];
+                POPSUB(cx, sv);
+                LEAVESUB(sv);
+            }
+            POPBLOCK(cx,PL_curpm);
+            PL_stack_sp = newsp;
+            POPSTACK;
+            CATCH_SET(oldcatch);
+        }
+        else {
+            MEXTEND(SP, 20);	/* Can't afford stack realloc on signal. */
+            start = sorting_av ? AvARRAY(av) : ORIGMARK+1;
+            sortsvp(aTHX_ start, max,
+                    (priv & OPpSORT_NUMERIC)
+                        ? ( ( ( priv & OPpSORT_INTEGER) || all_SIVs)
+                            ? ( overloading ? S_amagic_i_ncmp : S_sv_i_ncmp)
+                            : ( overloading ? S_amagic_ncmp : S_sv_ncmp ) )
+                        : (
 #ifdef USE_LOCALE_COLLATE
                            IN_LC_RUNTIME(LC_COLLATE)
-			    ? ( overloading
-				? (SVCOMPARE_t)S_amagic_cmp_locale
-				: (SVCOMPARE_t)sv_cmp_locale_static)
+                            ? ( overloading
+                                ? (SVCOMPARE_t)S_amagic_cmp_locale
+                                : (SVCOMPARE_t)sv_cmp_locale_static)
                             :
 #endif
-			      ( overloading ? (SVCOMPARE_t)S_amagic_cmp : (SVCOMPARE_t)sv_cmp_static)),
-		    sort_flags);
-	}
-	if ((priv & OPpSORT_REVERSE) != 0) {
-	    SV **q = start+max-1;
-	    while (start < q) {
-		SV * const tmp = *start;
-		*start++ = *q;
-		*q-- = tmp;
-	    }
-	}
+                              ( overloading ? (SVCOMPARE_t)S_amagic_cmp : (SVCOMPARE_t)sv_cmp_static)),
+                    sort_flags);
+        }
+        if ((priv & OPpSORT_REVERSE) != 0) {
+            SV **q = start+max-1;
+            while (start < q) {
+                SV * const tmp = *start;
+                *start++ = *q;
+                *q-- = tmp;
+            }
+        }
     }
     if (sorting_av)
-	SvREADONLY_off(av);
+        SvREADONLY_off(av);
     else if (av && !sorting_av) {
-	/* simulate pp_aassign of tied AV */
-	SV** const base = MARK+1;
-	for (i=0; i < max; i++) {
-	    base[i] = newSVsv(base[i]);
-	}
-	av_clear(av);
-	av_extend(av, max);
-	for (i=0; i < max; i++) {
-	    SV * const sv = base[i];
-	    SV ** const didstore = av_store(av, i, sv);
-	    if (SvSMAGICAL(sv))
-		mg_set(sv);
-	    if (!didstore)
-		sv_2mortal(sv);
-	}
+        /* simulate pp_aassign of tied AV */
+        SV** const base = MARK+1;
+        for (i=0; i < max; i++) {
+            base[i] = newSVsv(base[i]);
+        }
+        av_clear(av);
+        av_extend(av, max);
+        for (i=0; i < max; i++) {
+            SV * const sv = base[i];
+            SV ** const didstore = av_store(av, i, sv);
+            if (SvSMAGICAL(sv))
+                mg_set(sv);
+            if (!didstore)
+                sv_2mortal(sv);
+        }
     }
     LEAVE;
     PL_stack_sp = ORIGMARK + (sorting_av ? 0 : max);
@@ -1786,20 +1786,20 @@ S_sortcv(pTHX_ SV *const a, SV *const b)
     PL_op = sortop;
     PL_curcop = cop;
     if (PL_stack_sp != PL_stack_base + 1) {
-	assert(PL_stack_sp == PL_stack_base);
-	resultsv = &PL_sv_undef;
+        assert(PL_stack_sp == PL_stack_base);
+        resultsv = &PL_sv_undef;
     }
     else resultsv = *PL_stack_sp;
     if (SvNIOK_nog(resultsv)) result = SvIV(resultsv);
     else {
-	ENTER;
-	SAVEVPTR(PL_curpad);
-	PL_curpad = 0;
-	result = SvIV(resultsv);
-	LEAVE;
+        ENTER;
+        SAVEVPTR(PL_curpad);
+        PL_curpad = 0;
+        result = SvIV(resultsv);
+        LEAVE;
     }
     while (PL_scopestack_ix > oldscopeix) {
-	LEAVE;
+        LEAVE;
     }
     leave_scope(oldsaveix);
     PL_curpm = pm;
@@ -1821,22 +1821,22 @@ S_sortcv_stacked(pTHX_ SV *const a, SV *const b)
     PERL_ARGS_ASSERT_SORTCV_STACKED;
 
     if (AvREAL(av)) {
-	av_clear(av);
-	AvREAL_off(av);
-	AvREIFY_on(av);
+        av_clear(av);
+        AvREAL_off(av);
+        AvREIFY_on(av);
     }
     if (AvMAX(av) < 1) {
-	SV **ary = AvALLOC(av);
-	if (AvARRAY(av) != ary) {
-	    AvMAX(av) += AvARRAY(av) - AvALLOC(av);
-	    AvARRAY(av) = ary;
-	}
-	if (AvMAX(av) < 1) {
-	    AvMAX(av) = 1;
-	    Renew(ary,2,SV*);
-	    AvARRAY(av) = ary;
-	    AvALLOC(av) = ary;
-	}
+        SV **ary = AvALLOC(av);
+        if (AvARRAY(av) != ary) {
+            AvMAX(av) += AvARRAY(av) - AvALLOC(av);
+            AvARRAY(av) = ary;
+        }
+        if (AvMAX(av) < 1) {
+            AvMAX(av) = 1;
+            Renew(ary,2,SV*);
+            AvARRAY(av) = ary;
+            AvALLOC(av) = ary;
+        }
     }
     AvFILLp(av) = 1;
 
@@ -1849,13 +1849,13 @@ S_sortcv_stacked(pTHX_ SV *const a, SV *const b)
     PL_curcop = cop;
     pad = PL_curpad; PL_curpad = 0;
     if (PL_stack_sp != PL_stack_base + 1) {
-	assert(PL_stack_sp == PL_stack_base);
-	result = SvIV(&PL_sv_undef);
+        assert(PL_stack_sp == PL_stack_base);
+        result = SvIV(&PL_sv_undef);
     }
     else result = SvIV(*PL_stack_sp);
     PL_curpad = pad;
     while (PL_scopestack_ix > oldscopeix) {
-	LEAVE;
+        LEAVE;
     }
     leave_scope(oldsaveix);
     PL_curpm = pm;
@@ -1882,10 +1882,10 @@ S_sortcv_xsub(pTHX_ SV *const a, SV *const b)
     PUTBACK;
     (void)(*CvXSUB(cv))(aTHX_ cv);
     if (PL_stack_sp != PL_stack_base + 1)
-	Perl_croak(aTHX_ "Sort subroutine didn't return single value");
+        Perl_croak(aTHX_ "Sort subroutine didn't return single value");
     result = SvIV(*PL_stack_sp);
     while (PL_scopestack_ix > oldscopeix) {
-	LEAVE;
+        LEAVE;
     }
     leave_scope(oldsaveix);
     PL_curpm = pm;
@@ -1906,8 +1906,8 @@ S_sv_ncmp(pTHX_ SV *const a, SV *const b)
 #else
     if (nv1 != nv1 || nv2 != nv2) {
 #endif
-	if (ckWARN(WARN_UNINITIALIZED)) report_uninit(NULL);
-	return 0;
+        if (ckWARN(WARN_UNINITIALIZED)) report_uninit(NULL);
+        return 0;
     }
     return nv1 < nv2 ? -1 : nv1 > nv2 ? 1 : 0;
 }
@@ -1925,8 +1925,8 @@ S_sv_i_ncmp(pTHX_ SV *const a, SV *const b)
 
 #define tryCALL_AMAGICbin(left,right,meth) \
     (SvAMAGIC(left)||SvAMAGIC(right)) \
-	? amagic_call(left, right, meth, 0) \
-	: NULL;
+        ? amagic_call(left, right, meth, 0) \
+        : NULL;
 
 #define SORT_NORMAL_RETURN_VALUE(val)  (((val) > 0) ? 1 : ((val) ? -1 : 0))
 
@@ -1942,10 +1942,10 @@ S_amagic_ncmp(pTHX_ SV *const a, SV *const b)
             const I32 i = SvIVX(tmpsv);
             return SORT_NORMAL_RETURN_VALUE(i);
         }
-	else {
-	    const NV d = SvNV(tmpsv);
-	    return SORT_NORMAL_RETURN_VALUE(d);
-	}
+        else {
+            const NV d = SvNV(tmpsv);
+            return SORT_NORMAL_RETURN_VALUE(d);
+        }
      }
      return S_sv_ncmp(aTHX_ a, b);
 }
@@ -1962,10 +1962,10 @@ S_amagic_i_ncmp(pTHX_ SV *const a, SV *const b)
             const I32 i = SvIVX(tmpsv);
             return SORT_NORMAL_RETURN_VALUE(i);
         }
-	else {
-	    const NV d = SvNV(tmpsv);
-	    return SORT_NORMAL_RETURN_VALUE(d);
-	}
+        else {
+            const NV d = SvNV(tmpsv);
+            return SORT_NORMAL_RETURN_VALUE(d);
+        }
     }
     return S_sv_i_ncmp(aTHX_ a, b);
 }
@@ -1982,10 +1982,10 @@ S_amagic_cmp(pTHX_ SV *const str1, SV *const str2)
             const I32 i = SvIVX(tmpsv);
             return SORT_NORMAL_RETURN_VALUE(i);
         }
-	else {
-	    const NV d = SvNV(tmpsv);
-	    return SORT_NORMAL_RETURN_VALUE(d);
-	}
+        else {
+            const NV d = SvNV(tmpsv);
+            return SORT_NORMAL_RETURN_VALUE(d);
+        }
     }
     return sv_cmp(str1, str2);
 }
@@ -2004,10 +2004,10 @@ S_amagic_cmp_locale(pTHX_ SV *const str1, SV *const str2)
             const I32 i = SvIVX(tmpsv);
             return SORT_NORMAL_RETURN_VALUE(i);
         }
-	else {
-	    const NV d = SvNV(tmpsv);
-	    return SORT_NORMAL_RETURN_VALUE(d);
-	}
+        else {
+            const NV d = SvNV(tmpsv);
+            return SORT_NORMAL_RETURN_VALUE(d);
+        }
     }
     return sv_cmp_locale(str1, str2);
 }

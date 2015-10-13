@@ -10,27 +10,27 @@
 
 #ifdef VMS
 #  define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/'							\
-	 || (strchr(f,':')						\
-	     || ((*(f) == '[' || *(f) == '<')				\
-		 && (isWORDCHAR((f)[1]) || strchr("$-_]>",(f)[1])))))
+        (*(f) == '/'							\
+         || (strchr(f,':')						\
+             || ((*(f) == '[' || *(f) == '<')				\
+                 && (isWORDCHAR((f)[1]) || strchr("$-_]>",(f)[1])))))
 
 #else		/* !VMS */
 #  if defined(WIN32) || defined(__CYGWIN__)
 #    define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/' || *(f) == '\\'		/* UNC/rooted path */	\
-	 || ((f)[0] && (f)[1] == ':'))		/* drive name */
+        (*(f) == '/' || *(f) == '\\'		/* UNC/rooted path */	\
+         || ((f)[0] && (f)[1] == ':'))		/* drive name */
 #  else		/* !WIN32 */
 #  ifdef NETWARE
 #    define PERL_FILE_IS_ABSOLUTE(f) \
-	(((f)[0] && (f)[1] == ':')		/* drive name */	\
-	 || ((f)[0] == '\\' && (f)[1] == '\\')	/* UNC path */	\
-	 ||	((f)[3] == ':'))				/* volume name, currently only sys */
+        (((f)[0] && (f)[1] == ':')		/* drive name */	\
+         || ((f)[0] == '\\' && (f)[1] == '\\')	/* UNC path */	\
+         ||	((f)[3] == ':'))				/* volume name, currently only sys */
 #  else		/* !NETWARE */
 #    if defined(DOSISH) || defined(__SYMBIAN32__)
 #      define PERL_FILE_IS_ABSOLUTE(f) \
-	(*(f) == '/'							\
-	 || ((f)[0] && (f)[1] == ':'))		/* drive name */
+        (*(f) == '/'							\
+         || ((f)[0] && (f)[1] == ':'))		/* drive name */
 #    else	/* NEITHER DOSISH NOR SYMBIANISH */
 #      define PERL_FILE_IS_ABSOLUTE(f)	(*(f) == '/')
 #    endif	/* DOSISH */

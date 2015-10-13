@@ -25,7 +25,7 @@ main(int argc, char **argv, char **env)
 
   if(argc == 1)
     XCEShowMessageA("Starting perl with no args is currently\r\n"
-		    "not useful on Windows CE");
+                    "not useful on Windows CE");
 
   w32console_usefunctionkeys = 0; /* this allows backspace key to work */
 

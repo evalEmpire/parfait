@@ -160,11 +160,11 @@ END_EXTERN_C
 
 /* Input is a true Unicode (not-native) code point */
 #define OFFUNISKIP(uv) ( (uv) < 0xA0        ? 1 : \
-		      (uv) < 0x400          ? 2 : \
-		      (uv) < 0x4000         ? 3 : \
-		      (uv) < 0x40000        ? 4 : \
-		      (uv) < 0x400000       ? 5 : \
-		      (uv) < 0x4000000      ? 6 : 7 )
+                      (uv) < 0x400          ? 2 : \
+                      (uv) < 0x4000         ? 3 : \
+                      (uv) < 0x40000        ? 4 : \
+                      (uv) < 0x400000       ? 5 : \
+                      (uv) < 0x4000000      ? 6 : 7 )
 
 #define UNI_IS_INVARIANT(c)		(((UV)(c)) <  0xA0)
 

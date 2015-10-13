@@ -11,7 +11,7 @@
 #ifdef PERLIO_IS_STDIO
 
 #ifdef NETWARE
-	#include "nwstdio.h"
+        #include "nwstdio.h"
 #else
 
 /*

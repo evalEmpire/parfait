@@ -8,7 +8,7 @@
 #define PBLKSIZ 1024
 #define PAIRMAX 1008			/* arbitrary on PBLKSIZ-N */
 #define SPLTMAX	10			/* maximum allowed splits */
-					/* for a single insertion */
+                                        /* for a single insertion */
 #ifdef VMS
 #define DIRFEXT	".sdbm_dir"
 #else
@@ -17,19 +17,19 @@
 #define PAGFEXT	".pag"
 
 typedef struct {
-	int dirf;		       /* directory file descriptor */
-	int pagf;		       /* page file descriptor */
-	int flags;		       /* status/error flags, see below */
-	long maxbno;		       /* size of dirfile in bits */
-	long curbit;		       /* current bit number */
-	long hmask;		       /* current hash mask */
-	long blkptr;		       /* current block for nextkey */
-	int keyptr;		       /* current key for nextkey */
-	long blkno;		       /* current page to read/write */
-	long pagbno;		       /* current page in pagbuf */
-	char pagbuf[PBLKSIZ];	       /* page file block buffer */
-	long dirbno;		       /* current block in dirbuf */
-	char dirbuf[DBLKSIZ];	       /* directory file block buffer */
+        int dirf;		       /* directory file descriptor */
+        int pagf;		       /* page file descriptor */
+        int flags;		       /* status/error flags, see below */
+        long maxbno;		       /* size of dirfile in bits */
+        long curbit;		       /* current bit number */
+        long hmask;		       /* current hash mask */
+        long blkptr;		       /* current block for nextkey */
+        int keyptr;		       /* current key for nextkey */
+        long blkno;		       /* current page to read/write */
+        long pagbno;		       /* current page in pagbuf */
+        char pagbuf[PBLKSIZ];	       /* page file block buffer */
+        long dirbno;		       /* current block in dirbuf */
+        char dirbuf[DBLKSIZ];	       /* directory file block buffer */
 } DBM;
 
 #define DBM_RDONLY	0x1	       /* data base open read-only */
@@ -47,8 +47,8 @@ typedef struct {
 #define sdbm_pagfno(db)	((db)->pagf)
 
 typedef struct {
-	const char *dptr;
-	int dsize;
+        const char *dptr;
+        int dsize;
 } datum;
 
 extern const datum nullitem
@@ -229,7 +229,7 @@ Free_t   Perl_mfree proto((Malloc_t where));
 #ifdef HAS_MEMSET
 #  if !defined(STANDARD_C) && !defined(I_STRING) && !defined(I_MEMORY)
 #    ifndef memset
-	extern char *memset proto((char*, int, int));
+        extern char *memset proto((char*, int, int));
 #    endif
 #  endif
 #  define memzero(d,l) memset(d,0,l)
@@ -250,7 +250,7 @@ Free_t   Perl_mfree proto((Malloc_t where));
 #if defined(HAS_MEMCMP) && defined(HAS_SANE_MEMCMP)
 #  if !defined(STANDARD_C) && !defined(I_STRING) && !defined(I_MEMORY)
 #    ifndef memcmp
-	extern int memcmp proto((char*, char*, int));
+        extern int memcmp proto((char*, char*, int));
 #    endif
 #  endif
 #  ifdef BUGGY_MSC
@@ -258,10 +258,10 @@ Free_t   Perl_mfree proto((Malloc_t where));
 #  endif
 #else
 #   ifndef memcmp
-	/* maybe we should have included the full embedding header... */
+        /* maybe we should have included the full embedding header... */
 #	define memcmp Perl_my_memcmp
 #ifndef __cplusplus
-	extern int memcmp proto((char*, char*, int));
+        extern int memcmp proto((char*, char*, int));
 #endif
 #   endif
 #endif /* HAS_MEMCMP */
