@@ -2,8 +2,11 @@ language: c
 os:
         - osx
         - linux
+env:
+        - PERL_CONFIGURE_OPTS=-Dusethreads
+        - PERL_CONFIGURE_OPTS=
 script:
-        - sh Configure -des 
+        - sh Configure -des $(PERL_CONFIGURE_OPTS)
         - make -j5
         - TEST_JOBS=5 make test
 compiler:
