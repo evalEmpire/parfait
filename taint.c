@@ -189,7 +189,7 @@ Perl_taint_env(pTHX)
  * XXX extract method refactoring.
  */
 void
-Perl_taint_if_args_are_tainted(SV **mark, SV **sp) {
+Perl_taint_if_args_are_tainted(pTHX_ SV **mark, SV **sp) {
     PERL_ARGS_ASSERT_TAINT_IF_ARGS_ARE_TAINTED;
 
     /* This is a first heuristic; it doesn't catch tainting magic. */
