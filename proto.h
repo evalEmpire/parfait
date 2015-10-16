@@ -1270,6 +1270,7 @@ PERL_CALLCONV char*	Perl_form(pTHX_ const char* pat, ...)
 
 PERL_CALLCONV void	Perl_free_tied_hv_pool(pTHX);
 PERL_CALLCONV void	Perl_free_tmps(pTHX);
+PERL_CALLCONV AV *	Perl_get_args(pTHX);
 PERL_CALLCONV AV*	Perl_get_av(pTHX_ const char *name, I32 flags)
 			__attribute__nonnull__(pTHX_1);
 #define PERL_ARGS_ASSERT_GET_AV	\
@@ -1855,6 +1856,7 @@ PERL_CALLCONV bool	Perl_io_close(pTHX_ IO* io, GV *gv, bool not_implicit, bool w
 #define PERL_ARGS_ASSERT_IO_CLOSE	\
 	assert(io)
 
+PERL_CALLCONV void	Perl_io_error(pTHX);
 PERL_CALLCONV bool	Perl_isALNUM_lazy(pTHX_ const char* p)
 			__attribute__deprecated__
 			__attribute__warn_unused_result__
@@ -2289,6 +2291,11 @@ PERL_CALLCONV void	Perl_load_module(pTHX_ U32 flags, SV* name, SV* ver, ...)
 			__attribute__nonnull__(pTHX_2);
 #define PERL_ARGS_ASSERT_LOAD_MODULE	\
 	assert(name)
+
+PERL_CALLCONV void	Perl_load_module_protect_err(pTHX_ SV *module_name)
+			__attribute__nonnull__(pTHX_1);
+#define PERL_ARGS_ASSERT_LOAD_MODULE_PROTECT_ERR	\
+	assert(module_name)
 
 PERL_CALLCONV OP*	Perl_localize(pTHX_ OP *o, I32 lex)
 			__attribute__nonnull__(pTHX_1);

@@ -37,7 +37,7 @@ It can also be used by other modules.
 
     my $exception = Exception->new(\%args);
 
-Create a new exception object.  C<%args> is any L<Attributes|attribue> below.
+Create a new exception object.  C<%args> is any L<attribute|/Attributes> below.
 
 Most attributes do not have defaults, the caller is responsible for setting them.
 
@@ -178,7 +178,42 @@ This will not include the "at X line Y" context information.
 
 =cut
 
-sub message { return $_[0]->{message}; }
+sub message {
+    return $_[0]->{message} //= $_[0]->_build_message;
+}
+
+sub _build_message {
+    my $self = shift;
+
+    my $sub = $self->subroutine;
+    $sub =~ s/^CORE:://;
+
+    return sprintf "Can't %s(%s): %s",
+      $sub,
+      $self->_formatted_arg_list,
+      $self->errno;
+}
+
+sub _formatted_arg_list {
+    my $self = shift;
+
+    return join ", ", map { $self->_format_arg($_) } @{$self->args};
+}
+
+sub _format_arg {
+    my $self = shift;
+    my $arg  = shift;
+
+    return 'undef'      if not defined($arg);
+    return '$fh'        if ref($arg) eq "GLOB";
+
+    # Leave references unquoted to make it clear they're references.
+    return $arg         if ref $arg;
+
+    # It's a string, quote it.
+    $arg =~ s{'}{\\'}g;
+    return qq{'$arg'}
+}
 
 =head2 Methods
 
@@ -203,7 +238,7 @@ sub _build_as_string {
 
 =head2 Stringification
 
-If used as a string, L<as_string> will be called.
+If used as a string, L</as_string> will be called.
 
 =cut
 

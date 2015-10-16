@@ -4154,6 +4154,7 @@ lib/dumpvar.pl			A variable dumper
 lib/dumpvar.t			A variable dumper tester
 lib/English.pm			Readable aliases for short variables
 lib/English.t			See if English works
+lib/Exception.pm		The basic exception object
 lib/ExtUtils/Embed.pm		Utilities for embedding Perl in C programs
 lib/ExtUtils/t/Embed.t		See if ExtUtils::Embed and embedding works
 lib/ExtUtils/typemap		Extension interface types
@@ -4943,6 +4944,8 @@ t/comp/uproto.t			See if the _ prototype works
 t/comp/use.t			See if pragmata work
 t/comp/utf.t			See if UTFs work
 TestInit.pm			Preamble library for tests
+t/exceptions/object.t		Test Exception.pm
+t/exceptions/truncate.t		Test truncate() with the exceptions feature.
 t/exceptions/use.t		See if use feature 'exceptions' works.
 t/harness			Finer diagnostics from test suite
 thread.h			Threading header

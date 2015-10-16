@@ -1378,6 +1378,7 @@ use File::Glob qw(:case);
                 lib/DBM_Filter/
                 lib/DirHandle.{pm,t}
                 lib/English.{pm,t}
+                lib/Exception.pm
                 lib/ExtUtils/Embed.pm
                 lib/ExtUtils/XSSymSet.pm
                 lib/ExtUtils/t/Embed.t

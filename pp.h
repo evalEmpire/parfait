@@ -381,6 +381,7 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 #define ARGTARG		PL_op->op_targ
 
 #define MAXARG		(PL_op->op_private & OPpARG4_MASK)
+#define NUMARGS		(SP - (PL_stack_base + TOPMARK))
 
 #define SWITCHSTACK(f,t) \
     STMT_START {							\

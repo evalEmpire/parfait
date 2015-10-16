@@ -1708,4 +1708,37 @@ WATCHDOG_VIA_ALARM:
     }
 }
 
+sub exception_ok(&$) {
+    my($code, $wants) = @_;
+
+    note "testing an exception";
+    
+    my @warnings;
+    local $SIG{__WARN__} = sub { push @warnings, @_ };
+    
+    ok !eval { $code->() };
+    my $err     = $@;
+    my $errno   = $!;
+
+    ok eq_array \@warnings, $wants->{warnings} || [], "no warnings from the exception";
+    isa_ok $err,        "Exception";
+
+    # Special case for the argument list.
+    ok eq_array( $err->args, delete $wants->{args} || [] ), "args";
+
+    # Default tests
+    if( !exists $wants->{errno} ) {
+        is $err->errno, $errno, "string errno";
+        is $err->errno+0, $errno+0, "numeric errno";
+    }
+    is "$err", sprintf "%s at %s line %d.\n", $err->message, $err->file, $err->line
+      if !exists $wants->{as_string};
+    
+    for my $method (keys %$wants) {
+        my $want = $wants->{$method};
+        $want = $want->($err) if ref $want eq 'CODE';
+        is $err->$method, $want, "$method";
+    }
+}
+
 1;
