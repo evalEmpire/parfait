@@ -378,6 +378,8 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 #define RETSETUNDEF	RETURNX(SETs(&PL_sv_undef))
 #define RETSETTARG	STMT_START { SETTARG; RETURN; } STMT_END
 
+#define RETIOERROR(ret) STMT_START { throw_if_enabled(); XPUSHi(ret); RETURN; } STMT_END
+
 #define ARGTARG		PL_op->op_targ
 
 #define MAXARG		(PL_op->op_private & OPpARG4_MASK)

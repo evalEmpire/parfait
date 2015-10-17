@@ -205,10 +205,9 @@ sub _format_arg {
     my $arg  = shift;
 
     return 'undef'      if not defined($arg);
-    return '$fh'        if ref($arg) eq "GLOB";
 
-    # Leave references unquoted to make it clear they're references.
-    return $arg         if ref $arg;
+    # Leave references and globs unquoted to make it clear they're references.
+    return $arg         if ref $arg || ref \$arg eq 'GLOB';
 
     # It's a string, quote it.
     $arg =~ s{'}{\\'}g;

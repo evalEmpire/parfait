@@ -1856,7 +1856,6 @@ PERL_CALLCONV bool	Perl_io_close(pTHX_ IO* io, GV *gv, bool not_implicit, bool w
 #define PERL_ARGS_ASSERT_IO_CLOSE	\
 	assert(io)
 
-PERL_CALLCONV void	Perl_io_error(pTHX);
 PERL_CALLCONV bool	Perl_isALNUM_lazy(pTHX_ const char* p)
 			__attribute__deprecated__
 			__attribute__warn_unused_result__
@@ -4894,6 +4893,8 @@ PERL_CALLCONV void	Perl_taint_proper(pTHX_ const char* f, const char *const s)
 #define PERL_ARGS_ASSERT_TAINT_PROPER	\
 	assert(s)
 
+PERL_CALLCONV SV *	Perl_throw(pTHX);
+PERL_CALLCONV bool	Perl_throw_if_enabled(pTHX);
 PERL_CALLCONV OP *	Perl_tied_method(pTHX_ SV *methname, SV **sp, SV *const sv, const MAGIC *const mg, const U32 flags, U32 argc, ...)
 			__attribute__nonnull__(pTHX_1)
 			__attribute__nonnull__(pTHX_2)

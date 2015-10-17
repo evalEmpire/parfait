@@ -1199,7 +1199,6 @@
 #define init_debugger()		Perl_init_debugger(aTHX)
 #define invert(a)		Perl_invert(aTHX_ a)
 #define io_close(a,b,c,d)	Perl_io_close(aTHX_ a,b,c,d)
-#define io_error()		Perl_io_error(aTHX)
 #define isinfnansv(a)		Perl_isinfnansv(aTHX_ a)
 #define jmaybe(a)		Perl_jmaybe(aTHX_ a)
 #define keyword(a,b,c)		Perl_keyword(aTHX_ a,b,c)
@@ -1326,6 +1325,8 @@
 #define sv_resetpvn(a,b,c)	Perl_sv_resetpvn(aTHX_ a,b,c)
 #define sv_sethek(a,b)		Perl_sv_sethek(aTHX_ a,b)
 #define taint_if_args_are_tainted(a,b)	Perl_taint_if_args_are_tainted(aTHX_ a,b)
+#define throw()			Perl_throw(aTHX)
+#define throw_if_enabled()	Perl_throw_if_enabled(aTHX)
 #ifndef PERL_IMPLICIT_CONTEXT
 #define tied_method		Perl_tied_method
 #endif

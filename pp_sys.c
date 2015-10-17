@@ -641,8 +641,10 @@ PP(pp_open)
         PUSHi( (I32)PL_forkprocess );
     else if (PL_forkprocess == 0)		/* we are a new child */
         PUSHi(0);
-    else
+    else {
+        throw_if_enabled();
         RETPUSHUNDEF;
+    }
     RETURN;
 }
 
@@ -651,6 +653,7 @@ PP(pp_close)
     dSP;
     GV * const gv =
         MAXARG == 0 || (!TOPs && !POPs) ? PL_defoutgv : MUTABLE_GV(POPs);
+    bool ret = FALSE;
 
     if (MAXARG == 0)
         EXTEND(SP, 1);
@@ -664,7 +667,12 @@ PP(pp_close)
             }
         }
     }
-    PUSHs(boolSV(do_close(gv, TRUE)));
+
+    ret = do_close(gv, TRUE);
+
+    if( !ret )
+        throw_if_enabled();
+    PUSHs(boolSV(ret));
     RETURN;
 }
 
@@ -2324,7 +2332,7 @@ PP(pp_truncate)
         else {
             if (!errno)
                 SETERRNO(EBADF,RMS_IFI);
-            io_error();
+            throw_if_enabled();
             RETPUSHUNDEF;
         }
     }
@@ -6094,22 +6102,16 @@ Perl_load_module_protect_err(pTHX_ SV *module_name) {
     RESTORE_ERRNO;
 }
 
-/* If autodie is on for the given function it will croak
- * with an exception object.  Otherwise it will do nothing.  Typically
- * called just before an IO function returns with an error.
- */
-void
-Perl_io_error(pTHX) {
+/* croak with an Exception object populated with the current context */
+/* returns the thrown Exception object */
+SV *
+Perl_throw(pTHX) {
     dSP;
     SV *exception;
     SV *myerrno = newSV(0);
     AV *args;
     SV *function_name = newSV(0);
     HV *new_args = newHV();
-
-    if( !FEATURE_IS_ENABLED("exceptions") ) {
-        return;
-    }
 
     load_module_protect_err(newSVpvs("Exception"));
 
@@ -6161,8 +6163,19 @@ Perl_io_error(pTHX) {
     PUTBACK;
 
     croak_sv(exception);
+
+    return exception;
 }
 
+/* throw an exception if the exceptions feature is enabled */
+bool
+Perl_throw_if_enabled(pTHX) {
+    if( !FEATURE_IS_ENABLED("exceptions") )
+        return FALSE;
+
+    throw();
+    return TRUE;
+}
 
 AV *
 Perl_get_args(pTHX) {

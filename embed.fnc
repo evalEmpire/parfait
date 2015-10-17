@@ -357,7 +357,8 @@ Ap	|bool	|do_close	|NULLOK GV* gv|bool not_implicit
 p	|bool	|do_eof		|NN GV* gv
 p	|void	|fixup_errno_string|NN SV* sv
 p	|SV *	|errno2sv	|NN SV* sv
-p	|void	|io_error
+p	|SV *	|throw
+p	|bool	|throw_if_enabled
 p	|AV *	|get_args
 p	|void	|load_module_protect_err|NN SV *module_name
 
