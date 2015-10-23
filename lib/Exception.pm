@@ -51,6 +51,7 @@ my %Attributes = map { $_ => 1 } qw(
     package
     context
     errno
+    error
     message
 );
 
@@ -66,6 +67,7 @@ sub new {
     # A handful of easy defaults
     $self->{args}       //= [];
     $self->{errno}      //= $!;
+    $self->{error}      //= $self->{errno};
     
     return $self;
 }
@@ -74,7 +76,7 @@ sub new {
 
 =head3 args
 
-    my $args = $error->args;
+    my $args = $exception->args;
 
 Provides a reference to the arguments passed to the subroutine that
 threw the exception.
@@ -92,7 +94,7 @@ sub args {
 
 =head3 subroutine
 
-    my $fully_qualified_name = $error->subroutine;
+    my $fully_qualified_name = $exception->subroutine;
 
 The fully qualified name of the subroutine that threw the exception.
 
@@ -104,7 +106,7 @@ sub subroutine {
 
 =head3 file
 
-    my $file = $error->file;
+    my $file = $exception->file;
 
 The file in which the error occurred.
 
@@ -116,9 +118,9 @@ sub file {
 
 =head3 line
 
-    my $line = $error->line;
+    my $line = $exception->line;
 
-The line in C<< $error->file >> where the exceptional code was called.
+The line in C<< $exception->file >> where the exceptional code was called.
 
 =cut
 
@@ -128,7 +130,7 @@ sub line {
 
 =head3 package
 
-    my $package = $error->package;
+    my $package = $exception->package;
 
 The package from which the exceptional subroutine was called.
 
@@ -138,7 +140,7 @@ sub package     { return $_[0]->{package}; }
 
 =head3 context
 
-    my $context = $error->context;
+    my $context = $exception->context;
 
 The context in which the subroutine was called by autodie; usually
 the same as the context in which you called the autodying subroutine.
@@ -154,9 +156,23 @@ sub context {
     return $_[0]->{context}
 }
 
+=head3 error
+
+    my $error = $exception->error;
+
+The explanation of the error that happened.
+
+Defaults to C<< $exception->errno >>.
+
+=cut
+
+sub error {
+    return $_[0]->{error}
+}
+
 =head3 errno
 
-    my $errno = $error->errno;
+    my $errno = $exception->errno;
 
 The value of C<$!> at the time when the exception occurred.
 
@@ -170,7 +186,7 @@ sub errno {
 
 =head3 message
 
-    my $message = $error->message;
+    my $message = $exception->message;
 
 The text of the error message.
 
@@ -191,7 +207,7 @@ sub _build_message {
     return sprintf "Can't %s(%s): %s",
       $sub,
       $self->_formatted_arg_list,
-      $self->errno;
+      $self->error;
 }
 
 sub _formatted_arg_list {
@@ -218,7 +234,7 @@ sub _format_arg {
 
 =head3 as_string
 
-    my $string = $error->as_string;
+    my $string = $exception->as_string;
 
 This will produce a human readable message with context, the familiar "error at X line Y.\n".
 

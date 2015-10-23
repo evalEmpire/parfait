@@ -23,6 +23,7 @@ note "Default arguments"; {
 
     is @{$exception->args},     0;
     is $exception->errno,       $!;
+    is $exception->error,       $!;
 }
 
 note 'Preserve $! and $@'; {
@@ -34,6 +35,18 @@ note 'Preserve $! and $@'; {
 
     is $!, $errno_as_string;
     is $@, "error";
+}
+
+note 'message from error'; {
+    my $exception = Exception->new({
+        file            => 'foo.pl',
+        line            => 1234,
+        error           => 'Mouse out of cheese',
+        args            => [123, "foo"],
+        subroutine      => 'Some::thing',
+    });
+
+    is $exception->message, qq[Can't Some::thing('123', 'foo'): Mouse out of cheese];
 }
 
 note 'Stringification'; {
