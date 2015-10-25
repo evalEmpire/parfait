@@ -1693,9 +1693,14 @@ the L</croak_sv> function, which does not involve clobbering C<ERRSV>.
 void
 Perl_vcroak(pTHX_ const char* pat, va_list *args)
 {
-    SV *ex = with_queued_errors(pat ? vmess(pat, args) : mess_sv(ERRSV, 0));
-    invoke_exception_hook(ex, FALSE);
-    die_unwind(ex);
+    if( FEATURE_IS_ENABLED("exceptions") ) {
+        Perl_vthrow(aTHX_ pat, args);
+    }
+    else {
+        SV *ex = with_queued_errors(pat ? vmess(pat, args) : mess_sv(ERRSV, 0));
+        invoke_exception_hook(ex, FALSE);
+        die_unwind(ex);
+    }
 }
 
 /*
@@ -1863,7 +1868,7 @@ Perl_vthrow(pTHX_ const char *error_pattern, va_list *error_args) {
 
     PUTBACK;
 
-    croak_sv(exception);
+    die_sv(exception);
 }
 
 /* Many IO functions will use errno as the message */

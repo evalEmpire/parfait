@@ -297,7 +297,6 @@ Perl_do_open6(pTHX_ GV *gv, const char *oname, STRLEN len,
             if (num_svs) {
                 if (type[1] != IoTYPE_STD) {
                   unknown_open_mode:
-                    Perl_throw_if_enabled(aTHX_ "Unknown open() mode '%.*s'", (int)olen, oname);
                     Perl_croak(aTHX_ "Unknown open() mode '%.*s'", (int)olen, oname);
                 }
                 type++;

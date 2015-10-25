@@ -4947,6 +4947,7 @@ TestInit.pm			Preamble library for tests
 t/exceptions/close.t		Test close() with the exceptions feature.
 t/exceptions/object.t		Test Exception.pm
 t/exceptions/open.t		Test open() with the exceptions feature.
+t/exceptions/substr.t		Test substr() with the exceptions feature.
 t/exceptions/truncate.t		Test truncate() with the exceptions feature.
 t/exceptions/use.t		See if use feature 'exceptions' works.
 t/harness			Finer diagnostics from test suite
