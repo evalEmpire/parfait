@@ -1729,7 +1729,8 @@ sub exception_ok(&$) {
     isa_ok $err,        "Exception";
 
     # Special case for the argument list.
-    ok eq_array( $err->args, delete $wants->{args} || [] ), "args";
+    ok( eq_array( $err->args, delete $wants->{args} || [] ), "args" )
+      or diag join ", ", @{$err->args};
 
     # Default tests
     if( !exists $wants->{errno} ) {
