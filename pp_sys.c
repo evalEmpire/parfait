@@ -29,7 +29,6 @@
 #include "EXTERN.h"
 #define PERL_IN_PP_SYS_C
 #include "perl.h"
-#include "feature.h"
 #include "time64.h"
 #include "time64.c"
 
@@ -6100,91 +6099,6 @@ Perl_load_module_protect_err(pTHX_ SV *module_name) {
     Perl_load_module(aTHX_ PERL_LOADMOD_NOIMPORT, module_name, NULL);
     LEAVE;
     RESTORE_ERRNO;
-}
-
-/* croak with an Exception object populated with the current context */
-/* returns the thrown Exception object */
-SV *
-Perl_throw(pTHX) {
-    dSP;
-    SV *exception;
-    SV *myerrno = newSV(0);
-    AV *args;
-    SV *function_name = newSV(0);
-    HV *new_args = newHV();
-
-    load_module_protect_err(newSVpvs("Exception"));
-
-    args = get_args();
-
-    PUSHMARK(SP);
-
-    /* Class name as the first argument to Exception->new */
-    XPUSHs(newSVpvs("Exception"));
-
-    hv_stores(new_args, "file", newSVpv(CopFILE(PL_curcop),0));
-
-    hv_stores(new_args, "line", newSVuv(CopLINE(PL_curcop)));
-
-    hv_stores(new_args, "package", newSVpv(CopSTASHPV(PL_curcop),0));
-
-    sv_setpv(function_name, "CORE::");
-    sv_catpv(function_name, OP_NAME(PL_op));
-    hv_stores(new_args, "subroutine", function_name);
-
-    switch(GIMME_V) {
-        case G_VOID:
-            hv_stores(new_args, "context", newSVpvs("void"));
-            break;
-        case G_ARRAY:
-            hv_stores(new_args, "context", newSVpvs("list"));
-            break;
-        case G_SCALAR:
-            hv_stores(new_args, "context", newSVpvs("scalar"));
-            break;
-    }
-
-    hv_stores(new_args, "args", newRV_noinc(MUTABLE_SV(args)));
-
-    errno2sv(myerrno);
-    hv_stores(new_args, "errno", myerrno);
-
-    /* Put a reference to the hash of arguments on the stack */
-    XPUSHs(newRV_noinc(MUTABLE_SV(new_args)));
-
-    PUTBACK;
-
-    call_method("new", G_SCALAR);
-
-    SPAGAIN;
-
-    exception = POPs;
-
-    PUTBACK;
-
-    croak_sv(exception);
-
-    return exception;
-}
-
-/* throw an exception if the exceptions feature is enabled */
-bool
-Perl_throw_if_enabled(pTHX) {
-    if( !FEATURE_IS_ENABLED("exceptions") )
-        return FALSE;
-
-    throw();
-    return TRUE;
-}
-
-AV *
-Perl_get_args(pTHX) {
-    dSP;
-    AV * args;
-
-    args = av_make(NUMARGS, SP - NUMARGS + 1);
-
-    return args;
 }
 
 
