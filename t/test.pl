@@ -1720,11 +1720,12 @@ sub exception_ok(&$) {
     my @warnings;
     local $SIG{__WARN__} = sub { push @warnings, @_ };
     
-    ok !eval { $code->() };
+    ok !eval { $code->() }, "eval returned false";
     my $err     = $@;
     my $errno   = $!;
 
-    ok eq_array \@warnings, $wants->{warnings} || [], "no warnings from the exception";
+    ok( eq_array( \@warnings, delete $wants->{warnings} || [] ), "no warnings from the exception" )
+      or diag join ", ", @warnings;
     isa_ok $err,        "Exception";
 
     # Special case for the argument list.
@@ -1735,7 +1736,7 @@ sub exception_ok(&$) {
         is $err->errno, $errno, "string errno";
         is $err->errno+0, $errno+0, "numeric errno";
     }
-    is "$err", sprintf "%s at %s line %d.\n", $err->message, $err->file, $err->line
+    is( "$err", sprintf("%s at %s line %d.\n", $err->message, $err->file, $err->line), "as_string" )
       if !exists $wants->{as_string};
     
     for my $method (keys %$wants) {
