@@ -1325,15 +1325,20 @@
 #define sv_resetpvn(a,b,c)	Perl_sv_resetpvn(aTHX_ a,b,c)
 #define sv_sethek(a,b)		Perl_sv_sethek(aTHX_ a,b)
 #define taint_if_args_are_tainted(a,b)	Perl_taint_if_args_are_tainted(aTHX_ a,b)
-#define throw()			Perl_throw(aTHX)
-#define throw_if_enabled()	Perl_throw_if_enabled(aTHX)
 #ifndef PERL_IMPLICIT_CONTEXT
+#define throw			Perl_throw
+#endif
+#define throw0()		Perl_throw0(aTHX)
+#define throw0_if_enabled()	Perl_throw0_if_enabled(aTHX)
+#ifndef PERL_IMPLICIT_CONTEXT
+#define throw_if_enabled	Perl_throw_if_enabled
 #define tied_method		Perl_tied_method
 #endif
 #define tmps_grow_p(a)		Perl_tmps_grow_p(aTHX_ a)
 #define unshare_hek(a)		Perl_unshare_hek(aTHX_ a)
 #define utilize(a,b,c,d,e)	Perl_utilize(aTHX_ a,b,c,d,e)
 #define vivify_ref(a,b)		Perl_vivify_ref(aTHX_ a,b)
+#define vthrow(a,b)		Perl_vthrow(aTHX_ a,b)
 #define wait4pid(a,b,c)		Perl_wait4pid(aTHX_ a,b,c)
 #define watch(a)		Perl_watch(aTHX_ a)
 #define write_to_stderr(a)	Perl_write_to_stderr(aTHX_ a)

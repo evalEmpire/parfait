@@ -641,7 +641,7 @@ PP(pp_open)
     else if (PL_forkprocess == 0)		/* we are a new child */
         PUSHi(0);
     else {
-        throw_if_enabled();
+        throw0_if_enabled();
         RETPUSHUNDEF;
     }
     RETURN;
@@ -670,7 +670,7 @@ PP(pp_close)
     ret = do_close(gv, TRUE);
 
     if( !ret )
-        throw_if_enabled();
+        throw0_if_enabled();
     PUSHs(boolSV(ret));
     RETURN;
 }
@@ -2331,7 +2331,7 @@ PP(pp_truncate)
         else {
             if (!errno)
                 SETERRNO(EBADF,RMS_IFI);
-            throw_if_enabled();
+            throw0_if_enabled();
             RETPUSHUNDEF;
         }
     }

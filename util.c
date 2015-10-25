@@ -1788,10 +1788,19 @@ Perl_croak_popstack(void)
     my_exit(1);
 }
 
+inline void
+Perl_throw(pTHX_ const char *error_pattern, ...) {
+    va_list error_args;
+    va_start(error_args, error_pattern);
+    vthrow(error_pattern, &error_args);
+    NOT_REACHED;
+    va_end(error_args);
+}
+
 /* croak with an Exception object populated with the current context */
 /* returns the thrown Exception object */
-SV *
-Perl_throw(pTHX) {
+void
+Perl_vthrow(pTHX_ const char *error_pattern, va_list *error_args) {
     dSP;
     SV *exception;
     SV *myerrno = newSV(0);
@@ -1807,6 +1816,12 @@ Perl_throw(pTHX) {
 
     /* Class name as the first argument to Exception->new */
     XPUSHs(newSVpvs("Exception"));
+
+    if( error_pattern ) {
+        SV *error = newSV(0);
+        sv_vsetpvf(error, error_pattern, error_args);
+        hv_stores(new_args, "error", error);
+    }
 
     hv_stores(new_args, "file", newSVpv(CopFILE(PL_curcop),0));
 
@@ -1849,18 +1864,30 @@ Perl_throw(pTHX) {
     PUTBACK;
 
     croak_sv(exception);
-
-    return exception;
 }
 
-/* throw an exception if the exceptions feature is enabled */
-bool
-Perl_throw_if_enabled(pTHX) {
-    if( !FEATURE_IS_ENABLED("exceptions") )
-        return FALSE;
+/* Many IO functions will use errno as the message */
+inline void
+Perl_throw0(pTHX) {
+    Perl_throw(aTHX_ 0);
+}
 
-    throw();
-    return TRUE;
+inline void
+Perl_throw0_if_enabled(pTHX) {
+    if( FEATURE_IS_ENABLED("exceptions") ) {
+        throw0();
+    }
+}
+
+inline void
+Perl_throw_if_enabled(pTHX_ const char* error_pattern, ...) {
+    if( FEATURE_IS_ENABLED("exceptions") ) {
+        va_list error_args;
+        va_start(error_args, error_pattern);
+        vthrow(error_pattern, &error_args);
+        NOT_REACHED;
+        va_end(error_args);
+    }
 }
 
 AV *

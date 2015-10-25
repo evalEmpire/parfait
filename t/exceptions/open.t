@@ -46,4 +46,25 @@ note "piped open: program doesn't exist"; {
     }
 }
 
+note "invalid separator"; {
+    skip_without_perlio;
+
+    exception_ok {
+        use feature 'exceptions';
+#line 18 foo.bar
+        open my $fh, ">>>", "i-do-not-exist";
+        return;
+    } {
+        args            => ['*main::$fh', '>>>', 'i-do-not-exist'],
+        subroutine      => 'CORE::open',
+        file            => 'foo.bar',
+        line            => 18,
+        package         => __PACKAGE__,
+        context         => 'void',
+        warnings        => [qq[Invalid separator character '>' in PerlIO layer specification > at foo.bar line 18.\n]],
+        error           => q[Unknown open() mode '>>>'],
+        message         => qq[Can't open(*main::\$fh, '>>>', 'i-do-not-exist'): Unknown open() mode '>>>']
+    }
+}
+
 done_testing;
