@@ -511,6 +511,10 @@ sub skip_if_miniperl {
     skip(@_) if is_miniperl();
 }
 
+sub skip_without_perlio {
+    skip('no PerlIO', @_) unless PerlIO::Layer->find('perlio');
+}
+
 sub skip_without_dynamic_extension {
     my $extension = shift;
     skip("no dynamic loading on miniperl, no extension $extension", @_)
