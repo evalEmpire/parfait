@@ -61,4 +61,14 @@ note 'Stringification'; {
     is "$exception", $exception->as_string, "stringification";
 }
 
+note 'Exceptions are always true'; {
+    my $exception = Exception->new({
+        file            => 'foo.pl',
+        line            => 1234,
+        message         => '',
+    });
+
+    ok $exception;
+}
+
 done_testing;

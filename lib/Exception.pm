@@ -9,6 +9,7 @@ our $VERSION = '0.01';
 
 use overload
   q[""]         => \&as_string,
+  bool          => sub () { 1 },
   fallback      => 1;
 
 =head1 NAME
@@ -251,9 +252,16 @@ sub _build_as_string {
       $self->line;
 }
 
-=head2 Stringification
+=head2 Overloads
+
+=head3 Stringification
 
 If used as a string, L</as_string> will be called.
+
+=head3 Boolean
+
+Exception objects are always true. This ensures code like C<< if( $@ )
+{ ... } >> always does what you mean.
 
 =cut
 
