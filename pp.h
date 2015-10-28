@@ -20,6 +20,12 @@ C<SPAGAIN>.
 =for apidoc AmU||MARK
 Stack marker variable for the XSUB.  See C<dMARK>.
 
+=for apidoc AmU||TARG
+Target. An SV allocated to the current op used to return a single
+string, integer or double without having to allocate a new
+SV. C<(X)PUSH[iunp]> will all reuse TARG. See L<perlguts/Putting a C
+value on Perl stack> for more information.
+
 =for apidoc Am|void|PUSHMARK|SP
 Opening bracket for arguments on a callback.  See C<PUTBACK> and
 L<perlcall>.
