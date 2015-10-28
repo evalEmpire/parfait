@@ -1373,23 +1373,26 @@ sub {
     print ref tied $h{k};
     tie $h{l}, "";
     print ref tied $_[1];
-    untie $h{k};
+    print untie $h{k} // 'undef';
     print tied $_[0] // 'undef';
-    untie $_[1];
+    print untie $_[1] // 'undef';
     print tied $h{l} // 'undef';
     # check that tied and untie do not autovivify
     # XXX should they autovivify?
     tied $_[2];
     print exists $h{m} ? "yes" : "no";
-    untie $_[2];
+    print untie $_[2] // 'undef';
     print exists $h{m} ? "yes" : "no";
 }->($h{k}, $h{l}, $h{m});
 EXPECT
 main
 main
+1
 undef
+1
 undef
 no
+undef
 no
 ########
 

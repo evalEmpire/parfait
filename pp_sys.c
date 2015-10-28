@@ -985,7 +985,8 @@ PP(pp_untie)
         RETPUSHYES;
 
     if (SvTYPE(sv) == SVt_PVLV && LvTYPE(sv) == 'y' &&
-        !(sv = defelem_target(sv, NULL))) RETPUSHUNDEF;
+        !(sv = defelem_target(sv, NULL)))
+        RETPUSHUNDEF;
 
     if ((mg = SvTIED_mg(sv, how))) {
         SV * const obj = SvRV(SvTIED_obj(sv, mg));
