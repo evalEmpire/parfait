@@ -312,12 +312,12 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 #define PUSHi(i)	STMT_START { sv_setiv(TARG, (IV)(i)); PUSHTARG; } STMT_END
 #define PUSHu(u)	STMT_START { sv_setuv(TARG, (UV)(u)); PUSHTARG; } STMT_END
 
-#define XPUSHs(s)	STMT_START { EXTEND(sp,1); *++sp = (s); } STMT_END
-#define XPUSHTARG	STMT_START { SvSETMAGIC(TARG); XPUSHs(TARG); } STMT_END
-#define XPUSHp(p,l)	STMT_START { sv_setpvn(TARG, (p), (l)); XPUSHTARG; } STMT_END
-#define XPUSHn(n)	STMT_START { sv_setnv(TARG, (NV)(n)); XPUSHTARG; } STMT_END
-#define XPUSHi(i)	STMT_START { sv_setiv(TARG, (IV)(i)); XPUSHTARG; } STMT_END
-#define XPUSHu(u)	STMT_START { sv_setuv(TARG, (UV)(u)); XPUSHTARG; } STMT_END
+#define XPUSHs(s)	STMT_START { EXTEND(sp,1); PUSHs(s); } STMT_END
+#define XPUSHTARG	STMT_START { EXTEND(sp,1); PUSHTARG; } STMT_END
+#define XPUSHp(p,l)	STMT_START { EXTEND(sp,1); PUSHp(p,l); } STMT_END
+#define XPUSHn(n)	STMT_START { EXTEND(sp,1); PUSHn(n); } STMT_END
+#define XPUSHi(i)	STMT_START { EXTEND(sp,1); PUSHi(i); } STMT_END
+#define XPUSHu(u)	STMT_START { EXTEND(sp,1); PUSHu(u); } STMT_END
 #define XPUSHundef	STMT_START { SvOK_off(TARG); XPUSHs(TARG); } STMT_END
 
 #define mPUSHs(s)	PUSHs(sv_2mortal(s))
