@@ -747,14 +747,14 @@ PP(pp_fileno)
 #if defined(HAS_DIRFD) || defined(HAS_DIR_DD_FD)
         PUSHi(my_dirfd(IoDIRP(io)));
         RETURN;
-#elif defined(ENOTSUP)
+#else
+#if defined(ENOTSUP)
         errno = ENOTSUP;        /* Operation not supported */
-        RETPUSHUNDEF;
 #elif defined(EOPNOTSUPP)
         errno = EOPNOTSUPP;     /* Operation not supported on socket */
-        RETPUSHUNDEF;
 #else
         errno = EINVAL;         /* Invalid argument */
+#endif
         RETPUSHUNDEF;
 #endif
     }
