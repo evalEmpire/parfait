@@ -311,6 +311,9 @@ Does not use C<TARG>.  See also C<XPUSHu>, C<mPUSHu> and C<PUSHu>.
 #define PUSHn(n)	STMT_START { sv_setnv(TARG, (NV)(n)); PUSHTARG; } STMT_END
 #define PUSHi(i)	STMT_START { sv_setiv(TARG, (IV)(i)); PUSHTARG; } STMT_END
 #define PUSHu(u)	STMT_START { sv_setuv(TARG, (UV)(u)); PUSHTARG; } STMT_END
+#define PUSHyes		PUSHs(&PL_sv_yes)
+#define PUSHno		PUSHs(&PL_sv_no)
+#define PUSHundef	PUSHs(&PL_sv_undef)
 
 #define XPUSHs(s)	STMT_START { EXTEND(sp,1); PUSHs(s); } STMT_END
 #define XPUSHTARG	STMT_START { EXTEND(sp,1); PUSHTARG; } STMT_END

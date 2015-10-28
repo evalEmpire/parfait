@@ -1520,21 +1520,21 @@ PP(pp_leavewrite)
             report_wrongway_fh(gv, '<');
         else
             report_evil_fh(gv);
-        PUSHs(&PL_sv_no);
+        PUSHno;
     }
     else {
         if ((IoLINES_LEFT(io) -= FmLINES(PL_formtarget)) < 0) {
             Perl_ck_warner(aTHX_ packWARN(WARN_IO), "page overflow");
         }
         if (!do_print(PL_formtarget, fp))
-            PUSHs(&PL_sv_no);
+            PUSHno;
         else {
             FmLINES(PL_formtarget) = 0;
             SvCUR_set(PL_formtarget, 0);
             *SvEND(PL_formtarget) = '\0';
             if (IoFLAGS(io) & IOf_FLUSH)
                 (void)PerlIO_flush(fp);
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
     }
     PL_formtarget = PL_bodytarget;
@@ -1594,12 +1594,12 @@ PP(pp_prtf)
                 goto just_say_no;
     }
     SP = ORIGMARK;
-    PUSHs(&PL_sv_yes);
+    PUSHyes;
     RETURN;
 
   just_say_no:
     SP = ORIGMARK;
-    PUSHs(&PL_sv_undef);
+    PUSHundef;
     RETURN;
 }
 
@@ -1616,10 +1616,10 @@ PP(pp_sysopen)
     const char * const tmps = SvPV_const(sv, len);
     if (do_open_raw(gv, tmps, len, mode, perm)) {
         IoLINES(GvIOp(gv)) = 0;
-        PUSHs(&PL_sv_yes);
+        PUSHyes;
     }
     else {
-        PUSHs(&PL_sv_undef);
+        PUSHundef;
     }
     RETURN;
 }
@@ -2223,7 +2223,7 @@ PP(pp_sysseek)
     else {
         const Off_t sought = do_sysseek(gv, offset, whence);
         if (sought < 0)
-            PUSHs(&PL_sv_undef);
+            PUSHundef;
         else {
             SV* const sv = sought ?
 #if LSEEKSIZE > IVSIZE
@@ -2735,7 +2735,7 @@ PP(pp_ssockopt)
             }
             if (PerlSock_setsockopt(fd, lvl, optname, buf, len) < 0)
                 goto nuts2;
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
         break;
     }
