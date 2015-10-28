@@ -126,9 +126,9 @@ Pops a long off the stack.
 */
 
 #define PUTBACK		PL_stack_sp = sp
-#define RETURN		return (PUTBACK, NORMAL)
-#define RETURNOP(o)	return (PUTBACK, o)
-#define RETURNX(x)	return (x, PUTBACK, NORMAL)
+#define RETURN		STMT_START { PUTBACK; return NORMAL; } STMT_END
+#define RETURNOP(o)	STMT_START { PUTBACK; return o; } STMT_END
+#define RETURNX(x)	STMT_START { x; RETURN; } STMT_END
 
 #define POPs		(*sp--)
 #define POPp		POPpx
