@@ -4896,8 +4896,6 @@ PERL_CALLCONV void	Perl_taint_proper(pTHX_ const char* f, const char *const s)
 PERL_CALLCONV void	Perl_throw(pTHX_ const char* error_pattern, ...)
 			__attribute__format__null_ok__(__printf__,pTHX_1,pTHX_2);
 
-PERL_CALLCONV void	Perl_throw0(pTHX);
-PERL_CALLCONV void	Perl_throw0_if_enabled(pTHX);
 PERL_CALLCONV void	Perl_throw_if_enabled(pTHX_ const char* error_pattern, ...)
 			__attribute__format__null_ok__(__printf__,pTHX_1,pTHX_2);
 

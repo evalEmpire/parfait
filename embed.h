@@ -1327,11 +1327,9 @@
 #define taint_if_args_are_tainted(a,b)	Perl_taint_if_args_are_tainted(aTHX_ a,b)
 #ifndef PERL_IMPLICIT_CONTEXT
 #define throw			Perl_throw
-#endif
-#define throw0()		Perl_throw0(aTHX)
-#define throw0_if_enabled()	Perl_throw0_if_enabled(aTHX)
-#ifndef PERL_IMPLICIT_CONTEXT
 #define throw_if_enabled	Perl_throw_if_enabled
+#endif
+#ifndef PERL_IMPLICIT_CONTEXT
 #define tied_method		Perl_tied_method
 #endif
 #define tmps_grow_p(a)		Perl_tmps_grow_p(aTHX_ a)

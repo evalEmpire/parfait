@@ -1871,19 +1871,6 @@ Perl_vthrow(pTHX_ const char *error_pattern, va_list *error_args) {
     die_sv(exception);
 }
 
-/* Many IO functions will use errno as the message */
-inline void
-Perl_throw0(pTHX) {
-    Perl_throw(aTHX_ 0);
-}
-
-inline void
-Perl_throw0_if_enabled(pTHX) {
-    if( FEATURE_IS_ENABLED("exceptions") ) {
-        throw0();
-    }
-}
-
 inline void
 Perl_throw_if_enabled(pTHX_ const char* error_pattern, ...) {
     if( FEATURE_IS_ENABLED("exceptions") ) {

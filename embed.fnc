@@ -360,8 +360,6 @@ p	|SV *	|errno2sv	|NN SV* sv
 Xpf	|void	|throw			|NULLOK const char* error_pattern|...
 Xp	|void	|vthrow			|NULLOK const char* error_pattern|NULLOK va_list *error_args
 Xpf	|void	|throw_if_enabled	|NULLOK const char* error_pattern|...
-Xp	|void	|throw0
-Xp	|void	|throw0_if_enabled
 p	|AV *	|get_args
 p	|void	|load_module_protect_err|NN SV *module_name
 
