@@ -2702,7 +2702,7 @@ PP(pp_subst)
                     Copy(c, d, clen, char);
             }
             SPAGAIN;
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
         else {
             char *d, *m;

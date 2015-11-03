@@ -1801,7 +1801,7 @@ PP(pp_caller)
     if (gimme != G_ARRAY) {
         EXTEND(SP, 1);
         if (!stash_hek)
-            PUSHs(&PL_sv_undef);
+            PUSHundef;
         else {
             dTARGET;
             sv_sethek(TARG, stash_hek);
@@ -1813,7 +1813,7 @@ PP(pp_caller)
     EXTEND(SP, 11);
 
     if (!stash_hek)
-        PUSHs(&PL_sv_undef);
+        PUSHundef;
     else {
         dTARGET;
         sv_sethek(TARG, stash_hek);
@@ -1844,7 +1844,7 @@ PP(pp_caller)
     }
     gimme = (I32)cx->blk_gimme;
     if (gimme == G_VOID)
-        PUSHs(&PL_sv_undef);
+        PUSHundef;
     else
         PUSHs(boolSV((gimme & G_WANT) == G_ARRAY));
     if (CxTYPE(cx) == CXt_EVAL) {
@@ -1860,22 +1860,22 @@ PP(pp_caller)
                 PUSHs(sv_2mortal(newSVsv(cur_text)));
             }
 
-            PUSHs(&PL_sv_no);
+            PUSHno;
         }
         /* require */
         else if (cx->blk_eval.old_namesv) {
             mPUSHs(newSVsv(cx->blk_eval.old_namesv));
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
         /* eval BLOCK (try blocks have old_namesv == 0) */
         else {
-            PUSHs(&PL_sv_undef);
-            PUSHs(&PL_sv_undef);
+            PUSHundef;
+            PUSHundef;
         }
     }
     else {
-        PUSHs(&PL_sv_undef);
-        PUSHs(&PL_sv_undef);
+        PUSHundef;
+        PUSHundef;
     }
     if (CxTYPE(cx) == CXt_SUB && CxHASARGS(cx)
         && CopSTASH_eq(PL_curcop, PL_debstash))
@@ -1933,7 +1933,7 @@ PP(pp_reset)
     else
         tmps = SvPVx_const(POPs, len);
     sv_resetpvn(tmps, len, CopSTASH(PL_curcop));
-    PUSHs(&PL_sv_yes);
+    PUSHyes;
     RETURN;
 }
 
@@ -3170,7 +3170,7 @@ PP(pp_exit)
     }
     PL_exit_flags |= PERL_EXIT_EXPECTED;
     my_exit(anum);
-    PUSHs(&PL_sv_undef);
+    PUSHundef;
     RETURN;
 }
 
@@ -3541,7 +3541,8 @@ S_doeval(pTHX_ int gimme, CV* outside, U32 seq, HV *hh)
                 sv_setpvs(errsv, "Compilation error");
             }
         }
-        if (gimme != G_ARRAY) PUSHs(&PL_sv_undef);
+        if (gimme != G_ARRAY)
+            PUSHundef;
         PUTBACK;
         return FALSE;
     }
@@ -4685,7 +4686,7 @@ S_do_smartmatch(pTHX_ HV *seen_this, HV *seen_other, const bool copied)
             c = call_sv(e, G_SCALAR);
             SPAGAIN;
             if (c == 0)
-                PUSHs(&PL_sv_no);
+                PUSHno;
             else if (SvTEMP(TOPs))
                 SvREFCNT_inc_void(TOPs);
             FREETMPS;
