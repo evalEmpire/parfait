@@ -6,7 +6,7 @@ env:
         - PERL_CONFIGURE_OPTS=-Dusethreads
         - PERL_CONFIGURE_OPTS=
 script:
-        - sh Configure -des $(PERL_CONFIGURE_OPTS)
+        - sh Configure -des $PERL_CONFIGURE_OPTS
         - make -j5
         - TEST_JOBS=5 make test
 compiler:
