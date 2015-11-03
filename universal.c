@@ -749,7 +749,7 @@ XS(XS_PerlIO_get_layers)
                        else if (namok)
                             PUSHs(sv_2mortal(SvREFCNT_inc_simple_NN(*namsvp)));
                        else
-                            PUSHs(&PL_sv_undef);
+                            PUSHundef;
                        nitem++;
                        if (flgok) {
                             const IV flags = SvIVX(*flgsvp);

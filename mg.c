@@ -1814,7 +1814,7 @@ Perl_magic_methcall(pTHX_ SV *sv, const MAGIC *mg, SV *meth, U32 flags,
     PUSHs(SvTIED_obj(sv, mg));
     if (flags & G_UNDEF_FILL) {
         while (argc--) {
-            PUSHs(&PL_sv_undef);
+            PUSHundef;
         }
     } else if (argc > 0) {
         va_list args;

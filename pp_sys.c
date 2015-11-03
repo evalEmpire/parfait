@@ -747,14 +747,14 @@ PP(pp_fileno)
 #if defined(HAS_DIRFD) || defined(HAS_DIR_DD_FD)
         PUSHi(my_dirfd(IoDIRP(io)));
         RETURN;
-#elif defined(ENOTSUP)
+#else
+#if defined(ENOTSUP)
         errno = ENOTSUP;        /* Operation not supported */
-        RETPUSHUNDEF;
 #elif defined(EOPNOTSUPP)
         errno = EOPNOTSUPP;     /* Operation not supported on socket */
-        RETPUSHUNDEF;
 #else
         errno = EINVAL;         /* Invalid argument */
+#endif
         RETPUSHUNDEF;
 #endif
     }
@@ -1520,21 +1520,21 @@ PP(pp_leavewrite)
             report_wrongway_fh(gv, '<');
         else
             report_evil_fh(gv);
-        PUSHs(&PL_sv_no);
+        PUSHno;
     }
     else {
         if ((IoLINES_LEFT(io) -= FmLINES(PL_formtarget)) < 0) {
             Perl_ck_warner(aTHX_ packWARN(WARN_IO), "page overflow");
         }
         if (!do_print(PL_formtarget, fp))
-            PUSHs(&PL_sv_no);
+            PUSHno;
         else {
             FmLINES(PL_formtarget) = 0;
             SvCUR_set(PL_formtarget, 0);
             *SvEND(PL_formtarget) = '\0';
             if (IoFLAGS(io) & IOf_FLUSH)
                 (void)PerlIO_flush(fp);
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
     }
     PL_formtarget = PL_bodytarget;
@@ -1594,12 +1594,12 @@ PP(pp_prtf)
                 goto just_say_no;
     }
     SP = ORIGMARK;
-    PUSHs(&PL_sv_yes);
+    PUSHyes;
     RETURN;
 
   just_say_no:
     SP = ORIGMARK;
-    PUSHs(&PL_sv_undef);
+    PUSHundef;
     RETURN;
 }
 
@@ -1616,10 +1616,10 @@ PP(pp_sysopen)
     const char * const tmps = SvPV_const(sv, len);
     if (do_open_raw(gv, tmps, len, mode, perm)) {
         IoLINES(GvIOp(gv)) = 0;
-        PUSHs(&PL_sv_yes);
+        PUSHyes;
     }
     else {
-        PUSHs(&PL_sv_undef);
+        PUSHundef;
     }
     RETURN;
 }
@@ -2223,7 +2223,7 @@ PP(pp_sysseek)
     else {
         const Off_t sought = do_sysseek(gv, offset, whence);
         if (sought < 0)
-            PUSHs(&PL_sv_undef);
+            PUSHundef;
         else {
             SV* const sv = sought ?
 #if LSEEKSIZE > IVSIZE
@@ -2735,7 +2735,7 @@ PP(pp_ssockopt)
             }
             if (PerlSock_setsockopt(fd, lvl, optname, buf, len) < 0)
                 goto nuts2;
-            PUSHs(&PL_sv_yes);
+            PUSHyes;
         }
         break;
     }
@@ -5252,7 +5252,7 @@ PP(pp_ghostent)
         if (hent->h_addr)
             mPUSHp(hent->h_addr, len);
         else
-            PUSHs(sv_mortalcopy(&PL_sv_no));
+            PUSHno;
 #endif /* h_addr */
     }
     RETURN;
@@ -5752,7 +5752,7 @@ PP(pp_gpwent)
         mPUSHs(newSVpv(pwent->pw_age, 0));
 #	    else
         /* I think that you can never get this compiled, but just in case.  */
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #           endif
 #       endif
 #   endif
@@ -5766,7 +5766,7 @@ PP(pp_gpwent)
         mPUSHs(newSVpv(pwent->pw_comment, 0));
 #	else
         /* I think that you can never get this compiled, but just in case.  */
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #       endif
 #   endif
 
@@ -5839,7 +5839,7 @@ PP(pp_ggrent)
 #ifdef GRPASSWD
         mPUSHs(newSVpv(grent->gr_passwd, 0));
 #else
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #endif
 
         sv_setgid(PUSHmortal, grent->gr_gid);

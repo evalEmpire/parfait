@@ -1830,7 +1830,7 @@ PP(pp_unpack)
 
     SPAGAIN;
     if ( !cnt && gimme == G_SCALAR )
-       PUSHs(&PL_sv_undef);
+        PUSHundef;
     RETURN;
 }
 

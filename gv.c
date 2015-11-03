@@ -3400,9 +3400,9 @@ Perl_amagic_call(pTHX_ SV *left, SV *right, int method, int flags)
                            AMG_id2namelen(method + assignshift), SVs_TEMP));
     }
     else if (flags & AMGf_numarg)
-      PUSHs(&PL_sv_undef);
+        PUSHundef;
     if (flags & AMGf_numarg)
-      PUSHs(&PL_sv_yes);
+        PUSHyes;
     PUSHs(MUTABLE_SV(cv));
     PUTBACK;
     oldmark = TOPMARK;

@@ -1805,7 +1805,7 @@ S_Internals_V(pTHX_ CV *cv)
                               SVs_TEMP));
 #  endif
 #else
-    PUSHs(&PL_sv_undef);
+    PUSHundef;
 #endif
 
     for (i = 1; i <= local_patch_count; i++) {
