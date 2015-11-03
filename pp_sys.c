@@ -5252,7 +5252,7 @@ PP(pp_ghostent)
         if (hent->h_addr)
             mPUSHp(hent->h_addr, len);
         else
-            PUSHs(sv_mortalcopy(&PL_sv_no));
+            PUSHno;
 #endif /* h_addr */
     }
     RETURN;
@@ -5752,7 +5752,7 @@ PP(pp_gpwent)
         mPUSHs(newSVpv(pwent->pw_age, 0));
 #	    else
         /* I think that you can never get this compiled, but just in case.  */
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #           endif
 #       endif
 #   endif
@@ -5766,7 +5766,7 @@ PP(pp_gpwent)
         mPUSHs(newSVpv(pwent->pw_comment, 0));
 #	else
         /* I think that you can never get this compiled, but just in case.  */
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #       endif
 #   endif
 
@@ -5839,7 +5839,7 @@ PP(pp_ggrent)
 #ifdef GRPASSWD
         mPUSHs(newSVpv(grent->gr_passwd, 0));
 #else
-        PUSHs(sv_mortalcopy(&PL_sv_no));
+        PUSHno;
 #endif
 
         sv_setgid(PUSHmortal, grent->gr_gid);
