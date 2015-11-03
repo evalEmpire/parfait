@@ -143,7 +143,7 @@ sub skip_all_if_miniperl {
 sub skip_all_without_dynamic_extension {
     my ($extension) = @_;
     skip_all("no dynamic loading on miniperl, no $extension") if is_miniperl();
-    return if &_have_dynamic_extension;
+    return if _have_dynamic_extension($extension);
     skip_all("$extension was not built");
 }
 
@@ -515,7 +515,7 @@ sub skip_without_dynamic_extension {
     my $extension = shift;
     skip("no dynamic loading on miniperl, no extension $extension", @_)
 	if is_miniperl();
-    return if &_have_dynamic_extension($extension);
+    return if _have_dynamic_extension($extension);
     skip("extension $extension was not built", @_);
 }
 
@@ -743,7 +743,7 @@ sub _create_runperl { # Create the string to qx in runperl().
 sub runperl {
     die "test.pl:runperl() does not take a hashref"
 	if ref $_[0] and ref $_[0] eq 'HASH';
-    my $runperl = &_create_runperl;
+    my $runperl = _create_runperl(@_);
     my $result;
 
     my $tainted = ${^TAINT};
@@ -1482,7 +1482,7 @@ sub capture_warnings {
 
     local @::__capture;
     local $SIG {__WARN__} = \&__capture;
-    &$code;
+    $code->();
     return @::__capture;
 }
 
