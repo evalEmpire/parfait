@@ -165,6 +165,8 @@ PERL_STATIC_INLINE size_t S_size_to_psize(size_t x) {
 }
 
 PERL_STATIC_INLINE size_t S_diff_opslots(OPSLOT *o, OPSLOT *p) {
+    PERL_ARGS_ASSERT_DIFF_OPSLOTS;
+    
     return (size_t)((I32 **)p - (I32**)o);
 }
 
@@ -504,6 +506,8 @@ Perl_op_refcnt_dec(pTHX_ OP *o)
 #endif
 
 PERL_STATIC_INLINE OP *S_checkop(pTHX_ I32 type, OP *o) {
+    PERL_ARGS_ASSERT_CHECKOP;
+    
     /* The ", (OP*)0" is just to make the compiler think the expression is of
        the right type: croak actually does a Siglongjmp. */
     return((PL_op_mask && PL_op_mask[type])
