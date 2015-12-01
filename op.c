@@ -12834,8 +12834,6 @@ S_maybe_multideref(pTHX_ OP *start, OP *orig_o, UV orig_action, U8 hints)
     defer_queue[(defer_base + ++defer_ix) % MAX_DEFERRED] = &(o); \
   } STMT_END
 
-#define IS_AND_OP(o)   (o->op_type == OP_AND)
-#define IS_OR_OP(o)    (o->op_type == OP_OR)
 
 
 /* A peephole optimizer.  We visit the ops in the order they're to execute.
@@ -13649,8 +13647,13 @@ Perl_rpeep(pTHX_ OP *o)
                by the next op */
             if (o->op_next &&
                 (
-                    (IS_AND_OP(o) && IS_OR_OP(o->op_next))
-                 || (IS_OR_OP(o) && IS_AND_OP(o->op_next))
+                  (OP_TYPE_IS_NN(o, OP_AND)
+                  && 
+                  OP_TYPE_IS_NN(o->op_next, OP_OR))
+                ||
+                  (OP_TYPE_IS_NN(o, OP_OR)
+                  &&
+                  OP_TYPE_IS_NN(o->op_next, OP_AND))
                 )
                 && (o->op_next->op_flags & OPf_WANT) == OPf_WANT_VOID
             ) {
