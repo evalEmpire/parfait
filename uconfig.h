@@ -2433,26 +2433,19 @@
 /*#define USE_STAT_BLOCKS 	/ **/
 #endif
 
-/* HAS_STATIC_INLINE:
- *	This symbol, if defined, indicates that the C compiler supports
- *	C99-style static inline.  That is, the function can't be called
- *	from another translation unit.
- */
-/* PERL_STATIC_INLINE:
- *	This symbol gives the best-guess incantation to use for static
- *	inline functions.  If HAS_STATIC_INLINE is defined, this will
- *	give C99-style inline.  If HAS_STATIC_INLINE is not defined,
- *	this will give a plain 'static'.  It will always be defined
- *	to something that gives static linkage.
+/* inline:
+ *	This symbol gives the best-guess incantation to use for C99
+ *      inline functions.  It will always be defined.  If the
+ *      compiler does not support inline it will be empty.
+ *
  *	Possibilities include
- *		static inline       (c99)
- *		static __inline__   (gcc -ansi)
- *		static __inline     (MSVC)
- *		static _inline      (older MSVC)
- *		static              (c89 compilers)
+ *		inline       (c99)
+ *		__inline__   (gcc -ansi)
+ *		__inline     (MSVC)
+ *		_inline      (older MSVC)
+ *		             (c89 compilers)
  */
-/*#define HAS_STATIC_INLINE				/ **/
-#define PERL_STATIC_INLINE static	/**/
+#define inline 	/**/
 
 /* USE_STDIO_PTR:
  *	This symbol is defined if the _ptr and _cnt fields (or similar)
@@ -5167,6 +5160,6 @@
 #endif
 
 /* Generated from:
- * 496e563499c7b715275d61ae663d25dd20d963c75f9d3ee7850dae949df14136 config_h.SH
+ * fecde6c155d4ce704a51c3e9b6bf5ad787b2857a7f2cc8137ec72de393fce440 config_h.SH
  * 45fb46f69ab3d7fd8ea14fc29d490d044cbdd81e8a0111bc0b37aff4321d6182 uconfig.sh
  * ex: set ro: */

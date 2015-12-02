@@ -123,16 +123,9 @@
 #  define EXTERN_C extern
 #endif
 
-/* Fallback definitions in case we don't have definitions from config.h.
-   This should only matter for systems that don't use Configure and
-   haven't been modified to define PERL_STATIC_INLINE yet.
-*/
-#if !defined(PERL_STATIC_INLINE)
-#  ifdef HAS_STATIC_INLINE
-#    define PERL_STATIC_INLINE static inline
-#  else
-#    define PERL_STATIC_INLINE static
-#  endif
+/* Fallback definition in case we don't have an inline definition from config.h. */
+#ifndef inline
+#  define inline
 #endif
 
 #ifdef PERL_GLOBAL_STRUCT
@@ -196,6 +189,7 @@
 
 /* For backwards compatibility with older versions of the Perl API */
 #define STATIC static
+#define PERL_STATIC_INLINE static inline
 
 #ifndef PERL_CORE
 /* Do not use these macros. They were part of PERL_OBJECT, which was an

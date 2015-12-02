@@ -2468,27 +2468,22 @@ sed <<!GROK!THIS! >$CONFIG_H -e 's!^#undef\(.*/\)\*!/\*#define\1 \*!' -e 's!^#un
 #$d_statblks USE_STAT_BLOCKS 	/**/
 #endif
 
-/* HAS_STATIC_INLINE:
- *	This symbol, if defined, indicates that the C compiler supports
- *	C99-style static inline.  That is, the function can't be called
- *	from another translation unit.
- */
-/* PERL_STATIC_INLINE:
- *	This symbol gives the best-guess incantation to use for static
- *	inline functions.  If HAS_STATIC_INLINE is defined, this will
- *	give C99-style inline.  If HAS_STATIC_INLINE is not defined,
- *	this will give a plain 'static'.  It will always be defined
- *	to something that gives static linkage.
+/* inline:
+ *	This symbol gives the best-guess incantation to use for C99
+ *      inline functions.  It will always be defined.  If the
+ *      compiler does not support inline it will be empty.
+ *
  *	Possibilities include
- *		static inline       (c99)
- *		static __inline__   (gcc -ansi)
- *		static __inline     (MSVC)
- *		static _inline      (older MSVC)
- *		static              (c89 compilers)
+ *		inline       (c99)
+ *		__inline__   (gcc -ansi)
+ *		__inline     (MSVC)
+ *		_inline      (older MSVC)
+ *		             (c89 compilers)
  */
-#$d_static_inline HAS_STATIC_INLINE				/**/
-#define PERL_STATIC_INLINE $perl_static_inline	/**/
-
+#ifndef inline
+    #define inline $inline	/**/
+#endif
+ 
 /* USE_STDIO_PTR:
  *	This symbol is defined if the _ptr and _cnt fields (or similar)
  *	of the stdio FILE structure can be used to access the stdio buffer
