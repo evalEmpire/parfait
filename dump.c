@@ -752,7 +752,7 @@ Perl_pmop_dump(pTHX_ PMOP *pm)
  * otherwise add it.
  *  *** Note that this isn't thread-safe */
 
-STATIC UV
+static UV
 S_sequence_num(pTHX_ const OP *o)
 {
     dVAR;
@@ -2536,7 +2536,7 @@ Perl_debop(pTHX_ const OP *o)
     return 0;
 }
 
-STATIC CV*
+static CV*
 S_deb_curcv(pTHX_ I32 ix)
 {
     PERL_SI *si = PL_curstackinfo;
@@ -2571,7 +2571,7 @@ Perl_watch(pTHX_ char **addr)
         PTR2UV(PL_watchaddr), PTR2UV(PL_watchok));
 }
 
-STATIC void
+static void
 S_debprof(pTHX_ const OP *o)
 {
     PERL_ARGS_ASSERT_DEBPROF;

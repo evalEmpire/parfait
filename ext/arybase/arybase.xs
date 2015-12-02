@@ -17,13 +17,13 @@ typedef struct {
 #include "ptable.h"
 #define ptable_map_store(T, K, V) ptable_map_store(aPTBLMS_ (T), (K), (V))
 
-STATIC ptable *ab_op_map = NULL;
+static ptable *ab_op_map = NULL;
 
 #ifdef USE_ITHREADS
-STATIC perl_mutex ab_op_map_mutex;
+static perl_mutex ab_op_map_mutex;
 #endif
 
-STATIC const ab_op_info *ab_map_fetch(const OP *o, ab_op_info *oi) {
+static const ab_op_info *ab_map_fetch(const OP *o, ab_op_info *oi) {
  const ab_op_info *val;
 
 #ifdef USE_ITHREADS
@@ -43,7 +43,7 @@ STATIC const ab_op_info *ab_map_fetch(const OP *o, ab_op_info *oi) {
  return val;
 }
 
-STATIC const ab_op_info *ab_map_store_locked(
+static const ab_op_info *ab_map_store_locked(
  pPTBLMS_ const OP *o, OP *(*old_pp)(pTHX), IV base
 ) {
 #define ab_map_store_locked(O, PP, B) \
@@ -60,7 +60,7 @@ STATIC const ab_op_info *ab_map_store_locked(
  return oi;
 }
 
-STATIC void ab_map_store(
+static void ab_map_store(
  pPTBLMS_ const OP *o, OP *(*old_pp)(pTHX), IV base)
 {
 #define ab_map_store(O, PP, B) ab_map_store(aPTBLMS_ (O),(PP),(B))
@@ -76,7 +76,7 @@ STATIC void ab_map_store(
 #endif
 }
 
-STATIC void ab_map_delete(pTHX_ const OP *o) {
+static void ab_map_delete(pTHX_ const OP *o) {
 #define ab_map_delete(O) ab_map_delete(aTHX_ (O))
 #ifdef USE_ITHREADS
  MUTEX_LOCK(&ab_op_map_mutex);
@@ -94,7 +94,7 @@ STATIC void ab_map_delete(pTHX_ const OP *o) {
 #define hintkey     "$["
 #define hintkey_len  (sizeof(hintkey)-1)
 
-STATIC SV * ab_hint(pTHX_ const bool create) {
+static SV * ab_hint(pTHX_ const bool create) {
 #define ab_hint(c) ab_hint(aTHX_ c)
  dVAR;
  SV **val
@@ -105,7 +105,7 @@ STATIC SV * ab_hint(pTHX_ const bool create) {
 }
 
 /* current base at compile time */
-STATIC IV current_base(pTHX) {
+static IV current_base(pTHX) {
 #define current_base() current_base(aTHX)
  SV *hsv = ab_hint(0);
  assert(FEATURE_ARYBASE_IS_ENABLED);
@@ -113,14 +113,14 @@ STATIC IV current_base(pTHX) {
  return SvIV(hsv);
 }
 
-STATIC void set_arybase_to(pTHX_ IV base) {
+static void set_arybase_to(pTHX_ IV base) {
 #define set_arybase_to(base) set_arybase_to(aTHX_ (base))
  dVAR;
  SV *hsv = ab_hint(1);
  sv_setiv_mg(hsv, base);
 }
 
-#define old_ck(opname) STATIC OP *(*ab_old_ck_##opname)(pTHX_ OP *) = 0
+#define old_ck(opname) static OP *(*ab_old_ck_##opname)(pTHX_ OP *) = 0
 old_ck(sassign);
 old_ck(aassign);
 old_ck(aelem);
@@ -135,7 +135,7 @@ old_ck(rindex);
 old_ck(index);
 old_ck(pos);
 
-STATIC bool ab_op_is_dollar_bracket(pTHX_ OP *o) {
+static bool ab_op_is_dollar_bracket(pTHX_ OP *o) {
 #define ab_op_is_dollar_bracket(o) ab_op_is_dollar_bracket(aTHX_ (o))
  OP *c;
  return o->op_type == OP_RV2SV && (o->op_flags & OPf_KIDS)
@@ -145,7 +145,7 @@ STATIC bool ab_op_is_dollar_bracket(pTHX_ OP *o) {
   && strEQ(GvNAME(cGVOPx_gv(c)), "[");
 }
 
-STATIC void ab_neuter_dollar_bracket(pTHX_ OP *o) {
+static void ab_neuter_dollar_bracket(pTHX_ OP *o) {
 #define ab_neuter_dollar_bracket(o) ab_neuter_dollar_bracket(aTHX_ (o))
  OP *oldc, *newc;
  /*
@@ -161,7 +161,7 @@ STATIC void ab_neuter_dollar_bracket(pTHX_ OP *o) {
  op_free(oldc);
 }
 
-STATIC void ab_process_assignment(pTHX_ OP *left, OP *right) {
+static void ab_process_assignment(pTHX_ OP *left, OP *right) {
 #define ab_process_assignment(l, r) \
     ab_process_assignment(aTHX_ (l), (r))
  if (ab_op_is_dollar_bracket(left) && right->op_type == OP_CONST) {
@@ -173,7 +173,7 @@ STATIC void ab_process_assignment(pTHX_ OP *left, OP *right) {
  }
 }
 
-STATIC OP *ab_ck_sassign(pTHX_ OP *o) {
+static OP *ab_ck_sassign(pTHX_ OP *o) {
  o = (*ab_old_ck_sassign)(aTHX_ o);
  if (o->op_type == OP_SASSIGN && FEATURE_ARYBASE_IS_ENABLED) {
   OP *right = cBINOPx(o)->op_first;
@@ -183,7 +183,7 @@ STATIC OP *ab_ck_sassign(pTHX_ OP *o) {
  return o;
 }
 
-STATIC OP *ab_ck_aassign(pTHX_ OP *o) {
+static OP *ab_ck_aassign(pTHX_ OP *o) {
  o = (*ab_old_ck_aassign)(aTHX_ o);
  if (o->op_type == OP_AASSIGN && FEATURE_ARYBASE_IS_ENABLED) {
   OP *right = cBINOPx(o)->op_first;
@@ -401,7 +401,7 @@ static OP *ab_ck_base(pTHX_ OP *o)
 }
 
 
-STATIC U32 ab_initialized = 0;
+static U32 ab_initialized = 0;
 
 /* --- XS ------------------------------------------------------------- */
 

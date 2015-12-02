@@ -73,7 +73,7 @@ typedef struct ptable {
 #endif /* !ptable */
 
 #ifndef ptable_new
-STATIC ptable *ptable_new(pPTBLMS) {
+static ptable *ptable_new(pPTBLMS) {
 #define ptable_new() ptable_new(aPTBLMS)
   ptable *t = (ptable *)PerlMemShared_malloc(sizeof *t);
  t->max   = 63;
@@ -89,7 +89,7 @@ STATIC ptable *ptable_new(pPTBLMS) {
 #endif
 
 #ifndef ptable_find
-STATIC ptable_ent *ptable_find(const ptable * const t, const void * const key) {
+static ptable_ent *ptable_find(const ptable * const t, const void * const key) {
 #define ptable_find ptable_find
  ptable_ent *ent;
  const UV hash = PTABLE_HASH(key);
@@ -105,7 +105,7 @@ STATIC ptable_ent *ptable_find(const ptable * const t, const void * const key) {
 #endif /* !ptable_find */
 
 #ifndef ptable_fetch
-STATIC void *ptable_fetch(const ptable * const t, const void * const key) {
+static void *ptable_fetch(const ptable * const t, const void * const key) {
 #define ptable_fetch ptable_fetch
  const ptable_ent *const ent = ptable_find(t, key);
 
@@ -114,7 +114,7 @@ STATIC void *ptable_fetch(const ptable * const t, const void * const key) {
 #endif /* !ptable_fetch */
 
 #ifndef ptable_split
-STATIC void ptable_split(pPTBLMS_ ptable * const t) {
+static void ptable_split(pPTBLMS_ ptable * const t) {
 #define ptable_split(T) ptable_split(aPTBLMS_ (T))
  ptable_ent **ary = t->ary;
  const UV oldsize = t->max + 1;
@@ -144,7 +144,7 @@ STATIC void ptable_split(pPTBLMS_ ptable * const t) {
 }
 #endif /* !ptable_split */
 
-STATIC void PTABLE_PREFIX(_store)(pPTBL_ ptable * const t, const void * const key, void * const val) {
+static void PTABLE_PREFIX(_store)(pPTBL_ ptable * const t, const void * const key, void * const val) {
  ptable_ent *ent = ptable_find(t, key);
 
  if (ent) {
@@ -167,7 +167,7 @@ STATIC void PTABLE_PREFIX(_store)(pPTBL_ ptable * const t, const void * const ke
 /* this function appears to be unused */
 #if 0
 #ifndef ptable_walk
-STATIC void ptable_walk(pTHX_ ptable * const t, void (*cb)(pTHX_ ptable_ent *ent, void *userdata), void *userdata) {
+static void ptable_walk(pTHX_ ptable * const t, void (*cb)(pTHX_ ptable_ent *ent, void *userdata), void *userdata) {
 #define ptable_walk(T, CB, UD) ptable_walk(aTHX_ (T), (CB), (UD))
  if (t && t->items) {
   ptable_ent ** const array = t->ary;
@@ -184,7 +184,7 @@ STATIC void ptable_walk(pTHX_ ptable * const t, void (*cb)(pTHX_ ptable_ent *ent
 
 /* this function appears to be unused */
 #if 0
-STATIC void PTABLE_PREFIX(_clear)(pPTBL_ ptable * const t) {
+static void PTABLE_PREFIX(_clear)(pPTBL_ ptable * const t) {
  if (t && t->items) {
   ptable_ent ** const array = t->ary;
   UV i = t->max;
@@ -208,7 +208,7 @@ STATIC void PTABLE_PREFIX(_clear)(pPTBL_ ptable * const t) {
 
 /* this function appears to be unused */
 #if 0
-STATIC void PTABLE_PREFIX(_free)(pPTBL_ ptable * const t) {
+static void PTABLE_PREFIX(_free)(pPTBL_ ptable * const t) {
  if (!t)
   return;
  PTABLE_PREFIX(_clear)(aPTBL_ t);

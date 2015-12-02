@@ -97,10 +97,6 @@ EXTERN_C const struct regexp_engine my_reg_engine;
 #define IS_NON_FINAL_FOLD(c) _IS_NON_FINAL_FOLD_ONLY_FOR_USE_BY_REGCOMP_DOT_C(c)
 #define IS_IN_SOME_FOLD_L1(c) _IS_IN_SOME_FOLD_ONLY_FOR_USE_BY_REGCOMP_DOT_C(c)
 
-#ifndef STATIC
-#define	STATIC	static
-#endif
-
 #ifndef MIN
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #endif
@@ -904,7 +900,7 @@ DEBUG_OPTIMISE_MORE_r(if(data){                                      \
 /* is c a control character for which we have a mnemonic? */
 #define isMNEMONIC_CNTRL(c) _IS_MNEMONIC_CNTRL_ONLY_FOR_USE_BY_REGCOMP_DOT_C(c)
 
-STATIC const char *
+static const char *
 S_cntrl_to_mnemonic(const U8 c)
 {
     /* Returns the mnemonic string that represents character 'c', if one
@@ -928,7 +924,7 @@ S_cntrl_to_mnemonic(const U8 c)
    Update the longest found anchored substring and the longest found
    floating substrings if needed. */
 
-STATIC void
+static void
 S_scan_commit(pTHX_ const RExC_state_t *pRExC_state, scan_data_t *data,
                     SSize_t *minlenp, int is_inf)
 {
@@ -986,7 +982,7 @@ S_scan_commit(pTHX_ const RExC_state_t *pRExC_state, scan_data_t *data,
 /* An SSC is just a regnode_charclass_posix with an extra field: the inversion
  * list that describes which code points it matches */
 
-STATIC void
+static void
 S_ssc_anything(pTHX_ regnode_ssc *ssc)
 {
     /* Set the SSC 'ssc' to match an empty string or any code point */
@@ -1000,7 +996,7 @@ S_ssc_anything(pTHX_ regnode_ssc *ssc)
     ANYOF_FLAGS(ssc) |= SSC_MATCHES_EMPTY_STRING;  /* Plus matches empty */
 }
 
-STATIC int
+static int
 S_ssc_is_anything(const regnode_ssc *ssc)
 {
     /* Returns TRUE if the SSC 'ssc' can match the empty string and any code
@@ -1044,7 +1040,7 @@ S_ssc_is_anything(const regnode_ssc *ssc)
     return FALSE;
 }
 
-STATIC void
+static void
 S_ssc_init(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc)
 {
     /* Initializes the SSC 'ssc'.  This includes setting it to match an empty
@@ -1072,7 +1068,7 @@ S_ssc_init(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc)
     }
 }
 
-STATIC int
+static int
 S_ssc_is_cp_posixl_init(const RExC_state_t *pRExC_state,
                         const regnode_ssc *ssc)
 {
@@ -1105,7 +1101,7 @@ S_ssc_is_cp_posixl_init(const RExC_state_t *pRExC_state,
     return TRUE;
 }
 
-STATIC SV*
+static SV*
 S_get_ANYOF_cp_list_for_ssc(pTHX_ const RExC_state_t *pRExC_state,
                                const regnode_charclass* const node)
 {
@@ -1222,7 +1218,7 @@ S_get_ANYOF_cp_list_for_ssc(pTHX_ const RExC_state_t *pRExC_state,
  * should not be inverted.  'and_with->flags & ANYOF_MATCHES_POSIXL' should be
  * 0 if 'and_with' is a regnode_charclass instead of a regnode_ssc. */
 
-STATIC void
+static void
 S_ssc_and(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc,
                 const regnode_charclass *and_with)
 {
@@ -1390,7 +1386,7 @@ S_ssc_and(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc,
     }
 }
 
-STATIC void
+static void
 S_ssc_or(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc,
                const regnode_charclass *or_with)
 {
@@ -1532,7 +1528,7 @@ S_ssc_clear_locale(regnode_ssc *ssc)
 
 #define NON_OTHER_COUNT   NON_OTHER_COUNT_FOR_USE_ONLY_BY_REGCOMP_DOT_C
 
-STATIC bool
+static bool
 S_is_ssc_worth_it(const RExC_state_t * pRExC_state, const regnode_ssc * ssc)
 {
     /* The synthetic start class is used to hopefully quickly winnow down
@@ -1595,7 +1591,7 @@ S_is_ssc_worth_it(const RExC_state_t * pRExC_state, const regnode_ssc * ssc)
 }
 
 
-STATIC void
+static void
 S_ssc_finalize(pTHX_ RExC_state_t *pRExC_state, regnode_ssc *ssc)
 {
     /* The inversion list in the SSC is marked mortal; now we need a more
@@ -1658,7 +1654,7 @@ S_ssc_finalize(pTHX_ RExC_state_t *pRExC_state, regnode_ssc *ssc)
   Used for debugging make_trie().
 */
 
-STATIC void
+static void
 S_dump_trie(pTHX_ const struct _reg_trie_data *trie, HV *widecharmap,
             AV *revcharmap, U32 depth)
 {
@@ -1756,7 +1752,7 @@ S_dump_trie(pTHX_ const struct _reg_trie_data *trie, HV *widecharmap,
   possible chars (trie->uniquecharcount) is very high.
   Used for debugging make_trie().
 */
-STATIC void
+static void
 S_dump_trie_interim_list(pTHX_ const struct _reg_trie_data *trie,
                          HV *widecharmap, AV *revcharmap, U32 next_alloc,
                          U32 depth)
@@ -1815,7 +1811,7 @@ S_dump_trie_interim_list(pTHX_ const struct _reg_trie_data *trie,
   twists to facilitate compression later.
   Used for debugging make_trie().
 */
-STATIC void
+static void
 S_dump_trie_interim_table(pTHX_ const struct _reg_trie_data *trie,
                           HV *widecharmap, AV *revcharmap, U32 next_alloc,
                           U32 depth)
@@ -2116,7 +2112,7 @@ is the recommended Unicode-aware way of saying
 #define MADE_JUMP_TRIE  2
 #define MADE_EXACT_TRIE 4
 
-STATIC I32
+static I32
 S_make_trie(pTHX_ RExC_state_t *pRExC_state, regnode *startbranch,
                   regnode *first, regnode *last, regnode *tail,
                   U32 word_count, U32 flags, U32 depth)
@@ -3156,7 +3152,7 @@ S_make_trie(pTHX_ RExC_state_t *pRExC_state, regnode *startbranch,
              : MADE_TRIE;
 }
 
-STATIC regnode *
+static regnode *
 S_construct_ahocorasick_from_trie(pTHX_ RExC_state_t *pRExC_state, regnode *source, U32 depth)
 {
 /* The Trie is constructed and compressed now so we can build a fail array if
@@ -3420,7 +3416,7 @@ S_construct_ahocorasick_from_trie(pTHX_ RExC_state_t *pRExC_state, regnode *sour
     if (PL_regkind[OP(scan)] == EXACT) \
         join_exact(pRExC_state,(scan),(min_subtract),unfolded_multi_char, (flags),NULL,depth+1)
 
-STATIC U32
+static U32
 S_join_exact(pTHX_ RExC_state_t *pRExC_state, regnode *scan,
                    UV *min_subtract, bool *unfolded_multi_char,
                    U32 flags,regnode *val, U32 depth)
@@ -3750,7 +3746,7 @@ S_unwind_scan_frames(pTHX_ const void *p)
 }
 
 
-STATIC SSize_t
+static SSize_t
 S_study_chunk(pTHX_ RExC_state_t *pRExC_state, regnode **scanp,
                         SSize_t *minlenp, SSize_t *deltap,
                         regnode *last,
@@ -5646,7 +5642,7 @@ PerlIO_printf(Perl_debug_log, "LHS=%"UVuf" RHS=%"UVuf"\n",
     NOT_REACHED; /* NOTREACHED */
 }
 
-STATIC U32
+static U32
 S_add_data(RExC_state_t* const pRExC_state, const char* const s, const U32 n)
 {
     U32 count = RExC_rxi->data ? RExC_rxi->data->count : 0;
@@ -6286,7 +6282,7 @@ S_compile_runtime_code(pTHX_ RExC_state_t * const pRExC_state,
 }
 
 
-STATIC bool
+static bool
 S_setup_longest(pTHX_ RExC_state_t *pRExC_state, SV* sv_longest,
                       SV** rx_utf8, SV** rx_substr, SSize_t* rx_end_shift,
                       SSize_t lookbehind, SSize_t offset, SSize_t *minlen,
@@ -7854,7 +7850,7 @@ Perl_reg_qr_package(pTHX_ REGEXP * const rx)
 #define REG_RSN_RETURN_NAME    1
 #define REG_RSN_RETURN_DATA    2
 
-STATIC SV*
+static SV*
 S_reg_scan_name(pTHX_ RExC_state_t *pRExC_state, U32 flags)
 {
     char *name_start = RExC_parse;
@@ -8200,7 +8196,7 @@ Perl__new_invlist_C_array(pTHX_ const UV* const list)
 }
 #endif /* ifndef PERL_IN_XSUB_RE */
 
-STATIC void
+static void
 S_invlist_extend(pTHX_ SV* const invlist, const UV new_max)
 {
     /* Grow the maximum size of an inversion list */
@@ -8214,7 +8210,7 @@ S_invlist_extend(pTHX_ SV* const invlist, const UV new_max)
     SvGROW((SV *)invlist, TO_INTERNAL_SIZE(new_max + 1));
 }
 
-STATIC void
+static void
 S__append_range_to_invlist(pTHX_ SV* const invlist,
                                  const UV start, const UV end)
 {
@@ -9139,7 +9135,7 @@ S_invlist_iterfinish(SV* invlist)
     *get_invlist_iter_addr(invlist) = (STRLEN) UV_MAX;
 }
 
-STATIC bool
+static bool
 S_invlist_iternext(SV* invlist, UV* start, UV* end)
 {
     /* An C<invlist_iterinit> call on <invlist> must be used to set this up.
@@ -9375,7 +9371,7 @@ S__invlistEQ(pTHX_ SV* const a, SV* const b, const bool complement_b)
  * Returns the invlist as a new SV*; it is the caller's responsibility to
  * call SvREFCNT_dec() when done with it.
  */
-STATIC SV*
+static SV*
 S__make_exactf_invlist(pTHX_ RExC_state_t *pRExC_state, regnode *node)
 {
     const U8 * s = (U8*)STRING(node);
@@ -9521,7 +9517,7 @@ S__make_exactf_invlist(pTHX_ RExC_state_t *pRExC_state, regnode *node)
 
 /* End of inversion list object */
 
-STATIC void
+static void
 S_parse_lparen_question_flags(pTHX_ RExC_state_t *pRExC_state)
 {
     /* This parses the flags that are in either the '(?foo)' or '(?foo:bar)'
@@ -9752,7 +9748,7 @@ S_parse_lparen_question_flags(pTHX_ RExC_state_t *pRExC_state)
    needs to be restarted.
    Otherwise would only return NULL if regbranch() returns NULL, which
    cannot happen.  */
-STATIC regnode *
+static regnode *
 S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp,U32 depth)
     /* paren: Parenthesized? 0=top; 1,2=inside '(': changed to letter.
      * 2 is like 1, but indicates that nextchar() has been called to advance
@@ -10698,7 +10694,7 @@ S_reg(pTHX_ RExC_state_t *pRExC_state, I32 paren, I32 *flagp,U32 depth)
  * Returns NULL, setting *flagp to RESTART_UTF8 if the sizing scan needs to be
  * restarted.
  */
-STATIC regnode *
+static regnode *
 S_regbranch(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, I32 first, U32 depth)
 {
     regnode *ret;
@@ -10781,7 +10777,7 @@ S_regbranch(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, I32 first, U32 depth)
  * Returns NULL, setting *flagp to RESTART_UTF8 if the sizing scan needs to be
  * restarted.
  */
-STATIC regnode *
+static regnode *
 S_regpiece(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
 {
     regnode *ret;
@@ -11028,7 +11024,7 @@ S_regpiece(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
     return(ret);
 }
 
-STATIC bool
+static bool
 S_grok_bslash_N(pTHX_ RExC_state_t *pRExC_state,
                 regnode ** node_p,
                 UV * code_point_p,
@@ -11358,7 +11354,7 @@ S_grok_bslash_N(pTHX_ RExC_state_t *pRExC_state,
  * If the result from Encode is not a single character,
  * it returns U+FFFD (Replacement character) and sets *encp to NULL.
  */
-STATIC UV
+static UV
 S_reg_recode(pTHX_ const char value, SV **encp)
 {
     STRLEN numlen = 1;
@@ -11648,7 +11644,7 @@ S_backref_value(char *p)
    Otherwise does not return NULL.
 */
 
-STATIC regnode *
+static regnode *
 S_regatom(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
 {
     regnode *ret = NULL;
@@ -12969,7 +12965,7 @@ S_regatom(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth)
     return(ret);
 }
 
-STATIC char *
+static char *
 S_regpatws(RExC_state_t *pRExC_state, char *p , const bool recognize_comment )
 {
     /* Returns the next non-pattern-white space, non-comment character (the
@@ -12993,7 +12989,7 @@ S_regpatws(RExC_state_t *pRExC_state, char *p , const bool recognize_comment )
     return p;
 }
 
-STATIC void
+static void
 S_populate_ANYOF_from_invlist(pTHX_ regnode *node, SV** invlist_ptr)
 {
     /* Uses the inversion list '*invlist_ptr' to populate the ANYOF 'node'.  It
@@ -13214,7 +13210,7 @@ S_regpposixcc(pTHX_ RExC_state_t *pRExC_state, I32 value, const bool strict)
     return namedclass;
 }
 
-STATIC bool
+static bool
 S_could_it_be_a_POSIX_class(RExC_state_t *pRExC_state)
 {
     /* This applies some heuristics at the current parse position (which should
@@ -13267,7 +13263,7 @@ S_could_it_be_a_POSIX_class(RExC_state_t *pRExC_state)
             && first_char == *(p - 1));
 }
 
-STATIC unsigned  int
+static unsigned  int
 S_regex_set_precedence(const U8 my_operator) {
 
     /* Returns the precedence in the (?[...]) construct of the input operator,
@@ -13295,7 +13291,7 @@ S_regex_set_precedence(const U8 my_operator) {
     return 0;   /* Silence compiler warning */
 }
 
-STATIC regnode *
+static regnode *
 S_handle_regex_sets(pTHX_ RExC_state_t *pRExC_state, SV** return_invlist,
                     I32 *flagp, U32 depth,
                     char * const oregcomp_parse)
@@ -13981,7 +13977,7 @@ redo_curchar:
 }
 #undef IS_OPERAND
 
-STATIC void
+static void
 S_add_above_Latin1_folds(pTHX_ RExC_state_t *pRExC_state, const U8 cp, SV** invlist)
 {
     /* This hard-codes the Latin1/above-Latin1 folding rules, so that an
@@ -14038,7 +14034,7 @@ S_add_above_Latin1_folds(pTHX_ RExC_state_t *pRExC_state, const U8 cp, SV** invl
     }
 }
 
-STATIC AV *
+static AV *
 S_add_multi_match(pTHX_ AV* multi_char_matches, SV* multi_string, const STRLEN cp_count)
 {
     /* This adds the string scalar <multi_string> to the array
@@ -14091,7 +14087,7 @@ S_add_multi_match(pTHX_ AV* multi_char_matches, SV* multi_string, const STRLEN c
 #define HAS_NONLOCALE_RUNTIME_PROPERTY_DEFINITION                            \
                                         (SvCUR(listsv) != initial_listsv_len)
 
-STATIC regnode *
+static regnode *
 S_regclass(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth,
                  const bool stop_at_1,  /* Just parse the next thing, don't
                                            look for a full character class */
@@ -15984,7 +15980,7 @@ S_regclass(pTHX_ RExC_state_t *pRExC_state, I32 *flagp, U32 depth,
 
 #undef HAS_NONLOCALE_RUNTIME_PROPERTY_DEFINITION
 
-STATIC void
+static void
 S_set_ANYOF_arg(pTHX_ RExC_state_t* const pRExC_state,
                 regnode* const node,
                 SV* const cp_list,
@@ -16237,7 +16233,7 @@ S_reg_skipcomment(RExC_state_t *pRExC_state, char* p)
    This is the /x friendly way of saying RExC_parse++.
 */
 
-STATIC char*
+static char*
 S_nextchar(pTHX_ RExC_state_t *pRExC_state)
 {
     char* const retval = RExC_parse++;
@@ -16270,7 +16266,7 @@ S_nextchar(pTHX_ RExC_state_t *pRExC_state)
     }
 }
 
-STATIC regnode *
+static regnode *
 S_regnode_guts(pTHX_ RExC_state_t *pRExC_state, const U8 op, const STRLEN extra_size, const char* const name)
 {
     /* Allocate a regnode for 'op' and returns it, with 'extra_size' extra
@@ -16316,7 +16312,7 @@ S_regnode_guts(pTHX_ RExC_state_t *pRExC_state, const U8 op, const STRLEN extra_
 /*
 - reg_node - emit a node
 */
-STATIC regnode *			/* Location. */
+static regnode *			/* Location. */
 S_reg_node(pTHX_ RExC_state_t *pRExC_state, U8 op)
 {
     regnode * const ret = regnode_guts(pRExC_state, op, regarglen[op], "reg_node");
@@ -16336,7 +16332,7 @@ S_reg_node(pTHX_ RExC_state_t *pRExC_state, U8 op)
 /*
 - reganode - emit a node with an argument
 */
-STATIC regnode *			/* Location. */
+static regnode *			/* Location. */
 S_reganode(pTHX_ RExC_state_t *pRExC_state, U8 op, U32 arg)
 {
     regnode * const ret = regnode_guts(pRExC_state, op, regarglen[op], "reganode");
@@ -16353,7 +16349,7 @@ S_reganode(pTHX_ RExC_state_t *pRExC_state, U8 op, U32 arg)
     return(ret);
 }
 
-STATIC regnode *
+static regnode *
 S_reg2Lanode(pTHX_ RExC_state_t *pRExC_state, const U8 op, const U32 arg1, const I32 arg2)
 {
     /* emit a node with U32 and I32 arguments */
@@ -16377,7 +16373,7 @@ S_reg2Lanode(pTHX_ RExC_state_t *pRExC_state, const U8 op, const U32 arg1, const
 *
 * Means relocating the operand.
 */
-STATIC void
+static void
 S_reginsert(pTHX_ RExC_state_t *pRExC_state, U8 op, regnode *opnd, U32 depth)
 {
     regnode *src;
@@ -16467,7 +16463,7 @@ S_reginsert(pTHX_ RExC_state_t *pRExC_state, U8 op, regnode *opnd, U32 depth)
 - SEE ALSO: regtail_study
 */
 /* TODO: All three parms should be const */
-STATIC void
+static void
 S_regtail(pTHX_ RExC_state_t *pRExC_state, regnode *p,
                 const regnode *val,U32 depth)
 {
@@ -16525,7 +16521,7 @@ to control which is which.
 */
 /* TODO: All four parms should be const */
 
-STATIC U8
+static U8
 S_regtail_study(pTHX_ RExC_state_t *pRExC_state, regnode *p,
                       const regnode *val,U32 depth)
 {
@@ -17679,7 +17675,7 @@ Perl_regnext(pTHX_ regnode *p)
 }
 #endif
 
-STATIC void
+static void
 S_re_croak2(pTHX_ bool utf8, const char* pat1,const char* pat2,...)
 {
     va_list args;
@@ -17753,7 +17749,7 @@ Perl_save_re_context(pTHX)
 
 #ifdef DEBUGGING
 
-STATIC void
+static void
 S_put_code_point(pTHX_ SV *sv, UV c)
 {
     PERL_ARGS_ASSERT_PUT_CODE_POINT;
@@ -17780,7 +17776,7 @@ S_put_code_point(pTHX_ SV *sv, UV c)
 
 #define MAX_PRINT_A MAX_PRINT_A_FOR_USE_ONLY_BY_REGCOMP_DOT_C
 
-STATIC void
+static void
 S_put_range(pTHX_ SV *sv, UV start, const UV end, const bool allow_literals)
 {
     /* Appends to 'sv' a displayable version of the range of code points from
@@ -17937,7 +17933,7 @@ S_put_range(pTHX_ SV *sv, UV start, const UV end, const bool allow_literals)
     }
 }
 
-STATIC bool
+static bool
 S_put_charclass_bitmap_innards(pTHX_ SV *sv, char *bitmap, SV** bitmap_invlist)
 {
     /* Appends to 'sv' a displayable version of the innards of the bracketed
@@ -18051,7 +18047,7 @@ S_put_charclass_bitmap_innards(pTHX_ SV *sv, char *bitmap, SV** bitmap_invlist)
                     CLEAR_OPTSTART;                                          \
                     node=dumpuntil(r,start,(b),(e),last,sv,indent+1,depth+1);
 
-STATIC const regnode *
+static const regnode *
 S_dumpuntil(pTHX_ const regexp *r, const regnode *start, const regnode *node,
             const regnode *last, const regnode *plast,
             SV* sv, I32 indent, U32 depth)

@@ -544,7 +544,7 @@ PP(pp_refgen)
     RETURN;
 }
 
-STATIC SV*
+static SV*
 S_refto(pTHX_ SV *sv)
 {
     SV* rv;
@@ -2584,7 +2584,7 @@ PP(pp_i_divide)
 
 #if defined(__GLIBC__) && IVSIZE == 8 && !defined(PERL_DEBUG_READONLY_OPS) \
     && ( __GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 8))
-STATIC
+static
 PP(pp_i_modulo_0)
 #else
 PP(pp_i_modulo)
@@ -2608,7 +2608,7 @@ PP(pp_i_modulo)
 
 #if defined(__GLIBC__) && IVSIZE == 8 && !defined(PERL_DEBUG_READONLY_OPS) \
     && ( __GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 8))
-STATIC
+static
 PP(pp_i_modulo_1)
 
 {
@@ -4764,7 +4764,7 @@ PP(pp_each)
     RETURN;
 }
 
-STATIC OP *
+static OP *
 S_do_delete_local(pTHX)
 {
     dSP;

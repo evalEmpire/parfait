@@ -100,10 +100,6 @@ static const char* const non_utf8_target_but_utf8_required
 
 #define HAS_NONLATIN1_FOLD_CLOSURE(i) _HAS_NONLATIN1_FOLD_CLOSURE_ONLY_FOR_USE_BY_REGCOMP_DOT_C_AND_REGEXEC_DOT_C(i)
 
-#ifndef STATIC
-#define	STATIC	static
-#endif
-
 /* Valid only for non-utf8 strings: avoids the reginclass
  * call if there are no complications: i.e., if everything matchable is
  * straight forward in the bitmap */
@@ -266,7 +262,7 @@ static regmatch_state * S_push_slab(pTHX);
 /* REGCP_FRAME_ELEMS are not part of the REGCP_OTHER_ELEMS and
  * are needed for the regexp context stack bookkeeping. */
 
-STATIC CHECKPOINT
+static CHECKPOINT
 S_regcppush(pTHX_ const regexp *rex, I32 parenfloor, U32 maxopenparen)
 {
     const int retval = PL_savestack_ix;
@@ -346,7 +342,7 @@ S_regcppush(pTHX_ const regexp *rex, I32 parenfloor, U32 maxopenparen)
     rex->lastcloseparen = lcp;
 
 
-STATIC void
+static void
 S_regcppop(pTHX_ regexp *rex, U32 *maxopenparen_p)
 {
     UV i;
@@ -417,7 +413,7 @@ S_regcppop(pTHX_ regexp *rex, U32 *maxopenparen_p)
 /* restore the parens and associated vars at savestack position ix,
  * but without popping the stack */
 
-STATIC void
+static void
 S_regcp_restore(pTHX_ regexp *rex, I32 ix, U32 *maxopenparen_p)
 {
     I32 tmpix = PL_savestack_ix;
@@ -428,7 +424,7 @@ S_regcp_restore(pTHX_ regexp *rex, I32 ix, U32 *maxopenparen_p)
 
 #define regcpblow(cp) LEAVE_SCOPE(cp)	/* Ignores regcppush()ed data. */
 
-STATIC bool
+static bool
 S_isFOO_lc(pTHX_ const U8 classnum, const U8 character)
 {
     /* Returns a boolean as to whether or not 'character' is a member of the
@@ -469,7 +465,7 @@ S_isFOO_lc(pTHX_ const U8 classnum, const U8 character)
     return FALSE;
 }
 
-STATIC bool
+static bool
 S_isFOO_utf8_lc(pTHX_ const U8 classnum, const U8* character)
 {
     /* Returns a boolean as to whether or not the (well-formed) UTF-8-encoded
@@ -1799,7 +1795,7 @@ REXEC_FBC_SCAN( /* Loops while (s < strend) */                 \
 /* if reginfo->intuit, its a dryrun */
 /* annoyingly all the vars in this routine have different names from their counterparts
    in regmatch. /grrr */
-STATIC char *
+static char *
 S_find_byclass(pTHX_ regexp * prog, const regnode *c, char *s, 
     const char *strend, regmatch_info *reginfo)
 {
@@ -3486,7 +3482,7 @@ Perl_regexec_flags(pTHX_ REGEXP * const rx, char *stringarg, char *strend,
 /*
  - regtry - try match at specific point
  */
-STATIC I32			/* 0 failure, 1 success */
+static I32			/* 0 failure, 1 success */
 S_regtry(pTHX_ regmatch_info *reginfo, char **startposp)
 {
     CHECKPOINT lastcp;
@@ -3566,7 +3562,7 @@ S_regtry(pTHX_ regmatch_info *reginfo, char **startposp)
 
 /* grab a new slab and return the first slot in it */
 
-STATIC regmatch_state *
+static regmatch_state *
 S_push_slab(pTHX)
 {
 #if PERL_VERSION < 9 && !defined(PERL_CORE)
@@ -3756,7 +3752,7 @@ regmatch(), slabs allocated since entry are freed.
 
 #ifdef DEBUGGING
 
-STATIC void
+static void
 S_debug_start_match(pTHX_ const REGEXP *prog, const bool utf8_target,
     const char *start, const char *end, const char *blurb)
 {
@@ -3786,7 +3782,7 @@ S_debug_start_match(pTHX_ const REGEXP *prog, const bool utf8_target,
     }
 }
 
-STATIC void
+static void
 S_dump_exec_pos(pTHX_ const char *locinput, 
                       const regnode *scan, 
                       const char *loc_regeol, 
@@ -3858,7 +3854,7 @@ S_dump_exec_pos(pTHX_ const char *locinput,
  * Returns the index of the leftmost defined buffer with the given name
  * or 0 if non of the buffers matched.
  */
-STATIC I32
+static I32
 S_reg_check_named_buff_matched(const regexp *rex, const regnode *scan)
 {
     I32 n;
@@ -4192,7 +4188,7 @@ S_setup_EXACTISH_ST_c1_c2(pTHX_ const regnode * const text_node, int *c1p,
  * elements of the enum there are */
 #define GCBcase(before, after) ((GCB_ENUM_COUNT * before) + after)
 
-STATIC bool
+static bool
 S_isGCB(const GCB_enum before, const GCB_enum after)
 {
     /* returns a boolean indicating if there is a Grapheme Cluster Boundary
@@ -4288,7 +4284,7 @@ S_isGCB(const GCB_enum before, const GCB_enum after)
 
 #define SBcase(before, after) ((SB_ENUM_COUNT * before) + after)
 
-STATIC bool
+static bool
 S_isSB(pTHX_ SB_enum before,
              SB_enum after,
              const U8 * const strbeg,
@@ -4449,7 +4445,7 @@ S_isSB(pTHX_ SB_enum before,
     return FALSE;
 }
 
-STATIC SB_enum
+static SB_enum
 S_advance_one_SB(pTHX_ U8 ** curpos, const U8 * const strend, const bool utf8_target)
 {
     SB_enum sb;
@@ -4482,7 +4478,7 @@ S_advance_one_SB(pTHX_ U8 ** curpos, const U8 * const strend, const bool utf8_ta
     return sb;
 }
 
-STATIC SB_enum
+static SB_enum
 S_backup_one_SB(pTHX_ const U8 * const strbeg, U8 ** curpos, const bool utf8_target)
 {
     SB_enum sb;
@@ -4532,7 +4528,7 @@ S_backup_one_SB(pTHX_ const U8 * const strbeg, U8 ** curpos, const bool utf8_tar
 
 #define WBcase(before, after) ((WB_ENUM_COUNT * before) + after)
 
-STATIC bool
+static bool
 S_isWB(pTHX_ WB_enum previous,
              WB_enum before,
              WB_enum after,
@@ -4704,7 +4700,7 @@ S_isWB(pTHX_ WB_enum previous,
     NOT_REACHED; /* NOTREACHED */
 }
 
-STATIC WB_enum
+static WB_enum
 S_advance_one_WB(pTHX_ U8 ** curpos, const U8 * const strend, const bool utf8_target)
 {
     WB_enum wb;
@@ -4739,7 +4735,7 @@ S_advance_one_WB(pTHX_ U8 ** curpos, const U8 * const strend, const bool utf8_ta
     return wb;
 }
 
-STATIC WB_enum
+static WB_enum
 S_backup_one_WB(pTHX_ WB_enum * previous, const U8 * const strbeg, U8 ** curpos, const bool utf8_target)
 {
     WB_enum wb;
@@ -4802,7 +4798,7 @@ S_backup_one_WB(pTHX_ WB_enum * previous, const U8 * const strbeg, U8 ** curpos,
 }
 
 /* returns -1 on failure, $+[0] on success */
-STATIC SSize_t
+static SSize_t
 S_regmatch(pTHX_ regmatch_info *reginfo, char *startpos, regnode *prog)
 {
 #if PERL_VERSION < 9 && !defined(PERL_CORE)
@@ -8035,7 +8031,7 @@ NULL
  * max       - maximum number of things to match.
  * depth     - (for debugging) backtracking depth.
  */
-STATIC I32
+static I32
 S_regrepeat(pTHX_ regexp *prog, char **startposp, const regnode *p,
             regmatch_info *const reginfo, I32 max, int depth)
 {
@@ -8597,7 +8593,7 @@ Perl_regclass_swash(pTHX_ const regexp *prog, const regnode* node, bool doinit, 
 
  */
 
-STATIC bool
+static bool
 S_reginclass(pTHX_ regexp * const prog, const regnode * const n, const U8* const p, const U8* const p_end, const bool utf8_target)
 {
     dVAR;
@@ -8748,7 +8744,7 @@ S_reginclass(pTHX_ regexp * const prog, const regnode * const n, const U8* const
     return (flags & ANYOF_INVERT) ^ match;
 }
 
-STATIC U8 *
+static U8 *
 S_reghop3(U8 *s, SSize_t off, const U8* lim)
 {
     /* return the position 'off' UTF-8 characters away from 's', forward if
@@ -8776,7 +8772,7 @@ S_reghop3(U8 *s, SSize_t off, const U8* lim)
     return s;
 }
 
-STATIC U8 *
+static U8 *
 S_reghop4(U8 *s, SSize_t off, const U8* llim, const U8* rlim)
 {
     PERL_ARGS_ASSERT_REGHOP4;
@@ -8803,7 +8799,7 @@ S_reghop4(U8 *s, SSize_t off, const U8* llim, const U8* rlim)
 /* like reghop3, but returns NULL on overrun, rather than returning last
  * char pos */
 
-STATIC U8 *
+static U8 *
 S_reghopmaybe3(U8* s, SSize_t off, const U8* lim)
 {
     PERL_ARGS_ASSERT_REGHOPMAYBE3;
@@ -8973,7 +8969,7 @@ S_cleanup_regmatch_info_aux(pTHX_ void *arg)
 }
 
 
-STATIC void
+static void
 S_to_utf8_substr(pTHX_ regexp *prog)
 {
     /* Converts substr fields in prog from bytes to UTF-8, calling fbm_compile
@@ -9007,7 +9003,7 @@ S_to_utf8_substr(pTHX_ regexp *prog)
     } while (i--);
 }
 
-STATIC bool
+static bool
 S_to_byte_substr(pTHX_ regexp *prog)
 {
     /* Converts substr fields in prog from UTF-8 to bytes, calling fbm_compile

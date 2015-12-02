@@ -1305,7 +1305,7 @@ C<MAGIC> pointers can be identified as a particular kind of magic
 using their magic virtual table.  C<mg_findext> provides an easy way
 to do that:
 
-    STATIC MGVTBL my_vtbl = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    static MGVTBL my_vtbl = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
     MAGIC *mg;
     if ((mg = mg_findext(sv, PERL_MAGIC_ext, &my_vtbl))) {
@@ -2129,8 +2129,8 @@ As of perl 5.14 it is possible to hook into the compile-time lexical
 scope mechanism using C<Perl_blockhook_register>.  This is used like
 this:
 
-    STATIC void my_start_hook(pTHX_ int full);
-    STATIC BHK my_hooks;
+    static void my_start_hook(pTHX_ int full);
+    static BHK my_hooks;
 
     BOOT:
         BhkENTRY_set(&my_hooks, bhk_start, my_start_hook);
@@ -2305,11 +2305,8 @@ or pass nothing.  To solve this, the subroutines are named and
 declared in a particular way.  Here's a typical start of a static
 function used within the Perl guts:
 
-  STATIC void
+  static void
   S_incline(pTHX_ char *s)
-
-STATIC becomes "static" in C, and may be #define'd to nothing in some
-configurations in the future.
 
 A public function (i.e. part of the internal API, but not necessarily
 sanctioned for use in extensions) begins like this:
@@ -2413,9 +2410,9 @@ your Foo.xs:
         #include "perl.h"
         #include "XSUB.h"
 
-        STATIC void my_private_function(int arg1, int arg2);
+        static void my_private_function(int arg1, int arg2);
 
-        STATIC void
+        static void
         my_private_function(int arg1, int arg2)
         {
             dTHX;       /* fetch context */
@@ -2453,9 +2450,9 @@ the Perl guts:
         #include "XSUB.h"
 
         /* pTHX_ only needed for functions that call Perl API */
-        STATIC void my_private_function(pTHX_ int arg1, int arg2);
+        static void my_private_function(pTHX_ int arg1, int arg2);
 
-        STATIC void
+        static void
         my_private_function(pTHX_ int arg1, int arg2)
         {
             /* dTHX; not needed here, because THX is an argument */
@@ -2585,7 +2582,7 @@ Other available flags are:
 
 =item s
 
-This is a static function and is defined as C<STATIC S_whatever>, and
+This is a static function and is defined as C<static S_whatever>, and
 usually called within the sources as C<whatever(...)>.
 
 =item n

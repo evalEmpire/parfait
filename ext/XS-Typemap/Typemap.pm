@@ -36,7 +36,7 @@ require XSLoader;
 
 use vars qw/ $VERSION @EXPORT /;
 
-$VERSION = '0.13';
+$VERSION = '0.14';
 
 @EXPORT = (qw/
 	   T_SV

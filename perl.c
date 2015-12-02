@@ -1825,7 +1825,7 @@ S_Internals_V(pTHX_ CV *cv)
 #define INCPUSH_ADD_SUB_DIRS	\
     (INCPUSH_ADD_VERSIONED_SUB_DIRS|INCPUSH_ADD_ARCHONLY_SUB_DIRS)
 
-STATIC void *
+static void *
 S_parse_body(pTHX_ char **env, XSINIT_t xsinit)
 {
     dVAR;
@@ -2401,7 +2401,7 @@ perl_run(pTHXx)
     return ret;
 }
 
-STATIC void
+static void
 S_run_body(pTHX_ I32 oldscope)
 {
     DEBUG_r(PerlIO_printf(Perl_debug_log, "%s $` $& $' support (0x%x).\n",
@@ -2968,7 +2968,7 @@ Perl_require_pv(pTHX_ const char *pv)
     POPSTACK;
 }
 
-STATIC void
+static void
 S_usage(pTHX)		/* XXX move this out into a module ? */
 {
     /* This message really ought to be max 23 lines.
@@ -3444,7 +3444,7 @@ Perl_moreswitches(pTHX_ const char *s)
 }
 
 
-STATIC void
+static void
 S_minus_v(pTHX)
 {
         PerlIO * PIO_stdout;
@@ -3583,7 +3583,7 @@ Perl_my_unexec(pTHX)
 }
 
 /* initialize curinterp */
-STATIC void
+static void
 S_init_interp(pTHX)
 {
 #ifdef MULTIPLICITY
@@ -3615,7 +3615,7 @@ S_init_interp(pTHX)
 
 }
 
-STATIC void
+static void
 S_init_main_stash(pTHX)
 {
     GV *gv;
@@ -3664,7 +3664,7 @@ S_init_main_stash(pTHX)
     sv_setpvs(get_sv("/", GV_ADD), "\n");
 }
 
-STATIC PerlIO *
+static PerlIO *
 S_open_script(pTHX_ const char *scriptname, bool dosearch, bool *suidscript)
 {
     int fdscript = -1;
@@ -3813,7 +3813,7 @@ S_open_script(pTHX_ const char *scriptname, bool dosearch, bool *suidscript)
 #ifdef SETUID_SCRIPTS_ARE_SECURE_NOW
 /* Don't even need this function.  */
 #else
-STATIC void
+static void
 S_validate_suid(pTHX_ PerlIO *rsfp)
 {
     const Uid_t  my_uid = PerlProc_getuid();
@@ -3845,7 +3845,7 @@ FIX YOUR KERNEL, PUT A C WRAPPER AROUND THIS SCRIPT, OR USE -u AND UNDUMP!\n");
 }
 #endif /* SETUID_SCRIPTS_ARE_SECURE_NOW */
 
-STATIC void
+static void
 S_find_beginning(pTHX_ SV* linestr_sv, PerlIO *rsfp)
 {
     const char *s;
@@ -3874,7 +3874,7 @@ S_find_beginning(pTHX_ SV* linestr_sv, PerlIO *rsfp)
 }
 
 
-STATIC void
+static void
 S_init_ids(pTHX)
 {
     /* no need to do anything here any more if we don't
@@ -3943,7 +3943,7 @@ Perl_doing_taint(int argc, char *argv[], char *envp[])
    optimisation.  The only message that isn't /^-.$/ is
    "program input from stdin", which is substituted in place of '\0', which
    could never be a command line flag.  */
-STATIC void
+static void
 S_forbid_setid(pTHX_ const char flag, const bool suidscript) /* g */
 {
     char string[3] = "-x";
@@ -4073,7 +4073,7 @@ Perl_init_stacks(pTHX)
 
 #undef REASONABLE
 
-STATIC void
+static void
 S_nuke_stacks(pTHX)
 {
     while (PL_curstackinfo->si_next)
@@ -4128,7 +4128,7 @@ Perl_populate_isa(pTHX_ const char *name, STRLEN len, ...)
 }
 
 
-STATIC void
+static void
 S_init_predump_symbols(pTHX)
 {
     GV *tmpgv;
@@ -4234,7 +4234,7 @@ Perl_init_argv_symbols(pTHX_ int argc, char **argv)
                          "reading from STDIN");
 }
 
-STATIC void
+static void
 S_init_postdump_symbols(pTHX_ int argc, char **argv, char **env)
 {
 #ifdef USE_ITHREADS
@@ -4313,7 +4313,7 @@ S_init_postdump_symbols(pTHX_ int argc, char **argv, char **env)
     }
 }
 
-STATIC void
+static void
 S_init_perllib(pTHX)
 {
 #ifndef VMS
@@ -4518,7 +4518,7 @@ S_init_perllib(pTHX)
 /* Push a directory onto @INC if it exists.
    Generate a new SV if we do this, to save needing to copy the SV we push
    onto @INC  */
-STATIC SV *
+static SV *
 S_incpush_if_exists(pTHX_ AV *const av, SV *dir, SV *const stem)
 {
     Stat_t tmpstatbuf;
@@ -4537,7 +4537,7 @@ S_incpush_if_exists(pTHX_ AV *const av, SV *dir, SV *const stem)
 }
 #endif
 
-STATIC SV *
+static SV *
 S_mayberelocate(pTHX_ const char *const dir, STRLEN len, U32 flags)
 {
     const U8 canrelocate = (U8)flags & INCPUSH_CAN_RELOCATE;
@@ -4672,7 +4672,7 @@ S_mayberelocate(pTHX_ const char *const dir, STRLEN len, U32 flags)
     return libdir;
 }
 
-STATIC void
+static void
 S_incpush(pTHX_ const char *const dir, STRLEN len, U32 flags)
 {
 #ifndef PERL_IS_MINIPERL
@@ -4789,7 +4789,7 @@ S_incpush(pTHX_ const char *const dir, STRLEN len, U32 flags)
     }
 }
 
-STATIC void
+static void
 S_incpush_use_sep(pTHX_ const char *p, STRLEN len, U32 flags)
 {
     const char *s;
@@ -5030,7 +5030,7 @@ Perl_my_failure_exit(pTHX)
     my_exit_jump();
 }
 
-STATIC void
+static void
 S_my_exit_jump(pTHX)
 {
     if (PL_e_script) {

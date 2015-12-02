@@ -1179,7 +1179,7 @@ Perl_savesharedsvpv(pTHX_ SV *sv)
 
 /* the SV for Perl_form() and mess() is not kept in an arena */
 
-STATIC SV *
+static SV *
 S_mess_alloc(pTHX)
 {
     SV *sv;
@@ -1494,7 +1494,7 @@ Perl_write_to_stderr(pTHX_ SV* msv)
 
 /* Common code used in dieing and warning */
 
-STATIC SV *
+static SV *
 S_with_queued_errors(pTHX_ SV *ex)
 {
     PERL_ARGS_ASSERT_WITH_QUEUED_ERRORS;
@@ -1506,7 +1506,7 @@ S_with_queued_errors(pTHX_ SV *ex)
     return ex;
 }
 
-STATIC bool
+static bool
 S_invoke_exception_hook(pTHX_ SV *ex, bool warn)
 {
     HV *stash;
@@ -5500,7 +5500,7 @@ Perl_xs_handshake(const U32 key, void * v_my_perl, const char * file, ...)
 }
 
 
-STATIC void
+static void
 S_xs_version_bootcheck(pTHX_ U32 items, U32 ax, const char *xs_p,
                           STRLEN xs_len)
 {

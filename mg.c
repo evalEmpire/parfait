@@ -89,7 +89,7 @@ struct magic_state {
 };
 /* MGS is typedef'ed to struct magic_state in perl.h */
 
-STATIC void
+static void
 S_save_magic_flags(pTHX_ I32 mgs_ix, SV *sv, U32 flags)
 {
     MGS* mgs;
@@ -730,7 +730,7 @@ Perl_emulate_cop_io(pTHX_ const COP *const c, SV *const sv)
     }
 }
 
-STATIC void
+static void
 S_fixup_errno_string(pTHX_ SV* sv)
 {
     /* Do what is necessary to fixup the non-empty string in 'sv' for return to
@@ -1844,7 +1844,7 @@ Perl_magic_methcall(pTHX_ SV *sv, const MAGIC *mg, SV *meth, U32 flags,
 
 /* wrapper for magic_methcall that creates the first arg */
 
-STATIC SV*
+static SV*
 S_magic_methcall1(pTHX_ SV *sv, const MAGIC *mg, SV *meth, U32 flags,
     int n, SV *val)
 {
@@ -1869,7 +1869,7 @@ S_magic_methcall1(pTHX_ SV *sv, const MAGIC *mg, SV *meth, U32 flags,
     return Perl_magic_methcall(aTHX_ sv, mg, meth, flags, n, arg1, val);
 }
 
-STATIC int
+static int
 S_magic_methpack(pTHX_ SV *sv, const MAGIC *mg, SV *meth)
 {
     SV* ret;

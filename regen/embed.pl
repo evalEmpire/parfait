@@ -109,7 +109,7 @@ my ($embed, $core, $ext, $api) = setup_embed();
 		$type = $1 eq 's' ? "PERL_STATIC_NO_RET" : "PERL_STATIC_INLINE_NO_RET";
 	    }
 	    else {
-		$type = $1 eq 's' ? "STATIC" : "PERL_STATIC_INLINE";
+		$type = $1 eq 's' ? "static" : "PERL_STATIC_INLINE";
 	    }
 	    $retval = "$type $splint_flags$retval";
 	}

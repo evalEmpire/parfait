@@ -38,7 +38,7 @@
  * The main guts of traverse_isa was actually copied from gv_fetchmeth
  */
 
-STATIC bool
+static bool
 S_isa_lookup(pTHX_ HV *stash, const char * const name, STRLEN len, U32 flags)
 {
     const struct mro_meta *const meta = HvMROMETA(stash);
@@ -1036,7 +1036,7 @@ static const struct xsub_details details[] = {
     {"re::regexp_pattern", XS_re_regexp_pattern, "$"},
 };
 
-STATIC OP*
+static OP*
 optimize_out_native_convert_function(pTHX_ OP* entersubop,
                                            GV* namegv,
                                            SV* protosv)

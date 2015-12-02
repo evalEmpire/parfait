@@ -350,7 +350,7 @@ cmp_desc(pTHX_ gptr const a, gptr const b)
     return -PL_sort_RealCmp(aTHX_ a, b);
 }
 
-STATIC void
+static void
 S_mergesortsv(pTHX_ gptr *base, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
 {
     IV i, run, offset;
@@ -761,7 +761,7 @@ doqsort_all_asserts(
 
 /* ****************************************************************** qsort */
 
-STATIC void /* the standard unstable (u) quicksort (qsort) */
+static void /* the standard unstable (u) quicksort (qsort) */
 S_qsortsvu(pTHX_ SV ** array, size_t num_elts, SVCOMPARE_t compare)
 {
    SV * temp;
@@ -1344,7 +1344,7 @@ cmpindir_desc(pTHX_ gptr const a, gptr const b)
 
 }
 
-STATIC void
+static void
 S_qsortsv(pTHX_ gptr *list1, size_t nmemb, SVCOMPARE_t cmp, U32 flags)
 {
     if ((flags & SORTf_STABLE) != 0) {

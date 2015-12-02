@@ -1482,7 +1482,7 @@ Perl_to_uni_title(pTHX_ UV c, U8* p, STRLEN *lenp)
     return CALL_TITLE_CASE(p, p, lenp);
 }
 
-STATIC U8
+static U8
 S_to_lower_latin1(const U8 c, U8* p, STRLEN *lenp)
 {
     /* We have the latin1-range values compiled into the core, so just use
@@ -1868,7 +1868,7 @@ Perl_to_utf8_case(pTHX_ const U8 *p, U8* ustrp, STRLEN *lenp,
 
 }
 
-STATIC UV
+static UV
 S_check_locale_boundary_crossing(pTHX_ const U8* const p, const UV result, U8* const ustrp, STRLEN *lenp)
 {
     /* This is called when changing the case of a utf8-encoded character above
@@ -2806,7 +2806,7 @@ Perl_swash_fetch(pTHX_ SV *swash, const U8 *ptr, bool do_utf8)
  *	      valid min number on the line, returns lend+1
  */
 
-STATIC U8*
+static U8*
 S_swash_scan_list_line(pTHX_ U8* l, U8* const lend, UV* min, UV* max, UV* val,
                              const bool wants_value, const U8* const typestr)
 {
@@ -2902,7 +2902,7 @@ S_swash_scan_list_line(pTHX_ U8* l, U8* const lend, UV* min, UV* max, UV* val,
  * A C<swash> must be an object created by SWASHNEW (see lib/utf8_heavy.pl).
  * Should be used via swash_fetch, which will cache the swatch in C<swash>.
  */
-STATIC SV*
+static SV*
 S_swatch_get(pTHX_ SV* swash, UV start, UV span)
 {
     SV *swatch;

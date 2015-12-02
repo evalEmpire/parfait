@@ -27,7 +27,7 @@
 #include <signal.h>
 #endif
 
-STATIC I32
+static I32
 S_do_trans_simple(pTHX_ SV * const sv)
 {
     I32 matches = 0;
@@ -95,7 +95,7 @@ S_do_trans_simple(pTHX_ SV * const sv)
     return matches;
 }
 
-STATIC I32
+static I32
 S_do_trans_count(pTHX_ SV * const sv)
 {
     STRLEN len;
@@ -132,7 +132,7 @@ S_do_trans_count(pTHX_ SV * const sv)
     return matches;
 }
 
-STATIC I32
+static I32
 S_do_trans_complex(pTHX_ SV * const sv)
 {
     STRLEN len;
@@ -295,7 +295,7 @@ S_do_trans_complex(pTHX_ SV * const sv)
     return matches;
 }
 
-STATIC I32
+static I32
 S_do_trans_simple_utf8(pTHX_ SV * const sv)
 {
     U8 *s;
@@ -399,7 +399,7 @@ S_do_trans_simple_utf8(pTHX_ SV * const sv)
     return matches;
 }
 
-STATIC I32
+static I32
 S_do_trans_count_utf8(pTHX_ SV * const sv)
 {
     const U8 *s;
@@ -448,7 +448,7 @@ S_do_trans_count_utf8(pTHX_ SV * const sv)
     return matches;
 }
 
-STATIC I32
+static I32
 S_do_trans_complex_utf8(pTHX_ SV * const sv)
 {
     U8 *start, *send;

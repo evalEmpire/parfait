@@ -59,7 +59,7 @@
  * function removes the trailing new line and everything up through the '='
  *
  */
-STATIC char *
+static char *
 S_stdize_locale(pTHX_ char *locs)
 {
     const char * const s = strchr(locs, '=');

@@ -301,7 +301,7 @@ Public API:
 
 /* make some more SVs by adding another arena */
 
-STATIC SV*
+static SV*
 S_more_sv(pTHX)
 {
     SV* sv;
@@ -316,7 +316,7 @@ S_more_sv(pTHX)
 
 #ifdef DEBUG_LEAKING_SCALARS
 /* provide a real function for a debugger to play with */
-STATIC SV*
+static SV*
 S_new_SV(pTHX_ const char *file, int line, const char *func)
 {
     SV* sv;
@@ -376,7 +376,7 @@ S_new_SV(pTHX_ const char *file, int line, const char *func)
             plant_SV(p);				\
     } STMT_END
 
-STATIC void
+static void
 S_del_sv(pTHX_ SV *p)
 {
     PERL_ARGS_ASSERT_DEL_SV;
@@ -487,7 +487,7 @@ S_sv_add_arena(pTHX_ char *const ptr, const U32 size, const U32 flags)
 /* visit(): call the named function for each non-free SV in the arenas
  * whose flags field matches the flags/mask args. */
 
-STATIC I32
+static I32
 S_visit(pTHX_ SVFUNC_t f, const U32 flags, const U32 mask)
 {
     SV* sva;
@@ -1200,7 +1200,7 @@ Perl_more_bodies (pTHX_ const svtype sv_type, const size_t body_size,
 
 #ifndef PURIFY
 
-STATIC void *
+static void *
 S_new_body(pTHX_ const svtype sv_type)
 {
     void *xpv;
@@ -1820,7 +1820,7 @@ Perl_sv_setnv_mg(pTHX_ SV *const sv, const NV num)
  * The return value may be != tmpbuf.
  */
 
-STATIC const char *
+static const char *
 S_sv_display(pTHX_ SV *const sv, char *tmpbuf, STRLEN tmpbuf_size) {
     const char *pv;
 
@@ -1889,7 +1889,7 @@ S_sv_display(pTHX_ SV *const sv, char *tmpbuf, STRLEN tmpbuf_size) {
  * printable version of the offending string
  */
 
-STATIC void
+static void
 S_not_a_number(pTHX_ SV *const sv)
 {
      char tmpbuf[64];
@@ -1910,7 +1910,7 @@ S_not_a_number(pTHX_ SV *const sv)
                     "Argument \"%s\" isn't numeric", pv);
 }
 
-STATIC void
+static void
 S_not_incrementable(pTHX_ SV *const sv) {
      char tmpbuf[64];
      const char *pv;
@@ -1952,7 +1952,7 @@ Perl_looks_like_number(pTHX_ SV *const sv)
     return ((numtype & IS_NUMBER_TRAILING)) ? 0 : numtype;
 }
 
-STATIC bool
+static bool
 S_glob_2number(pTHX_ GV * const gv)
 {
     PERL_ARGS_ASSERT_GLOB_2NUMBER;
@@ -2054,7 +2054,7 @@ S_glob_2number(pTHX_ GV * const gv)
 /* sv_2iuv_non_preserve(): private routine for use by sv_2iv() and sv_2uv() */
 
 /* For sv_2nv these three cases are "SvNOK and don't bother casting"  */
-STATIC int
+static int
 S_sv_2iuv_non_preserve(pTHX_ SV *const sv
 #  ifdef DEBUGGING
                        , I32 numtype
@@ -2142,7 +2142,7 @@ S_sv_setnv(pTHX_ SV* sv, int numtype)
 #  pragma warning(pop)
 #endif
 
-STATIC bool
+static bool
 S_sv_2iuv_common(pTHX_ SV *const sv)
 {
     PERL_ARGS_ASSERT_SV_2IUV_COMMON;
@@ -2905,7 +2905,7 @@ S_uiv_2buf(char *const buf, const IV iv, UV uv, const int is_uv, char **const pe
  * XXX for "Inf", "-Inf", and "NaN", we could have three read-only
  * shared string constants we point to, instead of generating a new
  * string for each instance. */
-STATIC size_t
+static size_t
 S_infnan_2pv(NV nv, char* buffer, size_t maxlen, char plus) {
     assert(maxlen >= 4);
     if (maxlen < 4) /* "Inf\0", "NaN\0" */
@@ -5127,7 +5127,7 @@ Perl_sv_usepvn_flags(pTHX_ SV *const sv, char *ptr, const STRLEN len, const U32 
    another thread could invalidate it by unsharing last of the same hash key
    (which it can do by means other than releasing copy-on-write Svs)
    or by changing the other copy-on-write SVs in the loop.  */
-STATIC void
+static void
 S_sv_release_COW(pTHX_ SV *sv, const char *pvx, SV *after)
 {
     PERL_ARGS_ASSERT_SV_RELEASE_COW;
@@ -6459,7 +6459,7 @@ Perl_sv_replace(pTHX_ SV *const sv, SV *const nsv)
  * If that CV will outlive us, make it anonymous (i.e. fix up its CvGV
  * field) */
 
-STATIC void
+static void
 S_anonymise_cv_maybe(pTHX_ GV *gv, CV* cv)
 {
     SV *gvname;
@@ -10748,7 +10748,7 @@ Perl_sv_vsetpvfn(pTHX_ SV *const sv, const char *const pat, const STRLEN patlen,
  * Warn of missing argument to sprintf, and then return a defined value
  * to avoid inappropriate "use of uninit" warnings [perl #71000].
  */
-STATIC SV*
+static SV*
 S_vcatpvfn_missing_argument(pTHX) {
     if (ckWARN(WARN_MISSING)) {
         Perl_warner(aTHX_ packWARN(WARN_MISSING), "Missing argument in %s",
@@ -10758,7 +10758,7 @@ S_vcatpvfn_missing_argument(pTHX) {
 }
 
 
-STATIC I32
+static I32
 S_expect_number(pTHX_ char **const pattern)
 {
     I32 var = 0;
@@ -10780,7 +10780,7 @@ S_expect_number(pTHX_ char **const pattern)
     return var;
 }
 
-STATIC char *
+static char *
 S_F0convert(NV nv, char *const endbuf, STRLEN *const len)
 {
     const int neg = nv < 0;
@@ -10910,7 +10910,7 @@ Perl_sv_vcatpvfn(pTHX_ SV *const sv, const char *const pat, const STRLEN patlen,
  * extraction sanity checked.  On the second round the actual output
  * (the extraction of the hexadecimal values) takes place.
  * Sanity failures cause fatal failures during both rounds. */
-STATIC U8*
+static U8*
 S_hextract(pTHX_ const NV nv, int* exponent, U8* vhex, U8* vend)
 {
     U8* v = vhex;
@@ -13150,7 +13150,7 @@ Perl_ptr_table_new(pTHX)
 
 /* map an existing pointer using a table */
 
-STATIC PTR_TBL_ENT_t *
+static PTR_TBL_ENT_t *
 S_ptr_table_find(PTR_TBL_t *const tbl, const void *const sv)
 {
     PTR_TBL_ENT_t *tblent;
@@ -15393,7 +15393,7 @@ Perl_sv_cat_decode(pTHX_ SV *dsv, SV *encoding,
 /* Look for an entry in the hash whose value has the same SV as val;
  * If so, return a mortal copy of the key. */
 
-STATIC SV*
+static SV*
 S_find_hash_subscript(pTHX_ const HV *const hv, const SV *const val)
 {
     dVAR;
@@ -15429,7 +15429,7 @@ S_find_hash_subscript(pTHX_ const HV *const hv, const SV *const val)
 /* Look for an entry in the array whose value has the same SV as val;
  * If so, return the index, otherwise return -1. */
 
-STATIC I32
+static I32
 S_find_array_subscript(pTHX_ const AV *const av, const SV *const val)
 {
     PERL_ARGS_ASSERT_FIND_ARRAY_SUBSCRIPT;
@@ -15540,7 +15540,7 @@ PL_comppad/PL_curpad points to the currently executing pad.
 =cut
 */
 
-STATIC SV *
+static SV *
 S_find_uninit_var(pTHX_ const OP *const obase, const SV *const uninit_sv,
                   bool match, const char **desc_p)
 {

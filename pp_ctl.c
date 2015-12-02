@@ -1284,7 +1284,7 @@ static const char * const context_name[] = {
     "substitution",
 };
 
-STATIC I32
+static I32
 S_dopoptolabel(pTHX_ const char *label, STRLEN len, U32 flags)
 {
     I32 i;
@@ -1390,7 +1390,7 @@ Perl_was_lvalue_sub(pTHX)
         return 0;
 }
 
-STATIC I32
+static I32
 S_dopoptosub_at(pTHX_ const PERL_CONTEXT *cxstk, I32 startingblock)
 {
     I32 i;
@@ -1422,7 +1422,7 @@ S_dopoptosub_at(pTHX_ const PERL_CONTEXT *cxstk, I32 startingblock)
     return i;
 }
 
-STATIC I32
+static I32
 S_dopoptoeval(pTHX_ I32 startingblock)
 {
     I32 i;
@@ -1439,7 +1439,7 @@ S_dopoptoeval(pTHX_ I32 startingblock)
     return i;
 }
 
-STATIC I32
+static I32
 S_dopoptoloop(pTHX_ I32 startingblock)
 {
     I32 i;
@@ -1468,7 +1468,7 @@ S_dopoptoloop(pTHX_ I32 startingblock)
     return i;
 }
 
-STATIC I32
+static I32
 S_dopoptogiven(pTHX_ I32 startingblock)
 {
     I32 i;
@@ -1495,7 +1495,7 @@ S_dopoptogiven(pTHX_ I32 startingblock)
     return i;
 }
 
-STATIC I32
+static I32
 S_dopoptowhen(pTHX_ I32 startingblock)
 {
     I32 i;
@@ -2012,7 +2012,7 @@ PP(pp_dbstate)
    Also, taintedness is cleared.
 */
 
-STATIC SV **
+static SV **
 S_leave_common(pTHX_ SV **newsp, SV **sp, SV **mark, I32 gimme,
                               U32 flags, bool lvalue)
 {
@@ -2279,7 +2279,7 @@ PP(pp_leaveloop)
     return NORMAL;
 }
 
-STATIC void
+static void
 S_return_lvalues(pTHX_ SV **mark, SV **sp, SV **newsp, I32 gimme,
                        PERL_CONTEXT *cx, PMOP *newpm)
 {
@@ -2698,7 +2698,7 @@ PP(pp_redo)
     return redo_op;
 }
 
-STATIC OP *
+static OP *
 S_dofindlabel(pTHX_ OP *o, const char *label, STRLEN len, U32 flags, OP **opstack, OP **oplimit)
 {
     OP **ops = opstack;
@@ -3176,7 +3176,7 @@ PP(pp_exit)
 
 /* Eval. */
 
-STATIC void
+static void
 S_save_lines(pTHX_ AV *array, SV *sv)
 {
     const char *s = SvPVX_const(sv);
@@ -3215,7 +3215,7 @@ establish a local jmpenv to handle exception traps.
 
 =cut
 */
-STATIC OP *
+static OP *
 S_docatch(pTHX_ OP *o)
 {
     int ret;
@@ -3330,7 +3330,7 @@ Perl_find_runcv_where(pTHX_ U8 cond, IV arg, U32 *db_seqp)
  *   1: yyparse() failed
  *   3: yyparse() died
  */
-STATIC int
+static int
 S_try_yyparse(pTHX_ int gramtype)
 {
     int ret;
@@ -3368,7 +3368,7 @@ S_try_yyparse(pTHX_ int gramtype)
  * These can be distinguished by whether PL_op is entereval.
  */
 
-STATIC bool
+static bool
 S_doeval(pTHX_ int gimme, CV* outside, U32 seq, HV *hh)
 {
     dSP;
@@ -3584,7 +3584,7 @@ S_doeval(pTHX_ int gimme, CV* outside, U32 seq, HV *hh)
     return TRUE;
 }
 
-STATIC PerlIO *
+static PerlIO *
 S_check_type_and_open(pTHX_ SV *name)
 {
     Stat_t st;
@@ -3645,7 +3645,7 @@ S_check_type_and_open(pTHX_ SV *name)
 }
 
 #ifndef PERL_DISABLE_PMC
-STATIC PerlIO *
+static PerlIO *
 S_doopen_pm(pTHX_ SV *name)
 {
     STRLEN namelen;
@@ -4496,7 +4496,7 @@ PP(pp_leavegiven)
 }
 
 /* Helper routines used by pp_smartmatch */
-STATIC PMOP *
+static PMOP *
 S_make_matcher(pTHX_ REGEXP *re)
 {
     PMOP *matcher = (PMOP *) newPMOP(OP_MATCH, OPf_WANT_SCALAR | OPf_STACKED);
@@ -4511,7 +4511,7 @@ S_make_matcher(pTHX_ REGEXP *re)
     return matcher;
 }
 
-STATIC bool
+static bool
 S_matcher_matches_sv(pTHX_ PMOP *matcher, SV *sv)
 {
     dSP;
@@ -4530,7 +4530,7 @@ S_matcher_matches_sv(pTHX_ PMOP *matcher, SV *sv)
     return result;
 }
 
-STATIC void
+static void
 S_destroy_matcher(pTHX_ PMOP *matcher)
 {
     PERL_ARGS_ASSERT_DESTROY_MATCHER;
@@ -4550,7 +4550,7 @@ PP(pp_smartmatch)
 /* This version of do_smartmatch() implements the
  * table of smart matches that is found in perlsyn.
  */
-STATIC OP *
+static OP *
 S_do_smartmatch(pTHX_ HV *seen_this, HV *seen_other, const bool copied)
 {
     dSP;
@@ -5402,7 +5402,7 @@ S_doparseform(pTHX_ SV *sv)
 }
 
 
-STATIC bool
+static bool
 S_num_overflow(NV value, I32 fldsize, I32 frcsize)
 {
     /* Can value be printed in fldsize chars, using %*.*f ? */

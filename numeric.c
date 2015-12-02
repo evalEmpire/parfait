@@ -1105,7 +1105,7 @@ Perl_grok_atoUV(const char *pv, UV *valptr, const char** endptr)
 }
 
 #ifndef USE_QUADMATH
-STATIC NV
+static NV
 S_mulexp10(NV value, I32 exponent)
 {
     NV result = 1.0;

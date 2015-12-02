@@ -108,7 +108,7 @@ Perl_debstackptrs(pTHX)
  * Only displays top 30 max
  */
 
-STATIC void
+static void
 S_deb_stack_n(pTHX_ SV** stack_base, I32 stack_min, I32 stack_max,
         I32 mark_min, I32 mark_max)
 {

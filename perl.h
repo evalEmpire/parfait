@@ -194,6 +194,7 @@
 #  undef PERL_TRACK_MEMPOOL
 #endif
 
+/* For backwards compatibility with older versions of the Perl API */
 #define STATIC static
 
 #ifndef PERL_CORE
@@ -5484,11 +5485,11 @@ struct tempsym; /* defined in pp_pack.c */
 #    define PERL_CALLCONV_NO_RET PERL_CALLCONV
 #endif
 
-/* PERL_STATIC_NO_RET is supposed to be equivalent to STATIC on builds that
+/* PERL_STATIC_NO_RET is supposed to be equivalent to static on builds that
    dont have a noreturn as a declaration specifier
 */
 #ifndef PERL_STATIC_NO_RET
-#  define PERL_STATIC_NO_RET STATIC
+#  define PERL_STATIC_NO_RET static
 #endif
 /* PERL_STATIC_NO_RET is supposed to be equivalent to PERL_STATIC_INLINE on
    builds that dont have a noreturn as a declaration specifier

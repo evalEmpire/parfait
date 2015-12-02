@@ -39,7 +39,7 @@ S_regcurly(const char *s)
     U8 source = *current;
 */
 
-STATIC char
+static char
 S_grok_bslash_c(pTHX_ const char source, const bool output_warning)
 {
 
@@ -79,7 +79,7 @@ S_grok_bslash_c(pTHX_ const char source, const bool output_warning)
     return result;
 }
 
-STATIC bool
+static bool
 S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
                       const bool output_warning, const bool strict,
                       const bool silence_non_portable,
@@ -314,7 +314,7 @@ S_grok_bslash_x(pTHX_ char **s, UV *uv, const char** error_msg,
     return TRUE;
 }
 
-STATIC char*
+static char*
 S_form_short_octal_warning(pTHX_
                            const char * const s, /* Points to first non-octal */
                            const STRLEN len      /* Length of octals string, so

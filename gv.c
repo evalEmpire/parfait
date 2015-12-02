@@ -456,7 +456,7 @@ Perl_gv_init_pvn(pTHX_ GV *gv, HV *stash, const char *name, STRLEN len, U32 flag
     }
 }
 
-STATIC void
+static void
 S_gv_init_svtype(pTHX_ GV *gv, const svtype sv_type)
 {
     PERL_ARGS_ASSERT_GV_INIT_SVTYPE;
@@ -1304,7 +1304,7 @@ Perl_gv_autoload_pvn(pTHX_ HV *stash, const char *name, STRLEN len, U32 flags)
  * For the protection of $! to work (it is set by this routine)
  * the sv slot must already be magicalized.
  */
-STATIC HV*
+static HV*
 S_require_tie_mod(pTHX_ GV *gv, const char *varpv, SV* namesv, const char *methpv,const U32 flags)
 {
     HV* stash = gv_stashsv(namesv, 0);

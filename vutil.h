@@ -94,10 +94,10 @@ Perl_ck_warner(pTHX_ U32 err, const char* pat, ...)
 #define PERL_ARGS_ASSERT_CROAK_XS_USAGE assert(cv); assert(params)
 
 /* prototype to pass -Wmissing-prototypes */
-STATIC void
+static void
 S_croak_xs_usage(pTHX_ const CV *const cv, const char *const params);
 
-STATIC void
+static void
 S_croak_xs_usage(pTHX_ const CV *const cv, const char *const params)
 {
     const GV *const gv = CvGV(cv);

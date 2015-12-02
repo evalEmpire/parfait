@@ -186,7 +186,7 @@ STMT_START {						\
 #define FLAG_COMMA            0x02
 #define FLAG_PACK             0x01
 
-STATIC SV *
+static SV *
 S_mul128(pTHX_ SV *sv, U8 m)
 {
   STRLEN          len;
@@ -247,7 +247,7 @@ S_reverse_copy(const char *src, char *dest, STRLEN len)
         *--dest = *src++;
 }
 
-STATIC U8
+static U8
 utf8_to_byte(pTHX_ const char **s, const char *end, I32 datumtype)
 {
     STRLEN retlen;
@@ -273,7 +273,7 @@ utf8_to_byte(pTHX_ const char **s, const char *end, I32 datumtype)
         utf8_to_byte(aTHX_ &(s), (strend), (datumtype)) : \
         *(U8 *)(s)++)
 
-STATIC bool
+static bool
 S_utf8_to_bytes(pTHX_ const char **s, const char *end, const char *buf, int buf_len, I32 datumtype)
 {
     UV val;
@@ -326,7 +326,7 @@ S_utf8_to_bytes(pTHX_ const char **s, const char *end, const char *buf, int buf_
     return TRUE;
 }
 
-STATIC char *
+static char *
 S_my_bytes_to_utf8(const U8 *start, STRLEN len, char *dest, const bool needs_swap) {
     PERL_ARGS_ASSERT_MY_BYTES_TO_UTF8;
 
@@ -409,7 +409,7 @@ static const char *_action( const tempsym_t* symptr )
 }
 
 /* Returns the sizeof() struct described by pat */
-STATIC I32
+static I32
 S_measure_struct(pTHX_ tempsym_t* symptr)
 {
     I32 total = 0;
@@ -520,7 +520,7 @@ S_measure_struct(pTHX_ tempsym_t* symptr)
 /* locate matching closing parenthesis or bracket
  * returns char pointer to char after match, or NULL
  */
-STATIC const char *
+static const char *
 S_group_end(pTHX_ const char *patptr, const char *patend, char ender)
 {
     PERL_ARGS_ASSERT_GROUP_END;
@@ -551,7 +551,7 @@ S_group_end(pTHX_ const char *patptr, const char *patend, char ender)
  * Expects a pointer to the first digit and address of length variable
  * Advances char pointer to 1st non-digit char and returns number
  */
-STATIC const char *
+static const char *
 S_get_num(pTHX_ const char *patptr, I32 *lenptr )
 {
   I32 len = *patptr++ - '0';
@@ -570,7 +570,7 @@ S_get_num(pTHX_ const char *patptr, I32 *lenptr )
 /* The marvellous template parsing routine: Using state stored in *symptr,
  * locates next template code and count
  */
-STATIC bool
+static bool
 S_next_symbol(pTHX_ tempsym_t* symptr )
 {
   const char* patptr = symptr->patptr;
@@ -751,7 +751,7 @@ S_next_symbol(pTHX_ tempsym_t* symptr )
    version of the string. Users are advised to upgrade their pack string
    themselves if they need to do a lot of unpacks like this on it
 */
-STATIC bool
+static bool
 need_utf8(const char *pat, const char *patend)
 {
     bool first = TRUE;
@@ -771,7 +771,7 @@ need_utf8(const char *pat, const char *patend)
     return FALSE;
 }
 
-STATIC char
+static char
 first_symbol(const char *pat, const char *patend) {
     PERL_ARGS_ASSERT_FIRST_SYMBOL;
 
@@ -835,7 +835,7 @@ Perl_unpackstring(pTHX_ const char *pat, const char *patend, const char *s, cons
     return unpack_rec(&sym, s, s, strend, NULL );
 }
 
-STATIC I32
+static I32
 S_unpack_rec(pTHX_ tempsym_t* symptr, const char *s, const char *strbeg, const char *strend, const char **new_s )
 {
     dSP;
@@ -1834,7 +1834,7 @@ PP(pp_unpack)
     RETURN;
 }
 
-STATIC U8 *
+static U8 *
 doencodes(U8 *h, const U8 *s, I32 len)
 {
     *h++ = PL_uuemap[len];
@@ -1857,7 +1857,7 @@ doencodes(U8 *h, const U8 *s, I32 len)
     return h;
 }
 
-STATIC SV *
+static SV *
 S_is_an_int(pTHX_ const char *s, STRLEN l)
 {
   SV *result = newSVpvn(s, l);
@@ -1908,7 +1908,7 @@ S_is_an_int(pTHX_ const char *s, STRLEN l)
 }
 
 /* pnum must be '\0' terminated */
-STATIC int
+static int
 S_div128(pTHX_ SV *pnum, bool *done)
 {
     STRLEN len;
@@ -1960,7 +1960,7 @@ Perl_packlist(pTHX_ SV *cat, const char *pat, const char *patend, SV **beglist, 
 }
 
 /* like sv_utf8_upgrade, but also repoint the group start markers */
-STATIC void
+static void
 marked_upgrade(pTHX_ SV *sv, tempsym_t *sym_ptr) {
     STRLEN len;
     tempsym_t *group;
@@ -2028,7 +2028,7 @@ marked_upgrade(pTHX_ SV *sv, tempsym_t *sym_ptr) {
    needed says how many extra bytes we need (not counting the final '\0')
    Only grows the string if there is an actual lack of space
 */
-STATIC char *
+static char *
 S_sv_exp_grow(pTHX_ SV *sv, STRLEN needed) {
     const STRLEN cur = SvCUR(sv);
     const STRLEN len = SvLEN(sv);
@@ -2063,7 +2063,7 @@ S_sv_check_infnan(pTHX_ SV *sv, I32 datumtype)
 #define SvUV_no_inf(sv,d) \
         ((sv) = S_sv_check_infnan(aTHX_ sv,d), SvUV_nomg(sv))
 
-STATIC
+static
 SV **
 S_pack_rec(pTHX_ SV *cat, tempsym_t* symptr, SV **beglist, SV **endlist )
 {
