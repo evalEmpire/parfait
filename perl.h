@@ -190,6 +190,8 @@
 /* For backwards compatibility with older versions of the Perl API */
 #define STATIC static
 #define PERL_STATIC_INLINE static inline
+#define PERL_STATIC_NO_RET static
+#define PERL_STATIC_INLINE_NO_RET PERL_STATIC_INLINE
 
 #ifndef PERL_CORE
 /* Do not use these macros. They were part of PERL_OBJECT, which was an
@@ -3830,13 +3832,13 @@ struct ptr_tbl {
    that *declare* the various functions are still seen. If we declare our own
    htonl etc they will clash with the declarations in the Win32 headers.  */
 
-PERL_STATIC_INLINE U32
+static inline U32
 my_swap32(const U32 x) {
     return ((x & 0xFF) << 24) | ((x >> 24) & 0xFF)	
         | ((x & 0x0000FF00) << 8) | ((x & 0x00FF0000) >> 8);
 }
 
-PERL_STATIC_INLINE U16
+static inline U16
 my_swap16(const U16 x) {
     return ((x & 0xFF) << 8) | ((x >> 8) & 0xFF);
 }
@@ -5478,20 +5480,6 @@ struct tempsym; /* defined in pp_pack.c */
 #ifndef PERL_CALLCONV_NO_RET
 #    define PERL_CALLCONV_NO_RET PERL_CALLCONV
 #endif
-
-/* PERL_STATIC_NO_RET is supposed to be equivalent to static on builds that
-   dont have a noreturn as a declaration specifier
-*/
-#ifndef PERL_STATIC_NO_RET
-#  define PERL_STATIC_NO_RET static
-#endif
-/* PERL_STATIC_NO_RET is supposed to be equivalent to PERL_STATIC_INLINE on
-   builds that dont have a noreturn as a declaration specifier
-*/
-#ifndef PERL_STATIC_INLINE_NO_RET
-#  define PERL_STATIC_INLINE_NO_RET PERL_STATIC_INLINE
-#endif
-
 
 #undef PERL_CKDEF
 #undef PERL_PPDEF

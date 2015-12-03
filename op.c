@@ -160,11 +160,11 @@ S_prune_chain_head(OP** op_p)
 #endif
 
 /* rounds up to nearest pointer */
-PERL_STATIC_INLINE size_t S_size_to_psize(size_t x) {
+static inline size_t S_size_to_psize(size_t x) {
     return (x + sizeof(I32 *) - 1) / sizeof(I32 *);
 }
 
-PERL_STATIC_INLINE size_t S_diff_opslots(OPSLOT *o, OPSLOT *p) {
+static inline size_t S_diff_opslots(OPSLOT *o, OPSLOT *p) {
     PERL_ARGS_ASSERT_DIFF_OPSLOTS;
     
     return (size_t)((I32 **)p - (I32**)o);
@@ -505,7 +505,7 @@ Perl_op_refcnt_dec(pTHX_ OP *o)
 }
 #endif
 
-PERL_STATIC_INLINE OP *S_checkop(pTHX_ I32 type, OP *o) {
+static inline OP *S_checkop(pTHX_ I32 type, OP *o) {
     PERL_ARGS_ASSERT_CHECKOP;
     
     /* The ", (OP*)0" is just to make the compiler think the expression is of
@@ -2399,7 +2399,7 @@ Perl_finalize_optree(pTHX_ OP* o)
 /* Relocate sv to the pad for thread safety.
  * Despite being a "constant", the SV is written to,
  * for reference counts, sv_upgrade() etc. */
-PERL_STATIC_INLINE void
+static inline void
 S_op_relocate_sv(pTHX_ SV** svp, PADOFFSET* targp)
 {
     PADOFFSET ix;
@@ -4198,7 +4198,7 @@ Perl_jmaybe(pTHX_ OP *o)
     return o;
 }
 
-PERL_STATIC_INLINE OP *
+static inline OP *
 S_op_std_init(pTHX_ OP *o)
 {
     I32 type = o->op_type;
@@ -4213,7 +4213,7 @@ S_op_std_init(pTHX_ OP *o)
     return o;
 }
 
-PERL_STATIC_INLINE OP *
+static inline OP *
 S_op_integerize(pTHX_ OP *o)
 {
     I32 type = o->op_type;
@@ -6201,7 +6201,7 @@ Perl_vload_module(pTHX_ U32 flags, SV *name, SV *ver, va_list *args)
     LEAVE;
 }
 
-PERL_STATIC_INLINE OP *
+static inline OP *
 S_new_entersubop(pTHX_ GV *gv, OP *arg)
 {
     return newUNOP(OP_ENTERSUB, OPf_STACKED,
@@ -6338,7 +6338,7 @@ S_assignment_type(pTHX_ const OP *o)
   wouldn't help with aliasing, either.  To find somewhere
   to store these values, evil chicanery is done with SvUVX().
 */
-PERL_STATIC_INLINE bool
+static inline bool
 S_aassign_common_vars(pTHX_ OP* o)
 {
     OP *curop;
@@ -6414,7 +6414,7 @@ S_aassign_common_vars(pTHX_ OP* o)
 /* This variant only handles lexical aliases.  It is called when
    newASSIGNOP decides that we don’t have any common vars, as lexical ali-
    ases trump that decision.  */
-PERL_STATIC_INLINE bool
+static inline bool
 S_aassign_common_vars_aliases_only(pTHX_ OP *o)
 {
     OP *curop;
@@ -9512,7 +9512,7 @@ Perl_ck_bitop(pTHX_ OP *o)
     return o;
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 is_dollar_bracket(pTHX_ const OP * const o)
 {
     const OP *kid;

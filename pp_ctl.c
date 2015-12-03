@@ -3678,7 +3678,7 @@ S_doopen_pm(pTHX_ SV *name)
 
 /* require doesn't search for absolute names, or when the name is
    explicitly relative the current directory */
-PERL_STATIC_INLINE bool
+static inline bool
 S_path_is_searchable(const char *name)
 {
     PERL_ARGS_ASSERT_PATH_IS_SEARCHABLE;

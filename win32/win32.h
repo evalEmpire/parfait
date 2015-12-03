@@ -122,11 +122,6 @@
 #  endif
 #endif
 
-#ifdef _MSC_VER
-#  define PERL_STATIC_NO_RET __declspec(noreturn) static
-#  define PERL_STATIC_INLINE_NO_RET __declspec(noreturn) PERL_STATIC_INLINE
-#endif
-
 #define  WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
@@ -262,7 +257,7 @@ typedef unsigned short	mode_t;
 
 #  pragma warning(push)
 #  pragma warning(disable:4756;disable:4056)
-PERL_STATIC_INLINE
+static inline
 double S_Infinity() {
     /* this is a real C literal which can get further constant folded
        unlike using HUGE_VAL/_HUGE which are data symbol imports from the CRT

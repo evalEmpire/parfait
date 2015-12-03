@@ -2495,7 +2495,7 @@ S_sublex_done(pTHX)
     }
 }
 
-PERL_STATIC_INLINE SV*
+static inline SV*
 S_get_and_check_backslash_N_name(pTHX_ const char* s, const char* const e)
 {
     /* <s> points to first character of interior of \N{}, <e> to one beyond the
@@ -8547,7 +8547,7 @@ S_new_constant(pTHX_ const char *s, STRLEN len, const char *key, STRLEN keylen,
     return res;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_parse_ident(pTHX_ char **s, char **d, char * const e, int allow_package, bool is_utf8) {
     PERL_ARGS_ASSERT_PARSE_IDENT;
 

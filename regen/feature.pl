@@ -325,7 +325,7 @@ print $h <<EOH;
 #endif /* PERL_CORE or PERL_EXT */
 
 #ifdef PERL_IN_OP_C
-PERL_STATIC_INLINE void
+static inline void
 S_enable_feature_bundle(pTHX_ SV *ver)
 {
     SV *comp_ver = sv_newmortal();

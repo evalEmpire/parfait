@@ -5621,7 +5621,7 @@ long _ftol( double ); /* Defined by VC6 C libs. */
 long _ftol2( double dblSource ) { return _ftol( dblSource ); }
 #endif
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_gv_has_usable_name(pTHX_ GV *gv)
 {
     GV **gvp;

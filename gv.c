@@ -690,7 +690,7 @@ obtained from the GV with the C<GvCV> macro.
 
 /* NOTE: No support for tied ISA */
 
-PERL_STATIC_INLINE GV*
+static inline GV*
 S_gv_fetchmeth_internal(pTHX_ HV* stash, SV* meth, const char* name, STRLEN len, I32 level, U32 flags)
 {
     GV** gvp;
@@ -1390,7 +1390,7 @@ as being one half of the logic. Not to be called except from gv_stashsvpvn_cache
 
 */
 
-PERL_STATIC_INLINE HV*
+static inline HV*
 S_gv_stashpvn_internal(pTHX_ const char *name, U32 namelen, I32 flags)
 {
     char smallbuf[128];
@@ -1445,7 +1445,7 @@ Note the sv interface is strongly preferred for performance reasons.
 #define PERL_ARGS_ASSERT_GV_STASHSVPVN_CACHED \
     assert(namesv || name)
 
-PERL_STATIC_INLINE HV*
+static inline HV*
 S_gv_stashsvpvn_cached(pTHX_ SV *namesv, const char *name, U32 namelen, I32 flags)
 {
     HV* stash;
@@ -1522,7 +1522,7 @@ Perl_gv_fetchsv(pTHX_ SV *name, I32 flags, const svtype sv_type) {
     return gv_fetchpvn_flags(nambeg, len, flags | SvUTF8(name), sv_type);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_gv_magicalize_isa(pTHX_ GV *gv)
 {
     AV* av;
@@ -1541,7 +1541,7 @@ S_gv_magicalize_isa(pTHX_ GV *gv)
  * If the function returns TRUE and 'name == name_end', then
  * 'gv' can be directly returned to the caller of gv_fetchpvn_flags
  */
-PERL_STATIC_INLINE bool
+static inline bool
 S_parse_gv_stash_name(pTHX_ HV **stash, GV **gv, const char **name,
                STRLEN *len, const char *nambeg, STRLEN full_len,
                const U32 is_utf8, const I32 add)
@@ -1631,7 +1631,7 @@ S_parse_gv_stash_name(pTHX_ HV **stash, GV **gv, const char **name,
 }
 
 /* Checks if an unqualified name is in the main stash */
-PERL_STATIC_INLINE bool
+static inline bool
 S_gv_is_in_main(pTHX_ const char *name, STRLEN len, const U32 is_utf8)
 {
     PERL_ARGS_ASSERT_GV_IS_IN_MAIN;
@@ -1691,7 +1691,7 @@ S_gv_is_in_main(pTHX_ const char *name, STRLEN len, const U32 is_utf8)
  * It returns FALSE if the default stash can't be found nor created,
  * which might happen during global destruction.
  */
-PERL_STATIC_INLINE bool
+static inline bool
 S_find_default_stash(pTHX_ HV **stash, const char *name, STRLEN len,
                const U32 is_utf8, const I32 add,
                const svtype sv_type)
@@ -1801,7 +1801,7 @@ S_find_default_stash(pTHX_ HV **stash, const char *name, STRLEN len,
  * If it returns true, and the gv is empty, it indicates that its
  * refcount should be decreased.
  */
-PERL_STATIC_INLINE bool
+static inline bool
 S_gv_magicalize(pTHX_ GV *gv, HV *stash, const char *name, STRLEN len,
                bool addmg, const svtype sv_type)
 {
@@ -2182,7 +2182,7 @@ S_gv_magicalize(pTHX_ GV *gv, HV *stash, const char *name, STRLEN len,
  * latter would end up here, and we add the Errno tie to the HASH slot of
  * the *! glob.
  */
-PERL_STATIC_INLINE void
+static inline void
 S_maybe_multimagic_gv(pTHX_ GV *gv, const char *name, const svtype sv_type)
 {
     PERL_ARGS_ASSERT_MAYBE_MULTIMAGIC_GV;

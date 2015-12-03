@@ -227,7 +227,7 @@ See L<perlguts/Autoloading with XSUBs>.
 /* Flags for newXS_flags  */
 #define XS_DYNAMIC_FILENAME	0x01	/* The filename isn't static  */
 
-PERL_STATIC_INLINE HEK *
+static inline HEK *
 CvNAME_HEK(CV *sv)
 {
     return CvNAMED(sv)

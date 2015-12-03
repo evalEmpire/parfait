@@ -35,7 +35,7 @@ holds the key and hash value.
 #include "perl.h"
 
 
-PERL_STATIC_INLINE int S_should_hsplit(XPVHV * const xhv) {
+static inline int S_should_hsplit(XPVHV * const xhv) {
     PERL_ARGS_ASSERT_SHOULD_HSPLIT;
     
     return (xhv)->xhv_keys > (xhv)->xhv_max; /* HvTOTALKEYS(hv) > HvMAX(hv) */
@@ -71,7 +71,7 @@ S_new_he(pTHX)
     return he;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_del_he(pTHX_ HE *p) {
     PERL_ARGS_ASSERT_DEL_HE;
     
@@ -1397,7 +1397,7 @@ Perl_hv_ksplit(pTHX_ HV *hv, IV newmax)
 /* IMO this should also handle cases where hv_max is smaller than hv_keys
  * as tied hashes could play silly buggers and mess us around. We will
  * do the right thing during hv_store() afterwards, but still - Yves */
-PERL_STATIC_INLINE void S_hv_set_max_adjusted_for_keys(HV * const hv, STRLEN hv_max, STRLEN hv_keys) {
+static inline void S_hv_set_max_adjusted_for_keys(HV * const hv, STRLEN hv_max, STRLEN hv_keys) {
     PERL_ARGS_ASSERT_HV_SET_MAX_ADJUSTED_FOR_KEYS;
     
     /* Can we use fewer buckets? (hv_max is always 2^n-1) */
@@ -2006,7 +2006,7 @@ Perl_hv_fill(pTHX_ HV *const hv)
  * this code was derived from Sereal, which was derived from autobox.
  */
 
-PERL_STATIC_INLINE U32 S_ptr_hash(PTRV u) {
+static inline U32 S_ptr_hash(PTRV u) {
 #if PTRSIZE == 8
     /*
      * This is one of Thomas Wang's hash functions for 64-bit integers from:

@@ -14,7 +14,7 @@
  - regcurly - a little FSA that accepts {\d+,?\d*}
     Pulled from regcomp.c.
  */
-PERL_STATIC_INLINE I32
+static inline I32
 S_regcurly(const char *s)
 {
     PERL_ARGS_ASSERT_REGCURLY;
@@ -190,7 +190,7 @@ S_grok_bslash_o(pTHX_ char **s, UV *uv, const char** error_msg,
     return TRUE;
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_grok_bslash_x(pTHX_ char **s, UV *uv, const char** error_msg,
                       const bool output_warning, const bool strict,
                       const bool silence_non_portable,

@@ -10309,7 +10309,7 @@ Perl_sv_bless(pTHX_ SV *const sv, HV *const stash)
  * as it is after unglobbing it.
  */
 
-PERL_STATIC_INLINE void
+static inline void
 S_sv_unglob(pTHX_ SV *const sv, U32 flags)
 {
     void *xpvmg;

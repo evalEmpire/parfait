@@ -2445,8 +2445,10 @@
  *		_inline      (older MSVC)
  *		             (c89 compilers)
  */
-#define inline 	/**/
-
+#ifndef inline
+    #define inline 	/**/
+#endif
+ 
 /* USE_STDIO_PTR:
  *	This symbol is defined if the _ptr and _cnt fields (or similar)
  *	of the stdio FILE structure can be used to access the stdio buffer
@@ -5160,6 +5162,6 @@
 #endif
 
 /* Generated from:
- * fecde6c155d4ce704a51c3e9b6bf5ad787b2857a7f2cc8137ec72de393fce440 config_h.SH
- * 45fb46f69ab3d7fd8ea14fc29d490d044cbdd81e8a0111bc0b37aff4321d6182 uconfig.sh
+ * f62cd5c4388489721772334da13b9e0bb4673d4a8e47c5dde59a2089ad62e348 config_h.SH
+ * a9ebfff16c59539ee8bfcad3c72e1949c444aaf442974a4ef87254a045e5f98c uconfig.sh
  * ex: set ro: */

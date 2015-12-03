@@ -201,7 +201,7 @@
 
 /* SipHash-2-4 */
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_siphash_2_4(const unsigned char * const seed, const unsigned char *in, const STRLEN inlen) {
   /* "somepseudorandomlygeneratedbytes" */
   U64TYPE v0 = UINT64_C(0x736f6d6570736575);
@@ -267,7 +267,7 @@ S_perl_hash_siphash_2_4(const unsigned char * const seed, const unsigned char *i
  */
 
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_superfast(const unsigned char * const seed, const unsigned char *str, STRLEN len) {
     U32 hash = *((U32*)seed) + (U32)len;
     U32 tmp;
@@ -371,7 +371,7 @@ S_perl_hash_superfast(const unsigned char * const seed, const unsigned char *str
 
 
 /* now we create the hash function */
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_murmur3(const unsigned char * const seed, const unsigned char *ptr, STRLEN len) {
     U32 h1 = *((U32*)seed);
     U32 k1;
@@ -464,7 +464,7 @@ S_perl_hash_murmur3(const unsigned char * const seed, const unsigned char *ptr, 
 }
 
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_djb2(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
     const unsigned char * const end = (const unsigned char *)str + len;
     U32 hash = *((U32*)seed) + (U32)len;
@@ -474,7 +474,7 @@ S_perl_hash_djb2(const unsigned char * const seed, const unsigned char *str, con
     return hash;
 }
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_sdbm(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
     const unsigned char * const end = (const unsigned char *)str + len;
     U32 hash = *((U32*)seed) + (U32)len;
@@ -500,7 +500,7 @@ S_perl_hash_sdbm(const unsigned char * const seed, const unsigned char *str, con
  * (http://burtleburtle.net/bob/hash/doobs.html)
  * With seed/len tweak.
  * */
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_one_at_a_time(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
     const unsigned char * const end = (const unsigned char *)str + len;
     U32 hash = *((U32*)seed) + (U32)len;
@@ -515,7 +515,7 @@ S_perl_hash_one_at_a_time(const unsigned char * const seed, const unsigned char 
 }
 
 /* Derived from "One-at-a-Time" algorithm by Bob Jenkins */
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_one_at_a_time_hard(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
     const unsigned char * const end = (const unsigned char *)str + len;
     U32 hash = *((U32*)seed) + (U32)len;
@@ -550,7 +550,7 @@ S_perl_hash_one_at_a_time_hard(const unsigned char * const seed, const unsigned 
     return (hash + (hash << 15));
 }
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_old_one_at_a_time(const unsigned char * const seed, const unsigned char *str, const STRLEN len) {
     const unsigned char * const end = (const unsigned char *)str + len;
     U32 hash = *((U32*)seed);
@@ -576,7 +576,7 @@ S_perl_hash_old_one_at_a_time(const unsigned char * const seed, const unsigned c
 */
 
 /* a 64 bit hash where we only use the low 32 bits */
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_murmur_hash_64a (const unsigned char * const seed, const unsigned char *str, const STRLEN len)
 {
         const U64TYPE m = 0xc6a4a7935bd1e995;
@@ -634,7 +634,7 @@ S_perl_hash_murmur_hash_64a (const unsigned char * const seed, const unsigned ch
 */
 
 /* a 64-bit hash for 32-bit platforms where we only use the low 32 bits */
-PERL_STATIC_INLINE U32
+static inline U32
 S_perl_hash_murmur_hash_64b (const unsigned char * const seed, const unsigned char *str, STRLEN len)
 {
         const U32 m = 0x5bd1e995;

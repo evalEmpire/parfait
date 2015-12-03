@@ -2994,7 +2994,7 @@ S_ft_return_false(pTHX_ SV *ret) {
     return next;
 }
 
-PERL_STATIC_INLINE OP *
+static inline OP *
 S_ft_return_true(pTHX_ SV *ret) {
     dSP;
     if (PL_op->op_flags & OPf_REF)

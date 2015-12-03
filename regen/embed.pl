@@ -105,12 +105,7 @@ my ($embed, $core, $ext, $api) = setup_embed();
 
 	if ($flags =~ /([si])/) {
 	    my $type;
-	    if ($never_returns) {
-		$type = $1 eq 's' ? "PERL_STATIC_NO_RET" : "PERL_STATIC_INLINE_NO_RET";
-	    }
-	    else {
-		$type = $1 eq 's' ? "static" : "PERL_STATIC_INLINE";
-	    }
+            $type = $1 eq 's' ? "static" : "static inline";
 	    $retval = "$type $splint_flags$retval";
 	}
 	else {

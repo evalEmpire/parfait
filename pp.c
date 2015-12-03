@@ -2338,7 +2338,7 @@ PP(pp_sbit_or)
     }
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_negate_string(pTHX)
 {
     dTARGET; dSP;

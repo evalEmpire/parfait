@@ -14,7 +14,7 @@
 
 /* ------------------------------- av.h ------------------------------- */
 
-PERL_STATIC_INLINE SSize_t
+static inline SSize_t
 S_av_top_index(pTHX_ AV *av)
 {
     PERL_ARGS_ASSERT_AV_TOP_INDEX;
@@ -25,7 +25,7 @@ S_av_top_index(pTHX_ AV *av)
 
 /* ------------------------------- cv.h ------------------------------- */
 
-PERL_STATIC_INLINE GV *
+static inline GV *
 S_CvGV(pTHX_ CV *sv)
 {
     return CvNAMED(sv)
@@ -33,7 +33,7 @@ S_CvGV(pTHX_ CV *sv)
         : ((XPVCV*)MUTABLE_PTR(SvANY(sv)))->xcv_gv_u.xcv_gv;
 }
 
-PERL_STATIC_INLINE I32 *
+static inline I32 *
 S_CvDEPTHp(const CV * const sv)
 {
     assert(SvTYPE(sv) == SVt_PVCV || SvTYPE(sv) == SVt_PVFM);
@@ -52,7 +52,7 @@ S_CvDEPTHp(const CV * const sv)
  */
 
 #ifdef PERL_CORE
-PERL_STATIC_INLINE char *
+static inline char *
 S_strip_spaces(pTHX_ const char * orig, STRLEN * const len)
 {
     SV * tmpsv;
@@ -74,7 +74,7 @@ S_strip_spaces(pTHX_ const char * orig, STRLEN * const len)
 
 #if defined(PERL_CORE) || defined(PERL_EXT)
 /* assumes get-magic and stringification have already occurred */
-PERL_STATIC_INLINE STRLEN
+static inline STRLEN
 S_MgBYTEPOS(pTHX_ MAGIC *mg, SV *sv, const char *s, STRLEN len)
 {
     assert(mg->mg_type == PERL_MAGIC_regex_global);
@@ -93,7 +93,7 @@ S_MgBYTEPOS(pTHX_ MAGIC *mg, SV *sv, const char *s, STRLEN len)
 /* ------------------------------- pad.h ------------------------------ */
 
 #if defined(PERL_IN_PAD_C) || defined(PERL_IN_OP_C)
-PERL_STATIC_INLINE bool
+static inline bool
 PadnameIN_SCOPE(const PADNAME * const pn, const U32 seq)
 {
     /* is seq within the range _LOW to _HIGH ?
@@ -127,7 +127,7 @@ PadnameIN_SCOPE(const PADNAME * const pn, const U32 seq)
 
 /* ----------------------------- regexp.h ----------------------------- */
 
-PERL_STATIC_INLINE struct regexp *
+static inline struct regexp *
 S_ReANY(const REGEXP * const re)
 {
     assert(isREGEXP(re));
@@ -136,26 +136,26 @@ S_ReANY(const REGEXP * const re)
 
 /* ------------------------------- sv.h ------------------------------- */
 
-PERL_STATIC_INLINE SV *
+static inline SV *
 S_SvREFCNT_inc(SV *sv)
 {
     if (LIKELY(sv != NULL))
         SvREFCNT(sv)++;
     return sv;
 }
-PERL_STATIC_INLINE SV *
+static inline SV *
 S_SvREFCNT_inc_NN(SV *sv)
 {
     SvREFCNT(sv)++;
     return sv;
 }
-PERL_STATIC_INLINE void
+static inline void
 S_SvREFCNT_inc_void(SV *sv)
 {
     if (LIKELY(sv != NULL))
         SvREFCNT(sv)++;
 }
-PERL_STATIC_INLINE void
+static inline void
 S_SvREFCNT_dec(pTHX_ SV *sv)
 {
     if (LIKELY(sv != NULL)) {
@@ -167,7 +167,7 @@ S_SvREFCNT_dec(pTHX_ SV *sv)
     }
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_SvREFCNT_dec_NN(pTHX_ SV *sv)
 {
     U32 rc = SvREFCNT(sv);
@@ -177,33 +177,33 @@ S_SvREFCNT_dec_NN(pTHX_ SV *sv)
         Perl_sv_free2(aTHX_ sv, rc);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 SvAMAGIC_on(SV *sv)
 {
     assert(SvROK(sv));
     if (SvOBJECT(SvRV(sv))) HvAMAGIC_on(SvSTASH(SvRV(sv)));
 }
-PERL_STATIC_INLINE void
+static inline void
 SvAMAGIC_off(SV *sv)
 {
     if (SvROK(sv) && SvOBJECT(SvRV(sv)))
         HvAMAGIC_off(SvSTASH(SvRV(sv)));
 }
 
-PERL_STATIC_INLINE U32
+static inline U32
 S_SvPADSTALE_on(SV *sv)
 {
     assert(!(SvFLAGS(sv) & SVs_PADTMP));
     return SvFLAGS(sv) |= SVs_PADSTALE;
 }
-PERL_STATIC_INLINE U32
+static inline U32
 S_SvPADSTALE_off(SV *sv)
 {
     assert(!(SvFLAGS(sv) & SVs_PADTMP));
     return SvFLAGS(sv) &= ~SVs_PADSTALE;
 }
 #if defined(PERL_CORE) || defined (PERL_EXT)
-PERL_STATIC_INLINE STRLEN
+static inline STRLEN
 S_sv_or_pv_pos_u2b(pTHX_ SV *sv, const char *pv, STRLEN pos, STRLEN *lenp)
 {
     PERL_ARGS_ASSERT_SV_OR_PV_POS_U2B;
@@ -233,7 +233,7 @@ GCC_DIAG_RESTORE /* Intentionally left semicolonless. */
 
 /* ------------------------------- utf8.h ------------------------------- */
 
-PERL_STATIC_INLINE void
+static inline void
 S_append_utf8_from_native_byte(const U8 byte, U8** dest)
 {
     /* Takes an input 'byte' (Latin1 or EBCDIC) and appends it to the UTF-8
@@ -264,7 +264,7 @@ Note that an INVARIANT (i.e. ASCII on non-EBCDIC) character is a valid UTF-8
 character.
 
 =cut */
-PERL_STATIC_INLINE STRLEN
+static inline STRLEN
 S__is_utf8_char_slow(const U8 *s, const U8 *e)
 {
     dTHX;   /* The function called below requires thread context */
@@ -296,7 +296,7 @@ Used by the IS_SAFE_SYSCALL() macro.
 =cut
 */
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_is_safe_syscall(pTHX_ const char *pv, STRLEN len, const char *what, const char *op_name) {
     /* While the Windows CE API provides only UCS-16 (or UTF-16) APIs
      * perl itself uses xce*() functions which accept 8-bit strings.
@@ -337,7 +337,7 @@ then calling:
 
 #ifdef PERL_CORE
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_should_warn_nl(const char *pv) {
     STRLEN len;
 
@@ -354,7 +354,7 @@ S_should_warn_nl(const char *pv) {
 
 #define MAX_CHARSET_NAME_LENGTH 2
 
-PERL_STATIC_INLINE const char *
+static inline const char *
 get_regex_charset_name(const U32 flags, STRLEN* const lenp)
 {
     /* Returns a string that corresponds to the name of the regex character set
@@ -383,7 +383,7 @@ Return false if any get magic is on the SV other than taint magic.
 
 */
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_sv_only_taint_gmagic(SV *sv) {
     MAGIC *mg = SvMAGIC(sv);
 

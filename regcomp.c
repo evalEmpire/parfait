@@ -1458,7 +1458,7 @@ S_ssc_or(pTHX_ const RExC_state_t *pRExC_state, regnode_ssc *ssc,
               );
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert2nd)
 {
     PERL_ARGS_ASSERT_SSC_UNION;
@@ -1471,7 +1471,7 @@ S_ssc_union(pTHX_ regnode_ssc *ssc, SV* const invlist, const bool invert2nd)
                                         &ssc->invlist);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_ssc_intersection(pTHX_ regnode_ssc *ssc,
                          SV* const invlist,
                          const bool invert2nd)
@@ -1486,7 +1486,7 @@ S_ssc_intersection(pTHX_ regnode_ssc *ssc,
                                                &ssc->invlist);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_ssc_add_range(pTHX_ regnode_ssc *ssc, const UV start, const UV end)
 {
     PERL_ARGS_ASSERT_SSC_ADD_RANGE;
@@ -1496,7 +1496,7 @@ S_ssc_add_range(pTHX_ regnode_ssc *ssc, const UV start, const UV end)
     ssc->invlist = _add_range_to_invlist(ssc->invlist, start, end);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_ssc_cp_and(pTHX_ regnode_ssc *ssc, const UV cp)
 {
     /* AND just the single code point 'cp' into the SSC 'ssc' */
@@ -1514,7 +1514,7 @@ S_ssc_cp_and(pTHX_ regnode_ssc *ssc, const UV cp)
     SvREFCNT_dec_NN(cp_list);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_ssc_clear_locale(regnode_ssc *ssc)
 {
     /* Set the SSC 'ssc' to not match any locale things */
@@ -7990,7 +7990,7 @@ S_reg_scan_name(pTHX_ RExC_state_t *pRExC_state, U32 flags)
 
 /* The header definitions are in F<inline_invlist.c> */
 
-PERL_STATIC_INLINE UV*
+static inline UV*
 S__invlist_array_init(SV* const invlist, const bool will_have_0)
 {
     /* Returns a pointer to the first element in the inversion list's array.
@@ -8016,7 +8016,7 @@ S__invlist_array_init(SV* const invlist, const bool will_have_0)
     return zero_addr + *offset;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_invlist_set_len(pTHX_ SV* const invlist, const UV len, const bool offset)
 {
     /* Sets the current number of elements stored in the inversion list.
@@ -8035,7 +8035,7 @@ S_invlist_set_len(pTHX_ SV* const invlist, const UV len, const bool offset)
 
 #ifndef PERL_IN_XSUB_RE
 
-PERL_STATIC_INLINE IV*
+static inline IV*
 S_get_invlist_previous_index_addr(SV* invlist)
 {
     /* Return the address of the IV that is reserved to hold the cached index
@@ -8047,7 +8047,7 @@ S_get_invlist_previous_index_addr(SV* invlist)
     return &(((XINVLIST*) SvANY(invlist))->prev_index);
 }
 
-PERL_STATIC_INLINE IV
+static inline IV
 S_invlist_previous_index(SV* const invlist)
 {
     /* Returns cached index of previous search */
@@ -8057,7 +8057,7 @@ S_invlist_previous_index(SV* const invlist)
     return *get_invlist_previous_index_addr(invlist);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_invlist_set_previous_index(SV* const invlist, const IV index)
 {
     /* Caches <index> for later retrieval */
@@ -8069,7 +8069,7 @@ S_invlist_set_previous_index(SV* const invlist, const IV index)
     *get_invlist_previous_index_addr(invlist) = index;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_invlist_trim(SV* const invlist)
 {
     PERL_ARGS_ASSERT_INVLIST_TRIM;
@@ -8081,7 +8081,7 @@ S_invlist_trim(SV* const invlist)
     SvPV_shrink_to_cur((SV *) invlist);
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_invlist_is_iterating(SV* const invlist)
 {
     PERL_ARGS_ASSERT_INVLIST_IS_ITERATING;
@@ -8091,7 +8091,7 @@ S_invlist_is_iterating(SV* const invlist)
 
 #endif /* ifndef PERL_IN_XSUB_RE */
 
-PERL_STATIC_INLINE UV
+static inline UV
 S_invlist_max(SV* const invlist)
 {
     /* Returns the maximum number of elements storable in the inversion list's
@@ -9048,7 +9048,7 @@ Perl__setup_canned_invlist(pTHX_ const STRLEN size, const UV element0,
 
 #endif
 
-PERL_STATIC_INLINE SV*
+static inline SV*
 S_add_cp_to_invlist(pTHX_ SV* invlist, const UV cp) {
     return _add_range_to_invlist(invlist, cp, cp);
 }
@@ -9076,7 +9076,7 @@ Perl__invlist_invert(pTHX_ SV* const invlist)
 
 #endif
 
-PERL_STATIC_INLINE SV*
+static inline SV*
 S_invlist_clone(pTHX_ SV* const invlist)
 {
 
@@ -9098,7 +9098,7 @@ S_invlist_clone(pTHX_ SV* const invlist)
     return new_invlist;
 }
 
-PERL_STATIC_INLINE STRLEN*
+static inline STRLEN*
 S_get_invlist_iter_addr(SV* invlist)
 {
     /* Return the address of the UV that contains the current iteration
@@ -9111,7 +9111,7 @@ S_get_invlist_iter_addr(SV* invlist)
     return &(((XINVLIST*) SvANY(invlist))->iterator);
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_invlist_iterinit(SV* invlist)	/* Initialize iterator for invlist */
 {
     PERL_ARGS_ASSERT_INVLIST_ITERINIT;
@@ -9119,7 +9119,7 @@ S_invlist_iterinit(SV* invlist)	/* Initialize iterator for invlist */
     *get_invlist_iter_addr(invlist) = 0;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_invlist_iterfinish(SV* invlist)
 {
     /* Terminate iterator for invlist.  This is to catch development errors.
@@ -9170,7 +9170,7 @@ S_invlist_iternext(SV* invlist, UV* start, UV* end)
     return TRUE;
 }
 
-PERL_STATIC_INLINE UV
+static inline UV
 S_invlist_highest(SV* const invlist)
 {
     /* Returns the highest code point that matches an inversion list.  This API
@@ -11377,7 +11377,7 @@ S_reg_recode(pTHX_ const char value, SV **encp)
     return uv;
 }
 
-PERL_STATIC_INLINE U8
+static inline U8
 S_compute_EXACTish(RExC_state_t *pRExC_state)
 {
     U8 op;
@@ -11399,7 +11399,7 @@ S_compute_EXACTish(RExC_state_t *pRExC_state)
     return op + EXACTF;
 }
 
-PERL_STATIC_INLINE void
+static inline void
 S_alloc_maybe_populate_EXACT(pTHX_ RExC_state_t *pRExC_state,
                          regnode *node, I32* flagp, STRLEN len, UV code_point,
                          bool downgradable)
@@ -13067,7 +13067,7 @@ S_populate_ANYOF_from_invlist(pTHX_ regnode *node, SV** invlist_ptr)
 #define POSIXCC_NOTYET(c) ((c) == '=' || (c) == '.')
 #define POSIXCC(c) (POSIXCC_DONE(c) || POSIXCC_NOTYET(c))
 
-PERL_STATIC_INLINE I32
+static inline I32
 S_regpposixcc(pTHX_ RExC_state_t *pRExC_state, I32 value, const bool strict)
 {
     I32 namedclass = OOB_NAMEDCLASS;
@@ -16201,7 +16201,7 @@ Perl__get_regclass_nonbitmap_data(pTHX_ const regexp *prog,
 
 */
 
-PERL_STATIC_INLINE char*
+static inline char*
 S_reg_skipcomment(RExC_state_t *pRExC_state, char* p)
 {
     PERL_ARGS_ASSERT_REG_SKIPCOMMENT;

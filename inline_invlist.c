@@ -17,7 +17,7 @@
 #define TO_INTERNAL_SIZE(x) ((x) * sizeof(UV))
 #define FROM_INTERNAL_SIZE(x) ((x)/ sizeof(UV))
 
-PERL_STATIC_INLINE bool*
+static inline bool*
 S_get_invlist_offset_addr(SV* invlist)
 {
     /* Return the address of the field that says whether the inversion list is
@@ -29,7 +29,7 @@ S_get_invlist_offset_addr(SV* invlist)
     return &(((XINVLIST*) SvANY(invlist))->is_offset);
 }
 
-PERL_STATIC_INLINE UV
+static inline UV
 S__invlist_len(SV* const invlist)
 {
     /* Returns the current number of elements stored in the inversion list's
@@ -44,7 +44,7 @@ S__invlist_len(SV* const invlist)
            : FROM_INTERNAL_SIZE(SvCUR(invlist)) - *get_invlist_offset_addr(invlist);
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 S__invlist_contains_cp(SV* const invlist, const UV cp)
 {
     /* Does <invlist> contain code point <cp> as part of the set? */
@@ -56,7 +56,7 @@ S__invlist_contains_cp(SV* const invlist, const UV cp)
     return index >= 0 && ELEMENT_RANGE_MATCHES_INVLIST(index);
 }
 
-PERL_STATIC_INLINE UV*
+static inline UV*
 S_invlist_array(SV* const invlist)
 {
     /* Returns the pointer to the inversion list's array.  Every time the

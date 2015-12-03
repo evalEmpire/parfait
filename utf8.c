@@ -1621,7 +1621,7 @@ Perl__to_uni_fold_flags(pTHX_ UV c, U8* p, STRLEN *lenp, U8 flags)
     }
 }
 
-PERL_STATIC_INLINE bool
+static inline bool
 S_is_utf8_common(pTHX_ const U8 *const p, SV **swash,
                  const char *const swashname, SV* const invlist)
 {
